@@ -54,7 +54,7 @@ function Dashboard() {
           }}
         />
 
-        <div className="relative flex h-full min-h-[420px] flex-col justify-end p-6 sm:p-10 lg:min-h-0 lg:p-12">
+        <div className="relative flex h-full min-h-[420px] flex-col justify-center p-6 sm:p-10 lg:min-h-0 lg:p-12">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -72,7 +72,7 @@ function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.18, ease }}
-            className="mt-10 max-w-[560px] font-display text-[32px] sm:mt-14 sm:text-[40px] lg:text-[52px]"
+            className="mt-6 max-w-[560px] font-display text-[32px] sm:text-[40px] lg:text-[52px]"
             style={{
               lineHeight: 1.05,
               letterSpacing: "-0.03em",
@@ -103,6 +103,7 @@ function Dashboard() {
           </motion.div>
         </div>
       </motion.section>
+
 
       {/* RIGHT — CONTEXT */}
       <motion.section
