@@ -54,7 +54,7 @@ function Dashboard() {
           }}
         />
 
-        <div className="relative flex h-full min-h-[420px] flex-col justify-end p-6 sm:p-10 lg:min-h-0 lg:p-12">
+        <div className="relative flex h-full min-h-[420px] flex-col justify-center p-6 sm:p-10 lg:min-h-0 lg:p-12">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -72,7 +72,7 @@ function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.18, ease }}
-            className="mt-10 max-w-[560px] font-display text-[32px] sm:mt-14 sm:text-[40px] lg:text-[52px]"
+            className="mt-6 max-w-[560px] font-display text-[32px] sm:text-[40px] lg:text-[52px]"
             style={{
               lineHeight: 1.05,
               letterSpacing: "-0.03em",
@@ -104,6 +104,7 @@ function Dashboard() {
         </div>
       </motion.section>
 
+
       {/* RIGHT — CONTEXT */}
       <motion.section
         initial={{ opacity: 0, x: 12 }}
@@ -112,35 +113,41 @@ function Dashboard() {
         className="flex flex-1 flex-col border-t lg:border-l lg:border-t-0"
         style={{ borderColor: "var(--border-default)" }}
       >
-        {/* Stats */}
-        <div className="grid grid-cols-2 lg:flex lg:flex-1 lg:flex-col">
-          <StatBlock label="Deze maand" value="41" hint="+12 t.o.v. vorige maand" />
-          <div className="hidden lg:block" style={{ borderTop: "1px solid var(--border-default)" }} />
-          <div className="lg:hidden" style={{ borderLeft: "1px solid var(--border-default)" }}>
-            <StatBlock label="Protocollen" value="07" hint="RESET-PRO v3.2" />
-          </div>
-          <div className="hidden lg:block">
-            <StatBlock label="Protocollen" value="07" hint="RESET-PRO v3.2" />
-          </div>
-        </div>
-
         {/* Recent */}
-        <div
-          className="flex flex-1 flex-col p-6 sm:p-8 lg:p-10"
-          style={{ borderTop: "1px solid var(--border-default)" }}
-        >
-          <span
-            className="text-[10px] uppercase"
-            style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.22)" }}
-          >
-            Recent
-          </span>
-          <ul className="mt-4 flex flex-1 flex-col justify-start sm:mt-6">
+        <div className="flex flex-col p-6 sm:p-8 lg:p-10">
+          <div className="flex items-center justify-between">
+            <span
+              className="text-[10px] uppercase"
+              style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.22)" }}
+            >
+              Recent
+            </span>
+            <Link
+              to="/recepten"
+              className="inline-flex items-center gap-1 text-[11px] uppercase transition-colors hover:opacity-100"
+              style={{ letterSpacing: "0.1em", color: "rgba(240,237,230,0.55)" }}
+            >
+              Bekijk <ArrowRight className="h-3 w-3" strokeWidth={2} />
+            </Link>
+          </div>
+          <ul className="mt-4 flex flex-col sm:mt-6">
             {recent.map((rx, i) => (
               <RecentRow key={rx.id} rx={rx} last={i === recent.length - 1} />
             ))}
           </ul>
         </div>
+
+        {/* Stats */}
+        <div
+          className="grid grid-cols-2 lg:flex lg:flex-1"
+          style={{ borderTop: "1px solid var(--border-default)" }}
+        >
+          <StatBlock label="Deze maand" value="41" hint="+12 t.o.v. vorige maand" />
+          <div style={{ borderLeft: "1px solid var(--border-default)" }}>
+            <StatBlock label="Protocollen" value="07" hint="RESET-PRO v3.2" />
+          </div>
+        </div>
+
       </motion.section>
     </div>
   );
