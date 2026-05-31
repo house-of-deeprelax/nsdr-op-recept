@@ -14,18 +14,28 @@ export function PhaseBadge({ phase, className }: { phase: Phase; className?: str
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+        "group/badge inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs transition-all duration-200",
         className,
       )}
       style={{
-        backgroundColor: `color-mix(in oklab, ${color} 14%, transparent)`,
+        backgroundColor: `color-mix(in oklab, ${color} 10%, transparent)`,
         color: color,
-        border: `0.5px solid color-mix(in oklab, ${color} 35%, transparent)`,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = `color-mix(in oklab, ${color} 16%, transparent)`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = `color-mix(in oklab, ${color} 10%, transparent)`;
       }}
     >
       <span
-        className="h-1.5 w-1.5 rounded-full"
-        style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}` }}
+        className="block rounded-full transition-all duration-200 group-hover/badge:h-[9px] group-hover/badge:w-[9px]"
+        style={{
+          width: 6,
+          height: 6,
+          backgroundColor: color,
+          boxShadow: `0 0 8px ${color}`,
+        }}
       />
       {label}
     </span>
