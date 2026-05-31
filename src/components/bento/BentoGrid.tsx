@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import type { HTMLAttributes, ReactNode } from "react";
+import { motion, type HTMLMotionProps } from "framer-motion";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { fadeUp, stagger } from "@/lib/motion";
 
@@ -28,7 +28,7 @@ const sizeClass: Record<Size, string> = {
   xl: "lg:col-span-4 lg:row-span-2",
 };
 
-interface BentoCardProps extends HTMLAttributes<HTMLDivElement> {
+interface BentoCardProps extends HTMLMotionProps<"div"> {
   size?: Size;
   children: ReactNode;
 }
