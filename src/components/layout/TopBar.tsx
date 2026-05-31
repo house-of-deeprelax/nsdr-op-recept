@@ -11,17 +11,18 @@ export function TopBar() {
           className="block h-2 w-2 shrink-0 rounded-full"
           style={{ background: "var(--sage)", boxShadow: "0 0 10px var(--sage)" }}
         />
-        <span className="font-display-700 truncate text-[13px] text-foreground sm:text-[14px]">
+        <span className="font-display-700 whitespace-nowrap text-[13px] text-foreground sm:text-[14px]">
           NSDR op Recept
         </span>
-        <span className="hidden text-[rgba(240,237,230,0.25)] sm:inline">·</span>
+        <span className="hidden text-[rgba(240,237,230,0.25)] md:inline">·</span>
         <span
-          className="hidden text-[11px] uppercase sm:inline"
+          className="hidden whitespace-nowrap text-[11px] uppercase md:inline"
           style={{ letterSpacing: "0.1em", color: "rgba(240,237,230,0.25)" }}
         >
           Deeprelax Institute
         </span>
       </div>
+
 
       <div className="flex items-center gap-4">
         <button
