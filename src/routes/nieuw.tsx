@@ -272,6 +272,37 @@ function NieuwPage() {
             </motion.div>
           </AnimatePresence>
         </div>
+
+        {/* Mobile nav — pinned above bottom tab bar */}
+        <div
+          className="sticky bottom-0 left-0 right-0 z-20 -mx-6 mt-10 flex items-center justify-between px-6 py-4 sm:-mx-8 sm:px-8 lg:hidden"
+          style={{
+            background: "rgba(12,12,10,0.92)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            borderTop: "1px solid var(--border-default)",
+          }}
+        >
+          <button
+            onClick={() => go(-1)}
+            disabled={step === 0}
+            className="inline-flex items-center gap-1.5 text-[12px] transition-colors disabled:opacity-25"
+            style={{ color: "rgba(240,237,230,0.45)" }}
+          >
+            <ArrowLeft className="h-3 w-3" strokeWidth={1.5} /> Vorige
+          </button>
+          <CTAButton onClick={() => go(1)} disabled={!canNext}>
+            {step === 2 ? (
+              <>
+                <Sparkles className="h-3.5 w-3.5" strokeWidth={1.5} /> Genereren
+              </>
+            ) : (
+              <>
+                Volgende <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
+              </>
+            )}
+          </CTAButton>
+        </div>
       </section>
     </div>
   );
