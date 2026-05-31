@@ -1,23 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Check, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { PageTransition } from "@/components/layout/PageTransition";
-import { GlassCard } from "@/components/brand/GlassCard";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { fadeUp, stagger } from "@/lib/motion";
-import { cn } from "@/lib/utils";
 import type { Phase } from "@/components/brand/PhaseBadge";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/nieuw")({
   head: () => ({ meta: [{ title: "Nieuw recept — NSDR op Recept" }] }),
@@ -25,10 +12,10 @@ export const Route = createFileRoute("/nieuw")({
 });
 
 const phases: { id: Phase; label: string; color: string; hint: string }[] = [
-  { id: "rood", label: "Rood", color: "var(--phase-rood)", hint: "Acuut ontregeld" },
-  { id: "rood-geel", label: "Rood-Geel", color: "var(--phase-rood-geel)", hint: "Beginnend herstel" },
-  { id: "geel-groen", label: "Geel-Groen", color: "var(--phase-geel-groen)", hint: "Herwinnen van veerkracht" },
-  { id: "groen", label: "Groen", color: "var(--phase-groen)", hint: "Onderhoud en groei" },
+  { id: "rood", label: "Rood", color: "#e24b4a", hint: "Acuut ontregeld" },
+  { id: "rood-geel", label: "Rood-Geel", color: "#d48020", hint: "Beginnend herstel" },
+  { id: "geel-groen", label: "Geel-Groen", color: "#7ab040", hint: "Veerkracht terug" },
+  { id: "groen", label: "Groen", color: "#3a8040", hint: "Onderhoud en groei" },
 ];
 
 const domains = [
@@ -37,24 +24,22 @@ const domains = [
   "Chronische pijn", "Slaapproblemen",
 ];
 
-const steps = ["De casus", "Systeemscan", "Setting"];
+const stepTitles = ["De casus", "Systeemscan", "Setting"];
 
 function NieuwPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
 
-  // Step 1
   const [context, setContext] = useState("");
   const [complaint, setComplaint] = useState("");
   const [duration, setDuration] = useState("");
   const [treatment, setTreatment] = useState("");
   const [somatic, setSomatic] = useState<null | boolean>(null);
 
-  // Step 2
   const [phase, setPhase] = useState<Phase | null>(null);
   const [domain, setDomain] = useState<string>("");
 
-  // Step 3
   const [setting, setSetting] = useState<"individueel" | "groep">("individueel");
   const [time, setTime] = useState("");
   const [frequency, setFrequency] = useState("");
@@ -65,315 +50,280 @@ function NieuwPage() {
     (step === 1 && phase && domain) ||
     (step === 2 && time && frequency && rhythm);
 
-  const next = () => {
-    if (step < 2) setStep(step + 1);
-    else navigate({ to: "/genereren" });
+  const progress = ((step + 1) / 3) * 100;
+
+  const go = (delta: 1 | -1) => {
+    if (delta === 1 && step === 2) {
+      navigate({ to: "/genereren" });
+      return;
+    }
+    setDirection(delta);
+    setStep(step + delta);
   };
 
   return (
-    <PageTransition>
-      <div className="mx-auto max-w-3xl">
-        {/* Header / stepper */}
+    <>
+      {/* Progress line at top of viewport */}
+      <div className="fixed left-0 right-0 top-0 z-30 h-[1.5px] bg-[rgba(var(--paper-rgb),0.06)]">
         <motion.div
-          variants={stagger(0.06)}
-          initial="hidden"
-          animate="visible"
-          className="mb-10"
-        >
-          <motion.span variants={fadeUp} className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-            Stap {step + 1} van 3
-          </motion.span>
-          <motion.h2 variants={fadeUp} className="mt-2 text-3xl">
-            {steps[step]}
-          </motion.h2>
+          className="h-full bg-[var(--sage)]"
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        />
+      </div>
 
-          <motion.div variants={fadeUp} className="mt-6 flex items-center gap-2">
-            {steps.map((s, i) => (
-              <div key={s} className="flex flex-1 items-center gap-2">
-                <div
-                  className={cn(
-                    "flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-medium transition-colors",
-                    i < step && "bg-primary text-primary-foreground",
-                    i === step && "bg-primary/20 text-primary border border-primary/40",
-                    i > step && "bg-background/30 text-muted-foreground border border-border",
-                  )}
-                >
-                  {i < step ? <Check className="h-3.5 w-3.5" /> : i + 1}
-                </div>
-                {i < steps.length - 1 && (
-                  <div className="h-px flex-1 bg-border" />
-                )}
-              </div>
-            ))}
-          </motion.div>
-        </motion.div>
+      <PageTransition>
+        <div className="mx-auto max-w-[560px] pt-8">
+          <div className="mb-12">
+            <span className="text-label">Stap {step + 1} van 3</span>
+            <h2 className="mt-3 font-display text-[36px] leading-[1.05]">{stepTitles[step]}</h2>
+          </div>
 
-        <GlassCard className="p-7">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={step}
-              variants={stagger(0.08)}
-              initial="hidden"
-              animate="visible"
-              exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
-            >
-              {step === 0 && (
-                <div className="space-y-6">
-                  <Field label="Leeftijd en context">
-                    <Textarea
-                      value={context}
-                      onChange={(e) => setContext(e.target.value)}
-                      placeholder="bv. vrouw, 44, HR-manager, twee kinderen"
-                      className="min-h-[80px] resize-none border-border bg-background/20"
-                    />
-                  </Field>
-                  <Field label="Hoofdklacht">
-                    <Textarea
-                      value={complaint}
-                      onChange={(e) => setComplaint(e.target.value)}
-                      placeholder="waar komt deze persoon mee, in jouw woorden"
-                      className="min-h-[100px] resize-none border-border bg-background/20"
-                    />
-                  </Field>
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <Field label="Duur klachten">
-                      <Input
-                        value={duration}
-                        onChange={(e) => setDuration(e.target.value)}
-                        placeholder="bv. 8 maanden"
-                        className="border-border bg-background/20"
+          <div className="relative">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={step}
+                custom={direction}
+                initial={{ opacity: 0, x: direction === 1 ? 20 : -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: direction === 1 ? -20 : 20 }}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {step === 0 && (
+                  <div className="space-y-10">
+                    <Field label="Leeftijd en context">
+                      <LineTextarea
+                        value={context}
+                        onChange={setContext}
+                        placeholder="bv. vrouw, 44, HR-manager, twee kinderen"
                       />
+                    </Field>
+                    <Field label="Hoofdklacht">
+                      <LineTextarea
+                        value={complaint}
+                        onChange={setComplaint}
+                        placeholder="waar komt deze persoon mee, in jouw woorden"
+                      />
+                    </Field>
+                    <Field label="Duur klachten">
+                      <LineInput value={duration} onChange={setDuration} placeholder="bv. 8 maanden" />
                     </Field>
                     <Field label="Lopende behandeling" optional>
-                      <Input
-                        value={treatment}
-                        onChange={(e) => setTreatment(e.target.value)}
-                        placeholder="bv. POH-GGZ, fysio"
-                        className="border-border bg-background/20"
-                      />
+                      <LineInput value={treatment} onChange={setTreatment} placeholder="bv. POH-GGZ, fysio" />
+                    </Field>
+                    <Field label="Somatische oorzaak uitgesloten">
+                      <div className="grid grid-cols-2 gap-3 pt-1">
+                        <LineToggle active={somatic === true} onClick={() => setSomatic(true)} label="Ja, uitgesloten" />
+                        <LineToggle active={somatic === false} onClick={() => setSomatic(false)} label="Nee of onbekend" />
+                      </div>
                     </Field>
                   </div>
-                  <Field label="Somatische oorzaak uitgesloten?">
-                    <div className="grid grid-cols-2 gap-3">
-                      <ToggleButton
-                        active={somatic === true}
-                        onClick={() => setSomatic(true)}
-                        label="Ja, uitgesloten"
-                      />
-                      <ToggleButton
-                        active={somatic === false}
-                        onClick={() => setSomatic(false)}
-                        label="Nee of onbekend"
-                      />
-                    </div>
-                  </Field>
-                </div>
-              )}
+                )}
 
-              {step === 1 && (
-                <div className="space-y-8">
-                  <Field label="In welke fase bevindt deze persoon zich?">
-                    <motion.div
-                      variants={stagger(0.06)}
-                      initial="hidden"
-                      animate="visible"
-                      className="grid grid-cols-2 gap-3"
-                    >
-                      {phases.map((p) => {
-                        const active = phase === p.id;
-                        return (
-                          <motion.button
-                            key={p.id}
-                            variants={fadeUp}
-                            type="button"
-                            onClick={() => setPhase(p.id)}
-                            whileHover={{ y: -2 }}
-                            whileTap={{ scale: 0.98 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                            className={cn(
-                              "glass relative overflow-hidden rounded-xl p-4 text-left transition-all",
-                              active && "ring-1",
-                            )}
-                            style={
-                              active
-                                ? {
-                                    background: `color-mix(in oklab, ${p.color} 12%, transparent)`,
-                                    borderColor: `color-mix(in oklab, ${p.color} 45%, transparent)`,
-                                    boxShadow: `0 0 0 1px color-mix(in oklab, ${p.color} 40%, transparent), 0 8px 24px -12px ${p.color}`,
-                                  }
-                                : undefined
-                            }
-                          >
-                            <div className="flex items-center gap-2">
+                {step === 1 && (
+                  <div className="space-y-12">
+                    <Field label="Fase">
+                      <div className="grid grid-cols-2 gap-3 pt-2">
+                        {phases.map((p) => {
+                          const active = phase === p.id;
+                          return (
+                            <motion.button
+                              key={p.id}
+                              type="button"
+                              onClick={() => setPhase(p.id)}
+                              whileTap={{ scale: 0.98 }}
+                              animate={{ scale: active ? 1.02 : 1 }}
+                              transition={{ type: "spring", stiffness: 400, damping: 22 }}
+                              className="relative flex aspect-[1.4/1] flex-col items-center justify-center rounded-[10px] border transition-colors duration-200"
+                              style={{
+                                borderColor: active
+                                  ? `color-mix(in oklab, ${p.color} 60%, transparent)`
+                                  : "rgba(var(--paper-rgb),0.08)",
+                                background: active
+                                  ? `color-mix(in oklab, ${p.color} 6%, transparent)`
+                                  : "transparent",
+                              }}
+                            >
                               <span
-                                className="h-2 w-2 rounded-full"
-                                style={{ background: p.color, boxShadow: `0 0 10px ${p.color}` }}
+                                className="block rounded-full"
+                                style={{
+                                  width: 40,
+                                  height: 40,
+                                  background: p.color,
+                                  boxShadow: active ? `0 0 24px ${p.color}` : `0 0 12px ${p.color}`,
+                                  opacity: active ? 1 : 0.85,
+                                }}
                               />
-                              <span className="font-display text-base" style={{ color: active ? p.color : undefined }}>
-                                {p.label}
-                              </span>
-                            </div>
-                            <p className="mt-2 text-xs text-muted-foreground">{p.hint}</p>
-                          </motion.button>
-                        );
-                      })}
-                    </motion.div>
-                  </Field>
+                              <span className="font-display mt-4 text-base">{p.label}</span>
+                              <span className="text-label mt-1.5">{p.hint}</span>
+                            </motion.button>
+                          );
+                        })}
+                      </div>
+                    </Field>
 
-                  <Field label="Dominant domein">
-                    <Select value={domain} onValueChange={setDomain}>
-                      <SelectTrigger className="border-border bg-background/20">
-                        <SelectValue placeholder="Kies een domein" />
-                      </SelectTrigger>
-                      <SelectContent>
+                    <Field label="Dominant domein">
+                      <div className="flex flex-wrap gap-2 pt-2">
                         {domains.map((d) => (
-                          <SelectItem key={d} value={d}>{d}</SelectItem>
+                          <button
+                            key={d}
+                            type="button"
+                            onClick={() => setDomain(d)}
+                            className={cn(
+                              "rounded-full border px-3 py-1.5 text-xs transition-colors duration-200",
+                              domain === d
+                                ? "border-[var(--sage)] text-foreground"
+                                : "border-[rgba(var(--paper-rgb),0.08)] text-[rgba(var(--paper-rgb),0.5)] hover:text-foreground",
+                            )}
+                          >
+                            {d}
+                          </button>
                         ))}
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                </div>
-              )}
+                      </div>
+                    </Field>
+                  </div>
+                )}
 
-              {step === 2 && (
-                <div className="space-y-6">
-                  <Field label="Setting">
-                    <div className="grid grid-cols-2 gap-3">
-                      <ToggleButton
-                        active={setting === "individueel"}
-                        onClick={() => setSetting("individueel")}
-                        label="Individueel"
-                      />
-                      <ToggleButton
-                        active={setting === "groep"}
-                        onClick={() => setSetting("groep")}
-                        label="Groep"
-                      />
-                    </div>
-                  </Field>
-                  <div className="grid gap-6 sm:grid-cols-3">
+                {step === 2 && (
+                  <div className="space-y-10">
+                    <Field label="Setting">
+                      <div className="grid grid-cols-2 gap-3 pt-1">
+                        <LineToggle active={setting === "individueel"} onClick={() => setSetting("individueel")} label="Individueel" />
+                        <LineToggle active={setting === "groep"} onClick={() => setSetting("groep")} label="Groep" />
+                      </div>
+                    </Field>
                     <Field label="Beschikbare tijd">
-                      <Select value={time} onValueChange={setTime}>
-                        <SelectTrigger className="border-border bg-background/20">
-                          <SelectValue placeholder="Kies" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {["10 min", "20 min", "30 min", "45 min"].map((t) => (
-                            <SelectItem key={t} value={t}>{t}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <ChipSelect value={time} onChange={setTime} options={["10 min", "20 min", "30 min", "45 min"]} />
                     </Field>
                     <Field label="Frequentie">
-                      <Select value={frequency} onValueChange={setFrequency}>
-                        <SelectTrigger className="border-border bg-background/20">
-                          <SelectValue placeholder="Kies" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {["Dagelijks", "3x per week", "2x per week", "1x per week"].map((t) => (
-                            <SelectItem key={t} value={t}>{t}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <ChipSelect value={frequency} onChange={setFrequency} options={["Dagelijks", "3x per week", "2x per week", "1x per week"]} />
                     </Field>
                     <Field label="Dagritme">
-                      <Select value={rhythm} onValueChange={setRhythm}>
-                        <SelectTrigger className="border-border bg-background/20">
-                          <SelectValue placeholder="Kies" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {["Ochtendmens", "Avondmens", "Wisselend"].map((t) => (
-                            <SelectItem key={t} value={t}>{t}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <ChipSelect value={rhythm} onChange={setRhythm} options={["Ochtendmens", "Avondmens", "Wisselend"]} />
                     </Field>
                   </div>
-                </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <div className="mt-14 flex items-center justify-between">
+            <button
+              onClick={() => go(-1)}
+              disabled={step === 0}
+              className="inline-flex items-center gap-1.5 text-sm text-[rgba(var(--paper-rgb),0.5)] transition-colors hover:text-foreground disabled:opacity-30 disabled:hover:text-[rgba(var(--paper-rgb),0.5)]"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.5} /> Vorige
+            </button>
+            <CTAButton onClick={() => go(1)} disabled={!canNext}>
+              {step === 2 ? (
+                <>
+                  <Sparkles className="h-3.5 w-3.5" strokeWidth={1.5} /> Recept genereren
+                </>
+              ) : (
+                <>
+                  Volgende <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
+                </>
               )}
-            </motion.div>
-          </AnimatePresence>
-        </GlassCard>
+            </CTAButton>
+          </div>
+        </div>
+      </PageTransition>
+    </>
+  );
+}
 
-        {/* Nav */}
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          className="mt-6 flex items-center justify-between"
-        >
-          <Button
-            variant="ghost"
-            onClick={() => setStep(Math.max(0, step - 1))}
-            disabled={step === 0}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" /> Vorige
-          </Button>
-          <Button
-            onClick={next}
-            disabled={!canNext}
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            {step === 2 ? (
-              <>
-                <Sparkles className="h-4 w-4" /> Recept genereren
-              </>
-            ) : (
-              <>
-                Volgende <ArrowRight className="h-4 w-4" />
-              </>
-            )}
-          </Button>
-        </motion.div>
+function Field({ label, optional, children }: { label: string; optional?: boolean; children: React.ReactNode }) {
+  return (
+    <div>
+      <div className="flex items-baseline gap-2">
+        <label className="text-label">{label}</label>
+        {optional && <span className="text-label">— optioneel</span>}
       </div>
-    </PageTransition>
+      <div className="mt-2">{children}</div>
+    </div>
   );
 }
 
-function Field({
-  label,
-  optional,
-  children,
-}: {
-  label: string;
-  optional?: boolean;
-  children: React.ReactNode;
-}) {
+function LineInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
   return (
-    <motion.div variants={fadeUp} className="space-y-2">
-      <Label className="text-xs uppercase tracking-[0.12em] text-muted-foreground">
-        {label}
-        {optional && <span className="ml-2 normal-case tracking-normal text-[10px] opacity-60">optioneel</span>}
-      </Label>
-      {children}
-    </motion.div>
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full border-b border-[rgba(var(--paper-rgb),0.12)] bg-transparent py-2 text-base text-foreground outline-none transition-colors duration-200 placeholder:text-[rgba(var(--paper-rgb),0.3)] focus:border-b focus:border-[var(--sage)]"
+      style={{ borderBottomWidth: "0.5px" }}
+      onFocus={(e) => { e.currentTarget.style.borderBottom = "1px solid var(--sage)"; }}
+      onBlur={(e) => { e.currentTarget.style.borderBottom = "0.5px solid rgba(241,241,238,0.12)"; }}
+    />
   );
 }
 
-function ToggleButton({
-  active,
-  onClick,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-}) {
+function LineTextarea({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
   return (
-    <motion.button
+    <textarea
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      rows={2}
+      className="w-full resize-none border-b border-[rgba(var(--paper-rgb),0.12)] bg-transparent py-2 text-base text-foreground outline-none transition-colors duration-200 placeholder:text-[rgba(var(--paper-rgb),0.3)]"
+      style={{ borderBottomWidth: "0.5px" }}
+      onFocus={(e) => { e.currentTarget.style.borderBottom = "1px solid var(--sage)"; }}
+      onBlur={(e) => { e.currentTarget.style.borderBottom = "0.5px solid rgba(241,241,238,0.12)"; }}
+    />
+  );
+}
+
+function LineToggle({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button
       type="button"
       onClick={onClick}
-      whileTap={{ scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 400, damping: 17 }}
       className={cn(
-        "glass rounded-lg px-4 py-3 text-sm transition-all",
+        "rounded-md border px-4 py-3 text-sm transition-colors duration-200",
         active
-          ? "border-primary/50 bg-primary/10 text-primary"
-          : "text-foreground/80 hover:text-foreground",
+          ? "border-[var(--sage)] text-foreground"
+          : "border-[rgba(var(--paper-rgb),0.08)] text-[rgba(var(--paper-rgb),0.55)] hover:text-foreground",
       )}
     >
       {label}
-    </motion.button>
+    </button>
+  );
+}
+
+function ChipSelect({ value, onChange, options }: { value: string; onChange: (v: string) => void; options: string[] }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {options.map((o) => (
+        <button
+          key={o}
+          type="button"
+          onClick={() => onChange(o)}
+          className={cn(
+            "rounded-full border px-3 py-1.5 text-xs transition-colors duration-200",
+            value === o
+              ? "border-[var(--sage)] text-foreground"
+              : "border-[rgba(var(--paper-rgb),0.08)] text-[rgba(var(--paper-rgb),0.5)] hover:text-foreground",
+          )}
+        >
+          {o}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function CTAButton({ onClick, disabled, children }: { onClick: () => void; disabled?: boolean; children: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="inline-flex items-center gap-2 rounded-md bg-[var(--sage)] px-4 py-2.5 text-sm text-[#1e1e1a] transition-all duration-[80ms] disabled:cursor-not-allowed disabled:opacity-30"
+      onMouseDown={(e) => { if (!disabled) { e.currentTarget.style.transform = "scale(0.97)"; e.currentTarget.style.filter = "brightness(0.92)"; } }}
+      onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.filter = "brightness(1)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.filter = "brightness(1)"; }}
+    >
+      {children}
+    </button>
   );
 }

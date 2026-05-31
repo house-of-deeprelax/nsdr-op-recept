@@ -132,7 +132,7 @@ function AppShell() {
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
-        <main className="relative z-[1] flex-1 px-6 py-6 lg:px-10 lg:py-8">
+        <main className="relative z-[1] flex-1 px-10 pt-12 pb-16">
           <Outlet />
         </main>
       </div>
