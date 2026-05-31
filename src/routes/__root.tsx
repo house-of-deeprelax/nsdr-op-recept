@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { MobileTabs } from "@/components/layout/MobileTabs";
 import { TopBar } from "@/components/layout/TopBar";
 
 import appCss from "../styles.css?url";
@@ -131,10 +132,11 @@ function AppShell() {
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
-        <main className="relative z-[1] flex-1">
+        <main className="relative z-[1] flex-1 pb-16 md:pb-0">
           <Outlet />
         </main>
       </div>
+      <MobileTabs />
     </div>
   );
 }
