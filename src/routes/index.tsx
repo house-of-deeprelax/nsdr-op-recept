@@ -26,16 +26,16 @@ const ease = [0.22, 1, 0.36, 1] as const;
 function Dashboard() {
   return (
     <div
-      className="flex w-full"
+      className="flex w-full flex-col lg:flex-row"
       style={{ minHeight: "calc(100vh - 44px)" }}
     >
-      {/* LEFT — HERO 58% */}
+      {/* LEFT — HERO */}
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, ease }}
-        className="relative overflow-hidden"
-        style={{ width: "58%", background: "var(--surface-1)" }}
+        className="relative w-full overflow-hidden lg:w-[58%]"
+        style={{ background: "var(--surface-1)" }}
       >
         <div
           aria-hidden
@@ -43,7 +43,6 @@ function Dashboard() {
           style={{
             backgroundImage:
               "repeating-linear-gradient(-45deg, rgba(240,237,230,0.015) 0 1px, transparent 1px 10px)",
-            opacity: 1,
           }}
         />
         <div
@@ -55,7 +54,7 @@ function Dashboard() {
           }}
         />
 
-        <div className="relative flex h-full flex-col justify-end p-12">
+        <div className="relative flex h-full min-h-[420px] flex-col justify-end p-6 sm:p-10 lg:min-h-0 lg:p-12">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -73,9 +72,8 @@ function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.18, ease }}
-            className="mt-16 max-w-[560px] font-display"
+            className="mt-10 max-w-[560px] font-display text-[32px] sm:mt-14 sm:text-[40px] lg:text-[52px]"
             style={{
-              fontSize: 52,
               lineHeight: 1.05,
               letterSpacing: "-0.03em",
               color: "#f0ede6",
@@ -88,12 +86,8 @@ function Dashboard() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.28, ease }}
-            className="mt-5 max-w-[420px]"
-            style={{
-              fontSize: 14,
-              lineHeight: 1.65,
-              color: "rgba(240,237,230,0.5)",
-            }}
+            className="mt-4 max-w-[420px] text-[13px] sm:mt-5 sm:text-[14px]"
+            style={{ lineHeight: 1.65, color: "rgba(240,237,230,0.5)" }}
           >
             Drie stappen: casus, systeemscan, setting. We stellen een passend
             voorschrift samen volgens de RESET-PRO methode.
@@ -103,31 +97,36 @@ function Dashboard() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4, ease }}
-            className="mt-8"
+            className="mt-6 sm:mt-8"
           >
             <CTAButton to="/nieuw">Schrijf een recept</CTAButton>
           </motion.div>
         </div>
       </motion.section>
 
-      {/* RIGHT — CONTEXT 42% */}
+      {/* RIGHT — CONTEXT */}
       <motion.section
         initial={{ opacity: 0, x: 12 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.2, ease }}
-        className="flex flex-1 flex-col"
-        style={{ borderLeft: "2px solid var(--border-default)" }}
+        className="flex flex-1 flex-col border-t lg:border-l lg:border-t-0"
+        style={{ borderColor: "var(--border-default)" }}
       >
-        {/* Stats — top half */}
-        <div className="flex flex-1 flex-col">
+        {/* Stats */}
+        <div className="grid grid-cols-2 lg:flex lg:flex-1 lg:flex-col">
           <StatBlock label="Deze maand" value="41" hint="+12 t.o.v. vorige maand" />
-          <div style={{ borderTop: "1px solid var(--border-default)" }} />
-          <StatBlock label="Protocollen" value="07" hint="RESET-PRO v3.2" />
+          <div className="hidden lg:block" style={{ borderTop: "1px solid var(--border-default)" }} />
+          <div className="lg:hidden" style={{ borderLeft: "1px solid var(--border-default)" }}>
+            <StatBlock label="Protocollen" value="07" hint="RESET-PRO v3.2" />
+          </div>
+          <div className="hidden lg:block">
+            <StatBlock label="Protocollen" value="07" hint="RESET-PRO v3.2" />
+          </div>
         </div>
 
-        {/* Recent — bottom half */}
+        {/* Recent */}
         <div
-          className="flex flex-1 flex-col p-10"
+          className="flex flex-1 flex-col p-6 sm:p-8 lg:p-10"
           style={{ borderTop: "1px solid var(--border-default)" }}
         >
           <span
@@ -136,7 +135,7 @@ function Dashboard() {
           >
             Recent
           </span>
-          <ul className="mt-6 flex flex-1 flex-col justify-start">
+          <ul className="mt-4 flex flex-1 flex-col justify-start sm:mt-6">
             {recent.map((rx, i) => (
               <RecentRow key={rx.id} rx={rx} last={i === recent.length - 1} />
             ))}
