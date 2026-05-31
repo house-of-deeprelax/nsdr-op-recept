@@ -9,38 +9,135 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReceptenRouteImport } from './routes/recepten'
+import { Route as NieuwRouteImport } from './routes/nieuw'
+import { Route as InstellingenRouteImport } from './routes/instellingen'
+import { Route as GenererenRouteImport } from './routes/genereren'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ReceptIdRouteImport } from './routes/recept.$id'
 
+const ReceptenRoute = ReceptenRouteImport.update({
+  id: '/recepten',
+  path: '/recepten',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NieuwRoute = NieuwRouteImport.update({
+  id: '/nieuw',
+  path: '/nieuw',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InstellingenRoute = InstellingenRouteImport.update({
+  id: '/instellingen',
+  path: '/instellingen',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenererenRoute = GenererenRouteImport.update({
+  id: '/genereren',
+  path: '/genereren',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReceptIdRoute = ReceptIdRouteImport.update({
+  id: '/recept/$id',
+  path: '/recept/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/genereren': typeof GenererenRoute
+  '/instellingen': typeof InstellingenRoute
+  '/nieuw': typeof NieuwRoute
+  '/recepten': typeof ReceptenRoute
+  '/recept/$id': typeof ReceptIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/genereren': typeof GenererenRoute
+  '/instellingen': typeof InstellingenRoute
+  '/nieuw': typeof NieuwRoute
+  '/recepten': typeof ReceptenRoute
+  '/recept/$id': typeof ReceptIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/genereren': typeof GenererenRoute
+  '/instellingen': typeof InstellingenRoute
+  '/nieuw': typeof NieuwRoute
+  '/recepten': typeof ReceptenRoute
+  '/recept/$id': typeof ReceptIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/genereren'
+    | '/instellingen'
+    | '/nieuw'
+    | '/recepten'
+    | '/recept/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/genereren'
+    | '/instellingen'
+    | '/nieuw'
+    | '/recepten'
+    | '/recept/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/genereren'
+    | '/instellingen'
+    | '/nieuw'
+    | '/recepten'
+    | '/recept/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GenererenRoute: typeof GenererenRoute
+  InstellingenRoute: typeof InstellingenRoute
+  NieuwRoute: typeof NieuwRoute
+  ReceptenRoute: typeof ReceptenRoute
+  ReceptIdRoute: typeof ReceptIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/recepten': {
+      id: '/recepten'
+      path: '/recepten'
+      fullPath: '/recepten'
+      preLoaderRoute: typeof ReceptenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nieuw': {
+      id: '/nieuw'
+      path: '/nieuw'
+      fullPath: '/nieuw'
+      preLoaderRoute: typeof NieuwRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/instellingen': {
+      id: '/instellingen'
+      path: '/instellingen'
+      fullPath: '/instellingen'
+      preLoaderRoute: typeof InstellingenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/genereren': {
+      id: '/genereren'
+      path: '/genereren'
+      fullPath: '/genereren'
+      preLoaderRoute: typeof GenererenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +145,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/recept/$id': {
+      id: '/recept/$id'
+      path: '/recept/$id'
+      fullPath: '/recept/$id'
+      preLoaderRoute: typeof ReceptIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GenererenRoute: GenererenRoute,
+  InstellingenRoute: InstellingenRoute,
+  NieuwRoute: NieuwRoute,
+  ReceptenRoute: ReceptenRoute,
+  ReceptIdRoute: ReceptIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
