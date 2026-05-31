@@ -180,7 +180,7 @@ function CTAButton({ to, children }: { to: string; children: React.ReactNode }) 
 
 function StatBlock({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <div className="flex flex-1 flex-col justify-between p-10">
+    <div className="flex flex-1 flex-col justify-between gap-6 p-6 sm:p-8 lg:p-10">
       <span
         className="text-[10px] uppercase"
         style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.22)" }}
@@ -189,8 +189,8 @@ function StatBlock({ label, value, hint }: { label: string; value: string; hint:
       </span>
       <div>
         <div
-          className="font-display"
-          style={{ fontSize: 64, lineHeight: 1, color: "#f0ede6" }}
+          className="font-display text-[44px] sm:text-[56px] lg:text-[64px]"
+          style={{ lineHeight: 1, color: "#f0ede6" }}
         >
           {value}
         </div>
@@ -208,30 +208,17 @@ function RecentRow({ rx, last }: { rx: RecentRx; last: boolean }) {
       <Link
         to="/recept/$id"
         params={{ id: rx.id.toLowerCase() }}
-        className="group relative flex items-center justify-between py-4 transition-colors"
-        style={{
-          borderBottom: last ? "none" : "1px solid var(--border-default)",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(240,237,230,0.015)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "transparent";
-        }}
+        className="group relative flex items-center justify-between gap-3 py-3 transition-colors sm:py-4"
+        style={{ borderBottom: last ? "none" : "1px solid var(--border-default)" }}
       >
         <span
-          aria-hidden
-          className="absolute left-[-40px] top-0 h-full opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-          style={{ width: 2, background: "var(--sage)" }}
-        />
-        <span
-          className="text-[10px] uppercase"
+          className="hidden text-[10px] uppercase sm:inline-block"
           style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.4)", width: 96 }}
         >
           {rx.id}
         </span>
         <span
-          className="flex-1 truncate px-4 text-[13px]"
+          className="min-w-0 flex-1 truncate text-[13px]"
           style={{ color: "rgba(240,237,230,0.85)" }}
         >
           {rx.patient}
