@@ -2,9 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
-import { PageTransition } from "@/components/layout/PageTransition";
 import type { Phase } from "@/components/brand/PhaseBadge";
-import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/nieuw")({
   head: () => ({ meta: [{ title: "Nieuw recept — NSDR op Recept" }] }),
@@ -12,10 +10,10 @@ export const Route = createFileRoute("/nieuw")({
 });
 
 const phases: { id: Phase; label: string; color: string; hint: string }[] = [
-  { id: "rood", label: "Rood", color: "#e24b4a", hint: "Acuut ontregeld" },
-  { id: "rood-geel", label: "Rood-Geel", color: "#d48020", hint: "Beginnend herstel" },
-  { id: "geel-groen", label: "Geel-Groen", color: "#7ab040", hint: "Veerkracht terug" },
-  { id: "groen", label: "Groen", color: "#3a8040", hint: "Onderhoud en groei" },
+  { id: "rood", label: "Rood", color: "var(--phase-rood)", hint: "Acuut ontregeld" },
+  { id: "rood-geel", label: "Rood-Geel", color: "var(--phase-rood-geel)", hint: "Beginnend herstel" },
+  { id: "geel-groen", label: "Geel-Groen", color: "var(--phase-geel-groen)", hint: "Veerkracht terug" },
+  { id: "groen", label: "Groen", color: "var(--phase-groen)", hint: "Onderhoud en groei" },
 ];
 
 const domains = [
@@ -24,7 +22,25 @@ const domains = [
   "Chronische pijn", "Slaapproblemen",
 ];
 
-const stepTitles = ["De casus", "Systeemscan", "Setting"];
+const steps = [
+  {
+    name: "De casus",
+    blurb:
+      "Beschrijf in eigen woorden wie er voor je zit. Context, hoofdklacht en duur — kort en concreet.",
+  },
+  {
+    name: "Systeemscan",
+    blurb:
+      "Bepaal de regulatie-fase en het dominante domein. Dit stuurt protocol en intensiteit.",
+  },
+  {
+    name: "Setting",
+    blurb:
+      "Hoeveel tijd, hoe vaak, op welk moment van de dag. Het ritme is belangrijker dan de duur.",
+  },
+];
+
+const ease = [0.22, 1, 0.36, 1] as const;
 
 function NieuwPage() {
   const navigate = useNavigate();
@@ -62,174 +78,211 @@ function NieuwPage() {
   };
 
   return (
-    <>
-      {/* Progress line at top of viewport */}
-      <div className="fixed left-0 right-0 top-0 z-30 h-[1.5px] bg-[rgba(var(--paper-rgb),0.06)]">
-        <motion.div
-          className="h-full bg-[var(--sage)]"
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-        />
-      </div>
+    <div className="flex w-full" style={{ minHeight: "calc(100vh - 44px)" }}>
+      {/* LEFT — 38% */}
+      <aside
+        className="relative flex flex-col"
+        style={{
+          width: "38%",
+          background: "var(--surface-1)",
+          borderRight: "1px solid var(--border-default)",
+          padding: "48px 32px",
+        }}
+      >
+        <div className="relative">
+          <span
+            className="block font-display"
+            style={{
+              fontSize: 48,
+              lineHeight: 1,
+              color: "rgba(240,237,230,0.08)",
+              letterSpacing: "-0.03em",
+            }}
+          >
+            {String(step + 1).padStart(2, "0")} / 03
+          </span>
+          <motion.h2
+            key={step}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease }}
+            className="mt-3 font-display"
+            style={{ fontSize: 24, color: "#f0ede6", lineHeight: 1.1 }}
+          >
+            {steps[step].name}
+          </motion.h2>
 
-      <PageTransition>
-        <div className="mx-auto max-w-[560px] pt-8">
-          <div className="mb-12">
-            <span className="text-label">Stap {step + 1} van 3</span>
-            <h2 className="mt-3 font-display text-[36px] leading-[1.05]">{stepTitles[step]}</h2>
+          {/* Progress line */}
+          <div
+            className="mt-8 h-px w-full"
+            style={{ background: "rgba(255,255,255,0.06)" }}
+          >
+            <motion.div
+              className="h-full"
+              style={{ background: "var(--sage)" }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.4, ease }}
+            />
           </div>
 
-          <div className="relative">
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={step}
-                custom={direction}
-                initial={{ opacity: 0, x: direction === 1 ? 20 : -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: direction === 1 ? -20 : 20 }}
-                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              >
-                {step === 0 && (
-                  <div className="space-y-10">
-                    <Field label="Leeftijd en context">
-                      <LineTextarea
-                        value={context}
-                        onChange={setContext}
-                        placeholder="bv. vrouw, 44, HR-manager, twee kinderen"
-                      />
-                    </Field>
-                    <Field label="Hoofdklacht">
-                      <LineTextarea
-                        value={complaint}
-                        onChange={setComplaint}
-                        placeholder="waar komt deze persoon mee, in jouw woorden"
-                      />
-                    </Field>
-                    <Field label="Duur klachten">
-                      <LineInput value={duration} onChange={setDuration} placeholder="bv. 8 maanden" />
-                    </Field>
-                    <Field label="Lopende behandeling" optional>
-                      <LineInput value={treatment} onChange={setTreatment} placeholder="bv. POH-GGZ, fysio" />
-                    </Field>
-                    <Field label="Somatische oorzaak uitgesloten">
-                      <div className="grid grid-cols-2 gap-3 pt-1">
-                        <LineToggle active={somatic === true} onClick={() => setSomatic(true)} label="Ja, uitgesloten" />
-                        <LineToggle active={somatic === false} onClick={() => setSomatic(false)} label="Nee of onbekend" />
-                      </div>
-                    </Field>
-                  </div>
-                )}
-
-                {step === 1 && (
-                  <div className="space-y-12">
-                    <Field label="Fase">
-                      <div className="grid grid-cols-2 gap-3 pt-2">
-                        {phases.map((p) => {
-                          const active = phase === p.id;
-                          return (
-                            <motion.button
-                              key={p.id}
-                              type="button"
-                              onClick={() => setPhase(p.id)}
-                              whileTap={{ scale: 0.98 }}
-                              animate={{ scale: active ? 1.02 : 1 }}
-                              transition={{ type: "spring", stiffness: 400, damping: 22 }}
-                              className="relative flex aspect-[1.4/1] flex-col items-center justify-center rounded-[10px] border transition-colors duration-200"
-                              style={{
-                                borderColor: active
-                                  ? `color-mix(in oklab, ${p.color} 60%, transparent)`
-                                  : "rgba(var(--paper-rgb),0.08)",
-                                background: active
-                                  ? `color-mix(in oklab, ${p.color} 6%, transparent)`
-                                  : "transparent",
-                              }}
-                            >
-                              <span
-                                className="block rounded-full"
-                                style={{
-                                  width: 40,
-                                  height: 40,
-                                  background: p.color,
-                                  boxShadow: active ? `0 0 24px ${p.color}` : `0 0 12px ${p.color}`,
-                                  opacity: active ? 1 : 0.85,
-                                }}
-                              />
-                              <span className="font-display mt-4 text-base">{p.label}</span>
-                              <span className="text-label mt-1.5">{p.hint}</span>
-                            </motion.button>
-                          );
-                        })}
-                      </div>
-                    </Field>
-
-                    <Field label="Dominant domein">
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        {domains.map((d) => (
-                          <button
-                            key={d}
-                            type="button"
-                            onClick={() => setDomain(d)}
-                            className={cn(
-                              "rounded-full border px-3 py-1.5 text-xs transition-colors duration-200",
-                              domain === d
-                                ? "border-[var(--sage)] text-foreground"
-                                : "border-[rgba(var(--paper-rgb),0.08)] text-[rgba(var(--paper-rgb),0.5)] hover:text-foreground",
-                            )}
-                          >
-                            {d}
-                          </button>
-                        ))}
-                      </div>
-                    </Field>
-                  </div>
-                )}
-
-                {step === 2 && (
-                  <div className="space-y-10">
-                    <Field label="Setting">
-                      <div className="grid grid-cols-2 gap-3 pt-1">
-                        <LineToggle active={setting === "individueel"} onClick={() => setSetting("individueel")} label="Individueel" />
-                        <LineToggle active={setting === "groep"} onClick={() => setSetting("groep")} label="Groep" />
-                      </div>
-                    </Field>
-                    <Field label="Beschikbare tijd">
-                      <ChipSelect value={time} onChange={setTime} options={["10 min", "20 min", "30 min", "45 min"]} />
-                    </Field>
-                    <Field label="Frequentie">
-                      <ChipSelect value={frequency} onChange={setFrequency} options={["Dagelijks", "3x per week", "2x per week", "1x per week"]} />
-                    </Field>
-                    <Field label="Dagritme">
-                      <ChipSelect value={rhythm} onChange={setRhythm} options={["Ochtendmens", "Avondmens", "Wisselend"]} />
-                    </Field>
-                  </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          <div className="mt-14 flex items-center justify-between">
-            <button
-              onClick={() => go(-1)}
-              disabled={step === 0}
-              className="inline-flex items-center gap-1.5 text-sm text-[rgba(var(--paper-rgb),0.5)] transition-colors hover:text-foreground disabled:opacity-30 disabled:hover:text-[rgba(var(--paper-rgb),0.5)]"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.5} /> Vorige
-            </button>
-            <CTAButton onClick={() => go(1)} disabled={!canNext}>
-              {step === 2 ? (
-                <>
-                  <Sparkles className="h-3.5 w-3.5" strokeWidth={1.5} /> Recept genereren
-                </>
-              ) : (
-                <>
-                  Volgende <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
-                </>
-              )}
-            </CTAButton>
-          </div>
+          <motion.p
+            key={`blurb-${step}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="mt-8"
+            style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(240,237,230,0.4)" }}
+          >
+            {steps[step].blurb}
+          </motion.p>
         </div>
-      </PageTransition>
-    </>
+
+        <div className="mt-auto flex items-center justify-between pt-12">
+          <button
+            onClick={() => go(-1)}
+            disabled={step === 0}
+            className="inline-flex items-center gap-1.5 text-[12px] transition-colors disabled:opacity-25"
+            style={{ color: "rgba(240,237,230,0.45)" }}
+          >
+            <ArrowLeft className="h-3 w-3" strokeWidth={1.5} /> Vorige
+          </button>
+          <CTAButton onClick={() => go(1)} disabled={!canNext}>
+            {step === 2 ? (
+              <>
+                <Sparkles className="h-3.5 w-3.5" strokeWidth={1.5} /> Recept genereren
+              </>
+            ) : (
+              <>
+                Volgende <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.5} />
+              </>
+            )}
+          </CTAButton>
+        </div>
+      </aside>
+
+      {/* RIGHT — 62% */}
+      <section
+        className="flex-1 overflow-y-auto"
+        style={{ background: "var(--background)", padding: "48px 56px" }}
+      >
+        <div className="max-w-[640px]">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={step}
+              custom={direction}
+              initial={{ opacity: 0, x: direction === 1 ? 16 : -16 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: direction === 1 ? -16 : 16 }}
+              transition={{ duration: 0.25, ease }}
+            >
+              {step === 0 && (
+                <div className="space-y-10">
+                  <Field label="Leeftijd en context">
+                    <LineTextarea value={context} onChange={setContext} placeholder="bv. vrouw, 44, HR-manager, twee kinderen" />
+                  </Field>
+                  <Field label="Hoofdklacht">
+                    <LineTextarea value={complaint} onChange={setComplaint} placeholder="waar komt deze persoon mee, in jouw woorden" />
+                  </Field>
+                  <Field label="Duur klachten">
+                    <LineInput value={duration} onChange={setDuration} placeholder="bv. 8 maanden" />
+                  </Field>
+                  <Field label="Lopende behandeling" optional>
+                    <LineInput value={treatment} onChange={setTreatment} placeholder="bv. POH-GGZ, fysio" />
+                  </Field>
+                  <Field label="Somatische oorzaak uitgesloten">
+                    <div className="grid grid-cols-2 gap-3 pt-1">
+                      <LineToggle active={somatic === true} onClick={() => setSomatic(true)} label="Ja, uitgesloten" />
+                      <LineToggle active={somatic === false} onClick={() => setSomatic(false)} label="Nee of onbekend" />
+                    </div>
+                  </Field>
+                </div>
+              )}
+
+              {step === 1 && (
+                <div className="space-y-12">
+                  <Field label="Fase">
+                    <div className="grid grid-cols-2 gap-3 pt-2">
+                      {phases.map((p) => {
+                        const active = phase === p.id;
+                        return (
+                          <motion.button
+                            key={p.id}
+                            type="button"
+                            onClick={() => setPhase(p.id)}
+                            whileTap={{ scale: 0.98 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 22 }}
+                            className="relative flex flex-col items-center justify-center transition-colors"
+                            style={{
+                              height: 120,
+                              borderRadius: 6,
+                              border: `1px solid ${active ? `color-mix(in oklab, ${p.color} 50%, transparent)` : "rgba(255,255,255,0.06)"}`,
+                              background: active ? `color-mix(in oklab, ${p.color} 5%, transparent)` : "transparent",
+                            }}
+                          >
+                            <span
+                              className="block rounded-full"
+                              style={{
+                                width: 48,
+                                height: 48,
+                                background: p.color,
+                                boxShadow: active ? `0 0 22px ${p.color}` : `0 0 10px ${p.color}`,
+                                opacity: active ? 1 : 0.85,
+                              }}
+                            />
+                            <span
+                              className="mt-4 font-display-700"
+                              style={{ fontSize: 14, color: "#f0ede6" }}
+                            >
+                              {p.label}
+                            </span>
+                            <span
+                              className="mt-1 text-[10px] uppercase"
+                              style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.3)" }}
+                            >
+                              {p.hint}
+                            </span>
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  </Field>
+
+                  <Field label="Dominant domein">
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {domains.map((d) => (
+                        <Chip key={d} active={domain === d} onClick={() => setDomain(d)}>
+                          {d}
+                        </Chip>
+                      ))}
+                    </div>
+                  </Field>
+                </div>
+              )}
+
+              {step === 2 && (
+                <div className="space-y-10">
+                  <Field label="Setting">
+                    <div className="grid grid-cols-2 gap-3 pt-1">
+                      <LineToggle active={setting === "individueel"} onClick={() => setSetting("individueel")} label="Individueel" />
+                      <LineToggle active={setting === "groep"} onClick={() => setSetting("groep")} label="Groep" />
+                    </div>
+                  </Field>
+                  <Field label="Beschikbare tijd">
+                    <ChipRow value={time} onChange={setTime} options={["10 min", "20 min", "30 min", "45 min"]} />
+                  </Field>
+                  <Field label="Frequentie">
+                    <ChipRow value={frequency} onChange={setFrequency} options={["Dagelijks", "3x per week", "2x per week", "1x per week"]} />
+                  </Field>
+                  <Field label="Dagritme">
+                    <ChipRow value={rhythm} onChange={setRhythm} options={["Ochtendmens", "Avondmens", "Wisselend"]} />
+                  </Field>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -237,13 +290,29 @@ function Field({ label, optional, children }: { label: string; optional?: boolea
   return (
     <div>
       <div className="flex items-baseline gap-2">
-        <label className="text-label">{label}</label>
-        {optional && <span className="text-label">— optioneel</span>}
+        <label
+          className="text-[10px] uppercase"
+          style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.22)" }}
+        >
+          {label}
+        </label>
+        {optional && (
+          <span className="text-[10px] uppercase" style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.22)" }}>
+            — optioneel
+          </span>
+        )}
       </div>
-      <div className="mt-2">{children}</div>
+      <div className="mt-3">{children}</div>
     </div>
   );
 }
+
+const focusOn = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  e.currentTarget.style.borderBottom = "1px solid var(--sage)";
+};
+const focusOff = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  e.currentTarget.style.borderBottom = "0.5px solid rgba(255,255,255,0.12)";
+};
 
 function LineInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
   return (
@@ -251,10 +320,10 @@ function LineInput({ value, onChange, placeholder }: { value: string; onChange: 
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full border-b border-[rgba(var(--paper-rgb),0.12)] bg-transparent py-2 text-base text-foreground outline-none transition-colors duration-200 placeholder:text-[rgba(var(--paper-rgb),0.3)] focus:border-b focus:border-[var(--sage)]"
-      style={{ borderBottomWidth: "0.5px" }}
-      onFocus={(e) => { e.currentTarget.style.borderBottom = "1px solid var(--sage)"; }}
-      onBlur={(e) => { e.currentTarget.style.borderBottom = "0.5px solid rgba(241,241,238,0.12)"; }}
+      className="w-full bg-transparent py-2 text-[15px] text-foreground outline-none transition-colors"
+      style={{ borderBottom: "0.5px solid rgba(255,255,255,0.12)" }}
+      onFocus={focusOn}
+      onBlur={focusOff}
     />
   );
 }
@@ -266,10 +335,10 @@ function LineTextarea({ value, onChange, placeholder }: { value: string; onChang
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       rows={2}
-      className="w-full resize-none border-b border-[rgba(var(--paper-rgb),0.12)] bg-transparent py-2 text-base text-foreground outline-none transition-colors duration-200 placeholder:text-[rgba(var(--paper-rgb),0.3)]"
-      style={{ borderBottomWidth: "0.5px" }}
-      onFocus={(e) => { e.currentTarget.style.borderBottom = "1px solid var(--sage)"; }}
-      onBlur={(e) => { e.currentTarget.style.borderBottom = "0.5px solid rgba(241,241,238,0.12)"; }}
+      className="w-full resize-none bg-transparent py-2 text-[15px] text-foreground outline-none transition-colors"
+      style={{ borderBottom: "0.5px solid rgba(255,255,255,0.12)" }}
+      onFocus={focusOn}
+      onBlur={focusOff}
     />
   );
 }
@@ -279,35 +348,41 @@ function LineToggle({ active, onClick, label }: { active: boolean; onClick: () =
     <button
       type="button"
       onClick={onClick}
-      className={cn(
-        "rounded-md border px-4 py-3 text-sm transition-colors duration-200",
-        active
-          ? "border-[var(--sage)] text-foreground"
-          : "border-[rgba(var(--paper-rgb),0.08)] text-[rgba(var(--paper-rgb),0.55)] hover:text-foreground",
-      )}
+      className="px-4 py-3 text-[13px] transition-colors"
+      style={{
+        borderRadius: 6,
+        border: `1px solid ${active ? "var(--sage)" : "rgba(255,255,255,0.06)"}`,
+        color: active ? "#f0ede6" : "rgba(240,237,230,0.55)",
+      }}
     >
       {label}
     </button>
   );
 }
 
-function ChipSelect({ value, onChange, options }: { value: string; onChange: (v: string) => void; options: string[] }) {
+function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="rounded-full px-3 py-1.5 text-[12px] transition-colors"
+      style={{
+        border: `1px solid ${active ? "var(--sage)" : "rgba(255,255,255,0.06)"}`,
+        color: active ? "#f0ede6" : "rgba(240,237,230,0.5)",
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ChipRow({ value, onChange, options }: { value: string; onChange: (v: string) => void; options: string[] }) {
   return (
     <div className="flex flex-wrap gap-2">
       {options.map((o) => (
-        <button
-          key={o}
-          type="button"
-          onClick={() => onChange(o)}
-          className={cn(
-            "rounded-full border px-3 py-1.5 text-xs transition-colors duration-200",
-            value === o
-              ? "border-[var(--sage)] text-foreground"
-              : "border-[rgba(var(--paper-rgb),0.08)] text-[rgba(var(--paper-rgb),0.5)] hover:text-foreground",
-          )}
-        >
+        <Chip key={o} active={value === o} onClick={() => onChange(o)}>
           {o}
-        </button>
+        </Chip>
       ))}
     </div>
   );
@@ -318,7 +393,15 @@ function CTAButton({ onClick, disabled, children }: { onClick: () => void; disab
     <button
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex items-center gap-2 rounded-md bg-[var(--sage)] px-4 py-2.5 text-sm text-[#1e1e1a] transition-all duration-[80ms] disabled:cursor-not-allowed disabled:opacity-30"
+      className="inline-flex items-center gap-2 rounded-md px-4 py-2.5 transition-all duration-[80ms] disabled:cursor-not-allowed disabled:opacity-25"
+      style={{
+        background: "var(--sage)",
+        color: "#0c0c0a",
+        fontFamily: "var(--font-display)",
+        fontWeight: 700,
+        fontSize: 12,
+        letterSpacing: "0.03em",
+      }}
       onMouseDown={(e) => { if (!disabled) { e.currentTarget.style.transform = "scale(0.97)"; e.currentTarget.style.filter = "brightness(0.92)"; } }}
       onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.filter = "brightness(1)"; }}
       onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.filter = "brightness(1)"; }}
