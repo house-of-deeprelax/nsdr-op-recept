@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { TopBar } from "@/components/layout/TopBar";
 
@@ -126,13 +126,12 @@ function RootComponent() {
 }
 
 function AppShell() {
-  const [collapsed, setCollapsed] = useState(true);
   return (
     <div className="flex min-h-screen w-full">
-      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
+      <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
-        <main className="relative z-[1] flex-1 px-10 pt-12 pb-16">
+        <main className="relative z-[1] flex-1">
           <Outlet />
         </main>
       </div>
