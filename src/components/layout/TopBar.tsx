@@ -3,18 +3,20 @@ import { Bell } from "lucide-react";
 export function TopBar() {
   return (
     <header
-      className="sticky top-0 z-10 flex h-11 items-center justify-between bg-background px-5"
+      className="sticky top-0 z-10 flex h-11 items-center justify-between bg-background px-4 sm:px-5"
       style={{ borderBottom: "1px solid var(--border-default)" }}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 min-w-0">
         <span
-          className="block h-2 w-2 rounded-full"
+          className="block h-2 w-2 shrink-0 rounded-full"
           style={{ background: "var(--sage)", boxShadow: "0 0 10px var(--sage)" }}
         />
-        <span className="font-display-700 text-[14px] text-foreground">NSDR op Recept</span>
-        <span className="text-[rgba(240,237,230,0.25)]">·</span>
+        <span className="font-display-700 truncate text-[13px] text-foreground sm:text-[14px]">
+          NSDR op Recept
+        </span>
+        <span className="hidden text-[rgba(240,237,230,0.25)] sm:inline">·</span>
         <span
-          className="text-[11px] uppercase"
+          className="hidden text-[11px] uppercase sm:inline"
           style={{ letterSpacing: "0.1em", color: "rgba(240,237,230,0.25)" }}
         >
           Deeprelax Institute

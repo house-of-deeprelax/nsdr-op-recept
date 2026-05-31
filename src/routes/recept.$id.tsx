@@ -105,94 +105,102 @@ function RecipePage() {
   }, []);
 
   return (
-    <div className="flex w-full" style={{ minHeight: "calc(100vh - 44px)" }}>
-      {/* LEFT — 280px */}
+    <div className="flex w-full flex-col lg:flex-row" style={{ minHeight: "calc(100vh - 44px)" }}>
+      {/* LEFT — sidebar (top on mobile, side sticky on desktop) */}
       <aside
-        className="flex flex-col"
+        className="flex w-full flex-col p-6 sm:p-8 lg:sticky lg:top-11 lg:h-[calc(100vh-44px)] lg:w-[280px] lg:min-w-[280px] lg:p-[32px_24px]"
         style={{
-          width: 280,
-          minWidth: 280,
           background: "var(--surface-1)",
           borderRight: "1px solid var(--border-default)",
-          padding: "32px 24px",
-          position: "sticky",
-          top: 44,
-          height: "calc(100vh - 44px)",
+          borderBottom: "1px solid var(--border-default)",
         }}
       >
-        <span
-          className="text-[10px] uppercase"
-          style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.22)" }}
-        >
-          Voorschrift
-        </span>
-        <div
-          className="mt-2 font-display"
-          style={{ fontSize: 28, lineHeight: 1.05, color: "#f0ede6" }}
-        >
-          RX-{id.toUpperCase()}
-        </div>
-        <div
-          className="mt-2 text-[11px] uppercase"
-          style={{ letterSpacing: "0.1em", color: "rgba(240,237,230,0.3)" }}
-        >
-          {new Date().toLocaleDateString("nl-NL", { day: "2-digit", month: "short", year: "numeric" })}
+        <div className="flex items-start justify-between gap-4 lg:block">
+          <div>
+            <span
+              className="text-[10px] uppercase"
+              style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.22)" }}
+            >
+              Voorschrift
+            </span>
+            <div
+              className="mt-2 font-display text-[24px] lg:text-[28px]"
+              style={{ lineHeight: 1.05, color: "#f0ede6" }}
+            >
+              RX-{id.toUpperCase()}
+            </div>
+            <div
+              className="mt-2 text-[11px] uppercase"
+              style={{ letterSpacing: "0.1em", color: "rgba(240,237,230,0.3)" }}
+            >
+              {new Date().toLocaleDateString("nl-NL", { day: "2-digit", month: "short", year: "numeric" })}
+            </div>
+          </div>
+
+          <div className="flex flex-row flex-wrap items-center gap-2 lg:mt-8 lg:flex-col lg:items-start">
+            <PhaseBadge phase="rood-geel" />
+            <span
+              className="rounded-full px-2.5 py-1 text-[11px]"
+              style={{
+                background: "rgba(240,237,230,0.04)",
+                color: "rgba(240,237,230,0.7)",
+                border: "1px solid var(--border-default)",
+              }}
+            >
+              Burn-out
+            </span>
+          </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-2">
-          <PhaseBadge phase="rood-geel" />
+        {/* Sections nav — horizontal scroll on mobile, vertical on desktop */}
+        <div className="mt-6 lg:mt-10">
           <span
-            className="self-start rounded-full px-2.5 py-1 text-[11px]"
-            style={{
-              background: "rgba(240,237,230,0.04)",
-              color: "rgba(240,237,230,0.7)",
-              border: "1px solid var(--border-default)",
-            }}
-          >
-            Burn-out
-          </span>
-        </div>
-
-        <div className="mt-10">
-          <span
-            className="text-[10px] uppercase"
+            className="hidden text-[10px] uppercase lg:inline-block"
             style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.22)" }}
           >
             Secties
           </span>
-          <nav className="mt-3 flex flex-col">
+          <nav className="no-scrollbar -mx-6 mt-0 flex flex-row gap-1 overflow-x-auto px-6 sm:-mx-8 sm:px-8 lg:mx-0 lg:mt-3 lg:flex-col lg:overflow-visible lg:px-0">
             {sections.map((s) => {
               const active = activeSection === s.num;
               return (
                 <button
                   key={s.num}
                   onClick={() => scrollTo(s.num)}
-                  className="relative flex items-baseline gap-3 py-2 text-left transition-colors"
-                  style={{ color: active ? "#f0ede6" : "rgba(240,237,230,0.45)" }}
+                  className="relative flex shrink-0 items-baseline gap-2 px-3 py-2 text-left transition-colors lg:gap-3 lg:px-0"
+                  style={{
+                    color: active ? "#f0ede6" : "rgba(240,237,230,0.45)",
+                    borderBottom: active ? "1px solid var(--sage)" : "1px solid transparent",
+                  }}
                 >
-                  {active && (
-                    <span
-                      aria-hidden
-                      className="absolute"
-                      style={{ left: -24, top: 10, height: 14, width: 2, background: "var(--sage)" }}
-                    />
-                  )}
+                  <span
+                    aria-hidden
+                    className="absolute hidden lg:block"
+                    style={{
+                      left: -24,
+                      top: 10,
+                      height: 14,
+                      width: 2,
+                      background: active ? "var(--sage)" : "transparent",
+                    }}
+                  />
                   <span
                     className="text-[10px] uppercase"
                     style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.3)" }}
                   >
                     {s.num}
                   </span>
-                  <span className="text-[13px]">{s.label}</span>
+                  <span className="whitespace-nowrap text-[13px]">{s.label}</span>
                 </button>
               );
             })}
           </nav>
         </div>
 
-        <div className="mt-auto flex flex-col gap-1.5 pt-8">
+        {/* Actions — row on mobile, stack on desktop */}
+        <div className="mt-6 flex flex-row flex-wrap gap-1.5 lg:mt-auto lg:flex-col lg:pt-8">
           <SidebarAction primary>
-            <Download className="h-3.5 w-3.5" strokeWidth={1.5} /> PDF downloaden
+            <Download className="h-3.5 w-3.5" strokeWidth={1.5} /> PDF
           </SidebarAction>
           <SidebarAction>
             <Pencil className="h-3.5 w-3.5" strokeWidth={1.5} /> Bewerken
@@ -202,7 +210,7 @@ function RecipePage() {
           </SidebarAction>
           <Link
             to="/"
-            className="mt-3 text-[11px] uppercase transition-colors"
+            className="hidden text-[11px] uppercase transition-colors lg:mt-3 lg:inline-block"
             style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.3)" }}
           >
             ← Dashboard
@@ -212,8 +220,8 @@ function RecipePage() {
 
       {/* MAIN */}
       <main
-        className="flex-1"
-        style={{ background: "var(--background)", padding: "56px 72px 120px" }}
+        className="flex-1 p-6 pb-24 sm:p-10 lg:p-[56px_72px_120px]"
+        style={{ background: "var(--background)" }}
       >
         <div className="max-w-[640px]">
           <Section
@@ -269,24 +277,20 @@ function RecipePage() {
                       style={{
                         borderLeft: `3px solid ${t.accent}`,
                         background: "var(--surface-1)",
-                        padding: "20px 24px",
                         borderRadius: "0 4px 4px 0",
                       }}
+                      className="p-4 sm:p-5 lg:px-6 lg:py-5"
                     >
-                      <div className="flex items-center justify-between gap-4">
+                      <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between lg:gap-4">
                         <span
-                          className="rounded-full px-2.5 py-1 text-[10px] uppercase"
-                          style={{
-                            letterSpacing: "0.12em",
-                            background: t.pill,
-                            color: t.accent,
-                          }}
+                          className="self-start rounded-full px-2.5 py-1 text-[10px] uppercase"
+                          style={{ letterSpacing: "0.12em", background: t.pill, color: t.accent }}
                         >
                           {t.label}
                         </span>
                         <span
-                          className="font-display-700"
-                          style={{ fontSize: 14, color: "#f0ede6", flex: 1, textAlign: "center" }}
+                          className="font-display-700 lg:flex-1 lg:text-center"
+                          style={{ fontSize: 14, color: "#f0ede6" }}
                         >
                           {t.session}
                         </span>

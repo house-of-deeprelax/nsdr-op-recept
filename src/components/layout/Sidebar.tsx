@@ -3,24 +3,24 @@ import { LayoutDashboard, FilePlus2, FileText, Settings } from "lucide-react";
 
 type Item = { to: string; label: string; icon: typeof LayoutDashboard };
 
-const items: Item[] = [
+export const navItems: Item[] = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/nieuw", label: "Nieuw recept", icon: FilePlus2 },
+  { to: "/nieuw", label: "Nieuw", icon: FilePlus2 },
   { to: "/recepten", label: "Recepten", icon: FileText },
   { to: "/instellingen", label: "Instellingen", icon: Settings },
 ];
 
-// Kept for API compatibility with __root.tsx; sidebar is permanently a 48px icon rail.
+// Desktop sidebar — 48px icon rail. Hidden on mobile (replaced by MobileTabs).
 export function Sidebar(_props: { collapsed?: boolean; onToggle?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
     <aside
-      className="relative z-20 flex h-screen w-12 shrink-0 flex-col bg-background"
+      className="relative z-20 hidden h-screen w-12 shrink-0 flex-col bg-background md:flex"
       style={{ borderRight: "1px solid rgba(255,255,255,0.05)" }}
     >
       <nav className="mt-14 flex flex-1 flex-col">
-        {items.map((item) => {
+        {navItems.map((item) => {
           const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
           const Icon = item.icon;
           return (
