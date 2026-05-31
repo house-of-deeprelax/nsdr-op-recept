@@ -12,6 +12,8 @@ const items: Item[] = [
   { to: "/instellingen", label: "Instellingen", icon: Settings },
 ];
 
+const SIDEBAR_TRANSITION = { duration: 0.22, ease: [0.4, 0, 0.2, 1] as const };
+
 export function Sidebar({
   collapsed,
   onToggle,
@@ -24,21 +26,23 @@ export function Sidebar({
   return (
     <motion.aside
       animate={{ width: collapsed ? 64 : 220 }}
-      transition={{ type: "spring", stiffness: 260, damping: 28 }}
-      className="glass relative z-20 flex h-screen shrink-0 flex-col rounded-none border-y-0 border-l-0"
+      transition={SIDEBAR_TRANSITION}
+      className="relative z-20 flex h-screen shrink-0 flex-col border-r border-[rgba(var(--paper-rgb),0.06)] bg-background"
     >
-      <div className="flex h-14 items-center justify-between px-3">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary/15 text-primary">
-            <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_10px_var(--color-primary)]" />
-          </span>
-          {!collapsed && (
-            <span className="font-display text-sm tracking-tight">Deeprelax</span>
-          )}
+      <div className="flex h-14 items-center px-4">
+        <Link to="/" className="flex items-center gap-2.5 overflow-hidden">
+          <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--sage)]" style={{ boxShadow: "0 0 10px var(--sage)" }} />
+          <motion.span
+            animate={{ opacity: collapsed ? 0 : 1, x: collapsed ? -8 : 0 }}
+            transition={SIDEBAR_TRANSITION}
+            className="font-display whitespace-nowrap text-sm"
+          >
+            Deeprelax
+          </motion.span>
         </Link>
       </div>
 
-      <nav className="mt-2 flex flex-1 flex-col gap-1 px-2">
+      <nav className="mt-4 flex flex-1 flex-col gap-0.5 px-2">
         {items.map((item) => {
           const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
           const Icon = item.icon;
@@ -47,43 +51,56 @@ export function Sidebar({
               key={item.to}
               to={item.to}
               className={cn(
-                "group relative flex h-10 items-center gap-3 rounded-lg px-2.5 text-sm transition-colors",
-                active
-                  ? "bg-primary/12 text-foreground"
-                  : "text-foreground/65 hover:bg-white/[0.04] hover:text-foreground",
+                "group relative flex h-10 items-center rounded-md px-3 text-sm transition-colors",
+                active ? "text-foreground" : "text-[rgba(var(--paper-rgb),0.5)] hover:text-foreground",
               )}
             >
               {active && (
-                <motion.span
-                  layoutId="sidebar-active"
-                  className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-full bg-primary"
+                <span
+                  className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r-full bg-[var(--sage)]"
                 />
               )}
-              <Icon className="h-4 w-4 shrink-0" />
-              {!collapsed && <span className="truncate">{item.label}</span>}
+              <Icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+              <motion.span
+                animate={{ opacity: collapsed ? 0 : 1, x: collapsed ? -8 : 0 }}
+                transition={SIDEBAR_TRANSITION}
+                className="ml-3 whitespace-nowrap overflow-hidden"
+                style={{ pointerEvents: collapsed ? "none" : undefined }}
+              >
+                {item.label}
+              </motion.span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="border-t border-border/60 p-3">
-        <div className={cn("flex items-center gap-2.5", collapsed && "justify-center")}>
-          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent/25 text-xs font-semibold text-accent">
+      <div className="border-t border-[rgba(var(--paper-rgb),0.06)] p-3">
+        <div className="flex h-10 items-center px-1">
+          <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[rgba(var(--paper-rgb),0.06)] text-[10px] text-[rgba(var(--paper-rgb),0.7)]">
             PM
           </div>
-          {!collapsed && (
-            <div className="min-w-0">
-              <div className="truncate text-xs font-medium">Preschana Misri</div>
-              <div className="truncate text-[10px] text-muted-foreground">MD</div>
-            </div>
-          )}
+          <motion.div
+            animate={{ opacity: collapsed ? 0 : 1, x: collapsed ? -8 : 0 }}
+            transition={SIDEBAR_TRANSITION}
+            className="ml-3 min-w-0 whitespace-nowrap"
+            style={{ pointerEvents: collapsed ? "none" : undefined }}
+          >
+            <div className="truncate text-xs">Preschana Misri</div>
+            <div className="text-label mt-0.5">MD</div>
+          </motion.div>
         </div>
         <button
           onClick={onToggle}
-          className="mt-3 flex w-full items-center justify-center rounded-md py-1.5 text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
+          className="mt-2 flex h-8 w-full items-center justify-center rounded-md text-[rgba(var(--paper-rgb),0.4)] hover:bg-[rgba(var(--paper-rgb),0.04)] hover:text-foreground"
           aria-label={collapsed ? "Open menu" : "Sluit menu"}
         >
-          {collapsed ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
+          <motion.span
+            animate={{ rotate: collapsed ? 180 : 0 }}
+            transition={SIDEBAR_TRANSITION}
+            className="inline-flex"
+          >
+            {collapsed ? <ChevronsRight className="h-4 w-4" strokeWidth={1.5} /> : <ChevronsLeft className="h-4 w-4" strokeWidth={1.5} />}
+          </motion.span>
         </button>
       </div>
     </motion.aside>
