@@ -78,26 +78,19 @@ function NieuwPage() {
   };
 
   return (
-    <div className="flex w-full" style={{ minHeight: "calc(100vh - 44px)" }}>
-      {/* LEFT — 38% */}
+    <div className="flex w-full flex-col lg:flex-row" style={{ minHeight: "calc(100vh - 44px)" }}>
+      {/* LEFT — aside */}
       <aside
-        className="relative flex flex-col"
+        className="relative flex w-full flex-col p-6 sm:p-8 lg:w-[38%] lg:p-[48px_32px]"
         style={{
-          width: "38%",
           background: "var(--surface-1)",
           borderRight: "1px solid var(--border-default)",
-          padding: "48px 32px",
         }}
       >
         <div className="relative">
           <span
-            className="block font-display"
-            style={{
-              fontSize: 48,
-              lineHeight: 1,
-              color: "rgba(240,237,230,0.08)",
-              letterSpacing: "-0.03em",
-            }}
+            className="block font-display text-[36px] lg:text-[48px]"
+            style={{ lineHeight: 1, color: "rgba(240,237,230,0.08)", letterSpacing: "-0.03em" }}
           >
             {String(step + 1).padStart(2, "0")} / 03
           </span>
@@ -106,17 +99,14 @@ function NieuwPage() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, ease }}
-            className="mt-3 font-display"
-            style={{ fontSize: 24, color: "#f0ede6", lineHeight: 1.1 }}
+            className="mt-2 font-display text-[20px] lg:mt-3 lg:text-[24px]"
+            style={{ color: "#f0ede6", lineHeight: 1.1 }}
           >
             {steps[step].name}
           </motion.h2>
 
           {/* Progress line */}
-          <div
-            className="mt-8 h-px w-full"
-            style={{ background: "rgba(255,255,255,0.06)" }}
-          >
+          <div className="mt-6 h-px w-full lg:mt-8" style={{ background: "rgba(255,255,255,0.06)" }}>
             <motion.div
               className="h-full"
               style={{ background: "var(--sage)" }}
@@ -130,14 +120,15 @@ function NieuwPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="mt-8"
+            className="mt-6 hidden lg:mt-8 lg:block"
             style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(240,237,230,0.4)" }}
           >
             {steps[step].blurb}
           </motion.p>
         </div>
 
-        <div className="mt-auto flex items-center justify-between pt-12">
+        {/* Desktop nav pinned to bottom */}
+        <div className="mt-auto hidden items-center justify-between pt-12 lg:flex">
           <button
             onClick={() => go(-1)}
             disabled={step === 0}
@@ -160,10 +151,10 @@ function NieuwPage() {
         </div>
       </aside>
 
-      {/* RIGHT — 62% */}
+      {/* RIGHT — content */}
       <section
-        className="flex-1 overflow-y-auto"
-        style={{ background: "var(--background)", padding: "48px 56px" }}
+        className="flex-1 overflow-y-auto p-6 sm:p-8 lg:p-[48px_56px]"
+        style={{ background: "var(--background)" }}
       >
         <div className="max-w-[640px]">
           <AnimatePresence mode="wait" custom={direction}>
