@@ -6,15 +6,15 @@ export function useTypewriter(
   blocks: TypewriterBlock[],
   opts: { speed?: number; pauseBetween?: number; startDelay?: number } = {},
 ) {
-  const { speed = 18, pauseBetween = 400, startDelay = 0 } = opts;
+  const { speed = 14, pauseBetween = 350, startDelay = 0 } = opts;
 
   const [activeIndex, setActiveIndex] = useState(-1);
   const [chars, setChars] = useState(0);
   const [complete, setComplete] = useState(false);
 
   useEffect(() => {
-    const startTimer = setTimeout(() => setActiveIndex(0), startDelay);
-    return () => clearTimeout(startTimer);
+    const t = setTimeout(() => setActiveIndex(0), startDelay);
+    return () => clearTimeout(t);
   }, [startDelay]);
 
   useEffect(() => {
@@ -65,8 +65,13 @@ export function Cursor({ on }: { on: boolean }) {
   if (!on) return null;
   return (
     <span
-      className="cursor-blink ml-0.5 inline-block translate-y-[2px] align-baseline"
-      style={{ width: 2, height: 16, background: "var(--sage)" }}
+      className="ml-0.5 inline-block translate-y-[2px] align-baseline"
+      style={{
+        width: 2,
+        height: 16,
+        background: "var(--sage)",
+        animation: "cursor-blink 500ms steps(2, start) infinite",
+      }}
     />
   );
 }
