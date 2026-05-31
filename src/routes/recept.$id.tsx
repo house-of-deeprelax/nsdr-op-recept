@@ -277,24 +277,20 @@ function RecipePage() {
                       style={{
                         borderLeft: `3px solid ${t.accent}`,
                         background: "var(--surface-1)",
-                        padding: "20px 24px",
                         borderRadius: "0 4px 4px 0",
                       }}
+                      className="p-4 sm:p-5 lg:px-6 lg:py-5"
                     >
-                      <div className="flex items-center justify-between gap-4">
+                      <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between lg:gap-4">
                         <span
-                          className="rounded-full px-2.5 py-1 text-[10px] uppercase"
-                          style={{
-                            letterSpacing: "0.12em",
-                            background: t.pill,
-                            color: t.accent,
-                          }}
+                          className="self-start rounded-full px-2.5 py-1 text-[10px] uppercase"
+                          style={{ letterSpacing: "0.12em", background: t.pill, color: t.accent }}
                         >
                           {t.label}
                         </span>
                         <span
-                          className="font-display-700"
-                          style={{ fontSize: 14, color: "#f0ede6", flex: 1, textAlign: "center" }}
+                          className="font-display-700 lg:flex-1 lg:text-center"
+                          style={{ fontSize: 14, color: "#f0ede6" }}
                         >
                           {t.session}
                         </span>
