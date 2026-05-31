@@ -7,7 +7,9 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { TopBar } from "@/components/layout/TopBar";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -118,8 +120,23 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <AppShell />
     </QueryClientProvider>
   );
 }
+
+function AppShell() {
+  const [collapsed, setCollapsed] = useState(true);
+  return (
+    <div className="flex min-h-screen w-full">
+      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <TopBar />
+        <main className="relative z-[1] flex-1 px-6 py-6 lg:px-10 lg:py-8">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+}
+
