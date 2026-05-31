@@ -135,6 +135,18 @@ function AppShell() {
         <main className="relative z-[1] flex-1 pb-16 md:pb-0">
           <Outlet />
         </main>
+        <footer
+          className="px-4 py-3 text-center text-[10px] uppercase md:hidden"
+          style={{
+            letterSpacing: "0.12em",
+            color: "rgba(240,237,230,0.25)",
+            borderTop: "1px solid var(--border-default)",
+            marginBottom: "64px",
+          }}
+        >
+          Deeprelax Institute · Alleen voor professioneel gebruik
+        </footer>
+
       </div>
       <MobileTabs />
     </div>
