@@ -22,6 +22,23 @@ const domains = [
   "Chronische pijn", "Slaapproblemen",
 ];
 
+const variantsByPhase: Record<Phase, string[]> = {
+  "rood": ["Overdrive", "Freeze", "Oscillatie", "Trigger-respons"],
+  "rood-geel": ["Restspanning", "Restvermoeidheid", "Restoscillatie"],
+  "geel-groen": ["Mentaal hoog", "Fysiek hoog", "Emotioneel hoog"],
+  "groen": ["Stabiel-onderhoudend", "Hoog-presterend"],
+};
+
+const specialConditions: { label: string; value: string }[] = [
+  { label: "Long COVID / ME-CVS", value: "long_covid" },
+  { label: "Neurodivergent ADHD", value: "neurodivergent_adhd" },
+  { label: "Neurodivergent Autisme", value: "neurodivergent_autisme" },
+  { label: "Perimenopauze", value: "perimenopauze" },
+  { label: "Hersenschudding", value: "postcommotioneel" },
+  { label: "Rouw", value: "rouw" },
+  { label: "Groepsbehandeling", value: "groepsbehandeling" },
+];
+
 const steps = [
   {
     name: "De casus",
