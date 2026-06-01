@@ -52,13 +52,13 @@ export async function generateRecipe(
     lopende_behandeling: intake.treatment || "",
     somatisch_uitgesloten: intake.somaticCleared,
     fase: phaseMap[intake.phase],
-    variant: intake.variant ?? "",
+    variant: intake.variant,
     dominant_domein: intake.domain,
     setting: intake.setting,
     beschikbare_tijd: intake.time,
     frequentie: intake.frequency,
     dagritme: intake.rhythm,
-    special_conditions: intake.special_conditions ?? "",
+    special_conditions: intake.special_conditions,
   };
 
   const res = await fetch(`${SUPABASE_URL}/functions/v1/generate-recipe`, {
