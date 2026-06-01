@@ -68,11 +68,14 @@ function RecipePage() {
     if (raw) {
       try {
         setData(JSON.parse(raw));
+        toast.success("Opgeslagen");
         return;
       } catch {}
     }
     setData(FALLBACK);
   }, [id]);
+
+  const [copied, setCopied] = useState(false);
 
   const stored = data ?? FALLBACK;
   const recipe = stored.recipe;
