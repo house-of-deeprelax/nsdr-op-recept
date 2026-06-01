@@ -4,7 +4,7 @@ import { Copy, Download, Pencil } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PhaseBadge, type Phase } from "@/components/brand/PhaseBadge";
 import { useTypewriter, Cursor } from "@/lib/typewriter";
-import type { Recipe, Intake } from "@/lib/recipe.functions";
+import type { Recipe, Intake } from "@/lib/recipe";
 
 export const Route = createFileRoute("/recept/$id")({
   head: () => ({ meta: [{ title: "Voorschrift — NSDR op Recept" }] }),

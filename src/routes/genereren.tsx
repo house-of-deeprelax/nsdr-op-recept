@@ -1,8 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
-import { generateRecipe } from "@/lib/recipe.functions";
+import { generateRecipe, type Intake } from "@/lib/recipe";
 
 export const Route = createFileRoute("/genereren")({
   head: () => ({ meta: [{ title: "We schrijven je recept — NSDR op Recept" }] }),
@@ -19,7 +18,6 @@ const generationSteps = [
 
 function GenererenPage() {
   const navigate = useNavigate();
-  const callGenerate = useServerFn(generateRecipe);
   const [active, setActive] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const started = useRef(false);
@@ -28,14 +26,14 @@ function GenererenPage() {
     if (started.current) return;
     started.current = true;
 
-    const raw = typeof window !== "undefined" ? sessionStorage.getItem("nsdr:intake") : null;
+    const raw =
+      typeof window !== "undefined" ? sessionStorage.getItem("nsdr:intake") : null;
     if (!raw) {
       navigate({ to: "/nieuw" });
       return;
     }
-    const intake = JSON.parse(raw);
+    const intake = JSON.parse(raw) as Intake;
 
-    // Animate the step list independently from the network call
     const stepTimers: ReturnType<typeof setTimeout>[] = [];
     generationSteps.forEach((_, i) => {
       stepTimers.push(setTimeout(() => setActive(i + 1), (i + 1) * 900));
@@ -43,17 +41,16 @@ function GenererenPage() {
 
     (async () => {
       try {
-        const recipe = await callGenerate({ data: intake });
-        const id = `RX-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 900) + 100)}`;
+        const { id, recipe } = await generateRecipe(intake);
+        const idLower = id.toLowerCase();
         sessionStorage.setItem(
-          `nsdr:recipe:${id.toLowerCase()}`,
+          `nsdr:recipe:${idLower}`,
           JSON.stringify({ recipe, intake, createdAt: new Date().toISOString() }),
         );
         const minWait = generationSteps.length * 900 + 700;
-        const elapsed = 0; // simplified; we just always wait full anim
         setTimeout(
-          () => navigate({ to: "/recept/$id", params: { id: id.toLowerCase() } }),
-          Math.max(0, minWait - elapsed),
+          () => navigate({ to: "/recept/$id", params: { id: idLower } }),
+          minWait,
         );
       } catch (e) {
         console.error(e);
@@ -62,7 +59,7 @@ function GenererenPage() {
     })();
 
     return () => stepTimers.forEach(clearTimeout);
-  }, [navigate, callGenerate]);
+  }, [navigate]);
 
   return (
     <div
@@ -90,7 +87,10 @@ function GenererenPage() {
         We schrijven je recept.
       </motion.h2>
 
-      <ul className="text-left" style={{ marginTop: 32, gap: 12, display: "flex", flexDirection: "column" }}>
+      <ul
+        className="text-left"
+        style={{ marginTop: 32, gap: 12, display: "flex", flexDirection: "column" }}
+      >
         {generationSteps.map((label, i) => {
           const done = i < active;
           const current = i === active;
@@ -113,7 +113,9 @@ function GenererenPage() {
                 ) : (
                   <span
                     className="block h-1 w-1 rounded-full"
-                    style={{ background: done ? "rgba(140,158,110,0.4)" : "rgba(240,237,230,0.12)" }}
+                    style={{
+                      background: done ? "rgba(140,158,110,0.4)" : "rgba(240,237,230,0.12)",
+                    }}
                   />
                 )}
               </span>
