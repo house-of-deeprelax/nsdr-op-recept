@@ -154,6 +154,7 @@ function AppShell() {
 
       </div>
       <MobileTabs />
+      <Toaster />
     </div>
   );
 }
