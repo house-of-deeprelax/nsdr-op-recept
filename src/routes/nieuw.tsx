@@ -297,16 +297,6 @@ function NieuwPage() {
                     </div>
                   </Field>
 
-                  <Field label="Dominant domein" optional>
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {domains.map((d) => (
-                        <Chip key={d} active={domain === d} onClick={() => setDomain(domain === d ? "" : d)}>
-                          {d}
-                        </Chip>
-                      ))}
-                    </div>
-                  </Field>
-
                   {phase && (
                     <Field label="Variant">
                       <div className="grid grid-cols-2 gap-3 pt-2">
@@ -345,6 +335,16 @@ function NieuwPage() {
                       </div>
                     </Field>
                   )}
+
+                  <Field label="Dominant domein" optional>
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {domains.map((d) => (
+                        <Chip key={d} active={domain === d} onClick={() => setDomain(domain === d ? "" : d)}>
+                          {d}
+                        </Chip>
+                      ))}
+                    </div>
+                  </Field>
                 </div>
               )}
 
