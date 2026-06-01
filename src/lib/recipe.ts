@@ -14,13 +14,13 @@ export type Intake = {
   treatment: string;
   somaticCleared: boolean;
   phase: Phase;
+  variant: string;
   domain: string;
   setting: "individueel" | "groep";
   time: string;
   frequency: string;
   rhythm: string;
-  variant?: string;
-  special_conditions?: string;
+  special_conditions: string[];
 };
 
 export type Recipe = {
