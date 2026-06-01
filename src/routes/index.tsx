@@ -130,6 +130,7 @@ function useRecentPrescriptions(): RecentRx[] {
 const ease = [0.22, 1, 0.36, 1] as const;
 
 function Dashboard() {
+  const recent = useRecentPrescriptions();
   return (
     <div
       className="flex w-full flex-col lg:flex-row"
