@@ -10,10 +10,10 @@ export const Route = createFileRoute("/nieuw")({
 });
 
 const phases: { id: Phase; label: string; color: string; hint: string }[] = [
-  { id: "rood", label: "Rood", color: "var(--phase-rood)", hint: "Acuut ontregeld" },
-  { id: "rood-geel", label: "Rood-Geel", color: "var(--phase-rood-geel)", hint: "Beginnend herstel" },
-  { id: "geel-groen", label: "Geel-Groen", color: "var(--phase-geel-groen)", hint: "Veerkracht terug" },
-  { id: "groen", label: "Groen", color: "var(--phase-groen)", hint: "Onderhoud en groei" },
+  { id: "rood", label: "Rood", color: "var(--phase-rood)", hint: "Score 29-48" },
+  { id: "rood-geel", label: "Rood-Geel", color: "var(--phase-rood-geel)", hint: "Score 20-28" },
+  { id: "geel-groen", label: "Geel-Groen", color: "var(--phase-geel-groen)", hint: "Score 13-19" },
+  { id: "groen", label: "Groen", color: "var(--phase-groen)", hint: "Score 0-12" },
 ];
 
 const domains = [
