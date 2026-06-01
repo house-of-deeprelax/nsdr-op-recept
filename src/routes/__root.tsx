@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileTabs } from "@/components/layout/MobileTabs";
 import { TopBar } from "@/components/layout/TopBar";
+import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
