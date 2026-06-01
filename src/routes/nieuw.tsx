@@ -71,26 +71,41 @@ function NieuwPage() {
   const [somatic, setSomatic] = useState<null | boolean>(null);
 
   const [phase, setPhase] = useState<Phase | null>(null);
+  const [variant, setVariant] = useState<string>("");
   const [domain, setDomain] = useState<string>("");
 
   const [setting, setSetting] = useState<"individueel" | "groep">("individueel");
   const [time, setTime] = useState("");
   const [frequency, setFrequency] = useState("");
   const [rhythm, setRhythm] = useState("");
+  const [specialConds, setSpecialConds] = useState<string[]>([]);
 
   const canNext =
     (step === 0 && context && complaint && duration && somatic !== null) ||
-    (step === 1 && phase && domain) ||
+    (step === 1 && phase && variant) ||
     (step === 2 && time && frequency && rhythm);
 
   const progress = ((step + 1) / 3) * 100;
+
+  const selectPhase = (p: Phase) => {
+    setPhase(p);
+    setVariant("");
+  };
+
+  const toggleCondition = (value: string) => {
+    setSpecialConds((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
+    );
+  };
 
   const go = (delta: 1 | -1) => {
     if (delta === 1 && step === 2) {
       const intake = {
         context, complaint, duration, treatment,
         somaticCleared: somatic === true,
-        phase, domain, setting, time, frequency, rhythm,
+        phase, variant, domain,
+        setting, time, frequency, rhythm,
+        special_conditions: specialConds,
       };
       try {
         sessionStorage.setItem("nsdr:intake", JSON.stringify(intake));
