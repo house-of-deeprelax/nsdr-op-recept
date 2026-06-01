@@ -39,10 +39,10 @@ export async function generateRecipe(
   intake: Intake,
 ): Promise<{ id: string; recipe: Recipe }> {
   const phaseMap: Record<Phase, string> = {
-    rood: "Rood",
-    "rood-geel": "Geel-Rood",
-    "geel-groen": "Geel-Groen",
-    groen: "Groen",
+    rood: "rood",
+    "rood-geel": "geel-rood",
+    "geel-groen": "geel-groen",
+    groen: "groen",
   };
 
   const payload = {
@@ -51,8 +51,8 @@ export async function generateRecipe(
     duur_klachten: intake.duration,
     lopende_behandeling: intake.treatment || "",
     somatisch_uitgesloten: intake.somaticCleared,
-    fase: phaseMap[intake.phase],
-    variant: intake.variant,
+    fase: phaseMap[intake.phase].toLowerCase(),
+    variant: intake.variant.toLowerCase(),
     dominant_domein: intake.domain,
     setting: intake.setting,
     beschikbare_tijd: intake.time,
