@@ -94,13 +94,14 @@ export function Preloader({ onDone }: { onDone: () => void }) {
           <h1
             style={{
               fontFamily: "'DM Sans', system-ui, sans-serif",
-              fontWeight: 500,
-              fontSize: "clamp(64px, 11vw, 140px)",
+              fontWeight: 400,
+              fontSize: "clamp(20px, 2.6vw, 32px)",
               lineHeight: 1,
               color: "#F1F1EE",
-              letterSpacing: "-0.035em",
+              textTransform: "uppercase",
+              letterSpacing: "0.32em",
+              paddingLeft: "0.32em",
               margin: 0,
-              textShadow: "0 0 40px rgba(241,241,238,0.12)",
               whiteSpace: "nowrap",
             }}
           >
