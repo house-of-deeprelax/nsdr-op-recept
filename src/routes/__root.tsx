@@ -7,11 +7,12 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileTabs } from "@/components/layout/MobileTabs";
 import { TopBar } from "@/components/layout/TopBar";
 import { Toaster } from "@/components/ui/sonner";
+import { Preloader } from "@/components/Preloader";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -132,8 +133,22 @@ function RootComponent() {
 }
 
 function AppShell() {
+  const [showPreloader, setShowPreloader] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const shown = sessionStorage.getItem("nsdr:preloader-shown");
+    if (!shown) setShowPreloader(true);
+  }, []);
+
+  const handlePreloaderDone = () => {
+    sessionStorage.setItem("nsdr:preloader-shown", "1");
+    setShowPreloader(false);
+  };
+
   return (
     <div className="flex min-h-screen w-full">
+      {showPreloader && <Preloader onDone={handlePreloaderDone} />}
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
