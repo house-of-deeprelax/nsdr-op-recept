@@ -13,12 +13,48 @@ export const Route = createFileRoute("/")({
   component: Dashboard,
 });
 
-type RecentRx = { id: string; patient: string; phase: Phase; date: string };
+type RecentRx = {
+  id: string;
+  patient: string;
+  phase: Phase;
+  date: string;
+  variant: string;
+  domain: string;
+};
 
 const recent: RecentRx[] = [
-  { id: "RX-2025-041", patient: "Vrouw, 42 — chronische vermoeidheid", phase: "rood", date: "Vandaag" },
-  { id: "RX-2025-040", patient: "Man, 56 — herstel na hartoperatie", phase: "rood-geel", date: "Gisteren" },
-  { id: "RX-2025-039", patient: "Vrouw, 34 — burn-out, paniek", phase: "geel-groen", date: "2 dagen" },
+  {
+    id: "RX-2025-041",
+    patient: "Vrouw, 44 — burn-out, overspanning",
+    phase: "rood",
+    date: "Vandaag",
+    variant: "Overdrive",
+    domain: "Burn-out",
+  },
+  {
+    id: "RX-2025-040",
+    patient: "Man, 38 — post-COVID, slaapproblemen",
+    phase: "rood-geel",
+    date: "Gisteren",
+    variant: "Restvermoeidheid",
+    domain: "Postviraal",
+  },
+  {
+    id: "RX-2025-039",
+    patient: "Vrouw, 51 — perimenopauze, emotioneel labil",
+    phase: "geel-groen",
+    date: "2 dagen geleden",
+    variant: "Emotioneel hoog",
+    domain: "Hormonaal",
+  },
+  {
+    id: "RX-2025-038",
+    patient: "Man, 45 — preventief, hoog prestatieniveau",
+    phase: "groen",
+    date: "3 dagen geleden",
+    variant: "Hoog-presterend",
+    domain: "Burn-out",
+  },
 ];
 
 const ease = [0.22, 1, 0.36, 1] as const;
