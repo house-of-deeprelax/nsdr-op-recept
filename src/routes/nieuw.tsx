@@ -10,16 +10,33 @@ export const Route = createFileRoute("/nieuw")({
 });
 
 const phases: { id: Phase; label: string; color: string; hint: string }[] = [
-  { id: "rood", label: "Rood", color: "var(--phase-rood)", hint: "Acuut ontregeld" },
-  { id: "rood-geel", label: "Rood-Geel", color: "var(--phase-rood-geel)", hint: "Beginnend herstel" },
-  { id: "geel-groen", label: "Geel-Groen", color: "var(--phase-geel-groen)", hint: "Veerkracht terug" },
-  { id: "groen", label: "Groen", color: "var(--phase-groen)", hint: "Onderhoud en groei" },
+  { id: "rood", label: "Rood", color: "var(--phase-rood)", hint: "Score 29-48" },
+  { id: "rood-geel", label: "Rood-Geel", color: "var(--phase-rood-geel)", hint: "Score 20-28" },
+  { id: "geel-groen", label: "Geel-Groen", color: "var(--phase-geel-groen)", hint: "Score 13-19" },
+  { id: "groen", label: "Groen", color: "var(--phase-groen)", hint: "Score 0-12" },
 ];
 
 const domains = [
   "Burn-out", "Postviraal", "Long COVID", "Trauma", "Rouw",
   "Neurodivergentie", "Hormonaal", "Postcommotioneel",
   "Chronische pijn", "Slaapproblemen",
+];
+
+const variantsByPhase: Record<Phase, string[]> = {
+  "rood": ["Overdrive", "Freeze", "Oscillatie", "Trigger-respons"],
+  "rood-geel": ["Restspanning", "Restvermoeidheid", "Restoscillatie"],
+  "geel-groen": ["Mentaal hoog", "Fysiek hoog", "Emotioneel hoog"],
+  "groen": ["Stabiel-onderhoudend", "Hoog-presterend"],
+};
+
+const specialConditions: { label: string; value: string }[] = [
+  { label: "Long COVID / ME-CVS", value: "long_covid" },
+  { label: "Neurodivergent ADHD", value: "neurodivergent_adhd" },
+  { label: "Neurodivergent Autisme", value: "neurodivergent_autisme" },
+  { label: "Perimenopauze", value: "perimenopauze" },
+  { label: "Hersenschudding", value: "postcommotioneel" },
+  { label: "Rouw", value: "rouw" },
+  { label: "Groepsbehandeling", value: "groepsbehandeling" },
 ];
 
 const steps = [
@@ -54,26 +71,41 @@ function NieuwPage() {
   const [somatic, setSomatic] = useState<null | boolean>(null);
 
   const [phase, setPhase] = useState<Phase | null>(null);
+  const [variant, setVariant] = useState<string>("");
   const [domain, setDomain] = useState<string>("");
 
   const [setting, setSetting] = useState<"individueel" | "groep">("individueel");
   const [time, setTime] = useState("");
   const [frequency, setFrequency] = useState("");
   const [rhythm, setRhythm] = useState("");
+  const [specialConds, setSpecialConds] = useState<string[]>([]);
 
   const canNext =
     (step === 0 && context && complaint && duration && somatic !== null) ||
-    (step === 1 && phase && domain) ||
+    (step === 1 && phase && variant) ||
     (step === 2 && time && frequency && rhythm);
 
   const progress = ((step + 1) / 3) * 100;
+
+  const selectPhase = (p: Phase) => {
+    setPhase(p);
+    setVariant("");
+  };
+
+  const toggleCondition = (value: string) => {
+    setSpecialConds((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
+    );
+  };
 
   const go = (delta: 1 | -1) => {
     if (delta === 1 && step === 2) {
       const intake = {
         context, complaint, duration, treatment,
         somaticCleared: somatic === true,
-        phase, domain, setting, time, frequency, rhythm,
+        phase, variant, domain,
+        setting, time, frequency, rhythm,
+        special_conditions: specialConds,
       };
       try {
         sessionStorage.setItem("nsdr:intake", JSON.stringify(intake));
@@ -207,7 +239,7 @@ function NieuwPage() {
                           <motion.button
                             key={p.id}
                             type="button"
-                            onClick={() => setPhase(p.id)}
+                            onClick={() => selectPhase(p.id)}
                             whileTap={{ scale: 0.98 }}
                             transition={{ type: "spring", stiffness: 400, damping: 22 }}
                             className="relative flex flex-col items-center justify-center transition-colors"
@@ -246,10 +278,22 @@ function NieuwPage() {
                     </div>
                   </Field>
 
-                  <Field label="Dominant domein">
+                  {phase && (
+                    <Field label="Variant">
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        {variantsByPhase[phase].map((v) => (
+                          <Chip key={v} active={variant === v} onClick={() => setVariant(v)}>
+                            {v}
+                          </Chip>
+                        ))}
+                      </div>
+                    </Field>
+                  )}
+
+                  <Field label="Dominant domein" optional>
                     <div className="flex flex-wrap gap-2 pt-2">
                       {domains.map((d) => (
-                        <Chip key={d} active={domain === d} onClick={() => setDomain(d)}>
+                        <Chip key={d} active={domain === d} onClick={() => setDomain(domain === d ? "" : d)}>
                           {d}
                         </Chip>
                       ))}
@@ -274,6 +318,41 @@ function NieuwPage() {
                   </Field>
                   <Field label="Dagritme">
                     <ChipRow value={rhythm} onChange={setRhythm} options={["Ochtendmens", "Avondmens", "Wisselend"]} />
+                  </Field>
+                  <Field label="Bijzondere omstandigheden" optional>
+                    <div className="flex flex-col gap-2 pt-2">
+                      {specialConditions.map((c) => {
+                        const active = specialConds.includes(c.value);
+                        return (
+                          <button
+                            key={c.value}
+                            type="button"
+                            onClick={() => toggleCondition(c.value)}
+                            className="flex items-center gap-3 rounded-md px-3 py-2.5 text-left text-[13px] transition-colors"
+                            style={{
+                              border: `1px solid ${active ? "var(--sage)" : "rgba(255,255,255,0.06)"}`,
+                              color: active ? "#f0ede6" : "rgba(240,237,230,0.6)",
+                              background: active ? "color-mix(in oklab, var(--sage) 6%, transparent)" : "transparent",
+                            }}
+                          >
+                            <span
+                              className="flex h-4 w-4 items-center justify-center rounded-[3px]"
+                              style={{
+                                border: `1px solid ${active ? "var(--sage)" : "rgba(255,255,255,0.2)"}`,
+                                background: active ? "var(--sage)" : "transparent",
+                              }}
+                            >
+                              {active && (
+                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                  <path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0c0c0a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                              )}
+                            </span>
+                            {c.label}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </Field>
                 </div>
               )}

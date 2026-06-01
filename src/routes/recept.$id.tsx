@@ -33,11 +33,13 @@ const FALLBACK: Stored = {
     treatment: "",
     somaticCleared: true,
     phase: "rood-geel",
+    variant: "",
     domain: "—",
     setting: "individueel",
     time: "20 min",
     frequency: "Dagelijks",
     rhythm: "Ochtendmens",
+    special_conditions: [],
   },
   createdAt: new Date().toISOString(),
 };
