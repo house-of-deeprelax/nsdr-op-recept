@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
 import { PhaseBadge, type Phase } from "@/components/brand/PhaseBadge";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/recipe";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,7 +24,7 @@ type RecentRx = {
   domain: string;
 };
 
-const recent: RecentRx[] = [
+const demoRecent: RecentRx[] = [
   {
     id: "RX-2025-041",
     patient: "Vrouw, 44 — burn-out, overspanning",
@@ -56,6 +58,74 @@ const recent: RecentRx[] = [
     domain: "Burn-out",
   },
 ];
+
+function normalizePhase(fase: string | null | undefined): Phase {
+  const f = (fase ?? "").toLowerCase();
+  if (f === "rood") return "rood";
+  if (f === "geel-rood" || f === "rood-geel") return "rood-geel";
+  if (f === "geel-groen") return "geel-groen";
+  return "groen";
+}
+
+function formatDate(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString("nl-NL", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  } catch {
+    return iso;
+  }
+}
+
+function useRecentPrescriptions(): RecentRx[] {
+  const [items, setItems] = useState<RecentRx[]>(demoRecent);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/prescriptions?select=rx_number,created_at,patient_context,fase,variant,dominant_domein&order=created_at.desc&limit=4`,
+          {
+            headers: {
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            },
+          },
+        );
+        if (!res.ok) return;
+        const data = (await res.json()) as Array<{
+          rx_number: string;
+          created_at: string;
+          patient_context: string | null;
+          fase: string | null;
+          variant: string | null;
+          dominant_domein: string | null;
+        }>;
+        if (cancelled || data.length === 0) return;
+        setItems(
+          data.map((p) => ({
+            id: p.rx_number,
+            patient: p.patient_context ?? "—",
+            phase: normalizePhase(p.fase),
+            date: formatDate(p.created_at),
+            variant: p.variant ?? "—",
+            domain: p.dominant_domein ?? "—",
+          })),
+        );
+      } catch {
+        // keep demo fallback
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return items;
+}
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
