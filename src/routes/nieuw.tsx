@@ -319,6 +319,41 @@ function NieuwPage() {
                   <Field label="Dagritme">
                     <ChipRow value={rhythm} onChange={setRhythm} options={["Ochtendmens", "Avondmens", "Wisselend"]} />
                   </Field>
+                  <Field label="Bijzondere omstandigheden" optional>
+                    <div className="flex flex-col gap-2 pt-2">
+                      {specialConditions.map((c) => {
+                        const active = specialConds.includes(c.value);
+                        return (
+                          <button
+                            key={c.value}
+                            type="button"
+                            onClick={() => toggleCondition(c.value)}
+                            className="flex items-center gap-3 rounded-md px-3 py-2.5 text-left text-[13px] transition-colors"
+                            style={{
+                              border: `1px solid ${active ? "var(--sage)" : "rgba(255,255,255,0.06)"}`,
+                              color: active ? "#f0ede6" : "rgba(240,237,230,0.6)",
+                              background: active ? "color-mix(in oklab, var(--sage) 6%, transparent)" : "transparent",
+                            }}
+                          >
+                            <span
+                              className="flex h-4 w-4 items-center justify-center rounded-[3px]"
+                              style={{
+                                border: `1px solid ${active ? "var(--sage)" : "rgba(255,255,255,0.2)"}`,
+                                background: active ? "var(--sage)" : "transparent",
+                              }}
+                            >
+                              {active && (
+                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                  <path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0c0c0a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                              )}
+                            </span>
+                            {c.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </Field>
                 </div>
               )}
             </motion.div>
