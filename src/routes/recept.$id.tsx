@@ -1,74 +1,46 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Download, Pencil } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { PhaseBadge } from "@/components/brand/PhaseBadge";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { PhaseBadge, type Phase } from "@/components/brand/PhaseBadge";
 import { useTypewriter, Cursor } from "@/lib/typewriter";
+import type { Recipe, Intake } from "@/lib/recipe.functions";
 
 export const Route = createFileRoute("/recept/$id")({
   head: () => ({ meta: [{ title: "Voorschrift — NSDR op Recept" }] }),
   component: RecipePage,
 });
 
-const blocks = [
-  {
-    id: "intro",
-    text:
-      "Vrouw, 44, HR-manager met twee jonge kinderen. Acht maanden aanhoudende vermoeidheid, gespannen schouders en doorslaapproblemen na een periode van overbelasting. Somatisch onderzocht en gerust gesteld; het beeld past bij beginnend herstel uit chronische stress.",
-  },
-  {
-    id: "reality",
-    text:
-      "Somatische oorzaken zijn uitgesloten. POH-GGZ loopt parallel. NSDR komt hier naast de bestaande zorg, gericht op down-regulatie en slaapherstel.",
-  },
-  { id: "tiers", text: "" },
-  {
-    id: "dosering",
-    text:
-      "Start met de eerste keus: 20 minuten, vijf ochtenden per week, op vaste tijd direct na het wakker worden. Het ritme is belangrijker dan de duur; mis je een sessie, ga dan niet terug-doseren. Voeg de zwaardere variant pas toe wanneer de ochtendsessie twee weken stabiel staat.",
-  },
-  {
-    id: "looptijd",
-    text:
-      "Eerste evaluatiemoment na drie weken. Verwachte indicatoren: kortere inslaaplatentie, minder ochtendmoeheid, hogere HRV-baseline. Herijk de fase en overweeg de opbouwvariant wanneer ten minste twee van drie indicatoren verbeteren. Totale looptijd: zes tot twaalf weken.",
-  },
-  {
-    id: "attention",
-    text:
-      "Let op: toename van prikkelbaarheid of dissociatie tijdens de bodyscan vraagt om terugschakelen naar de lichtere variant. Slaperigheid overdag die niet verbetert na week twee bespreek je met huisarts of POH-GGZ. Cafeïne na 14:00 ondermijnt het slaapherstel; benoem dit expliciet.",
-  },
-  { id: "closing", text: "NSDR komt naast bestaande zorg, niet in plaats daarvan." },
-];
+type Stored = { recipe: Recipe; intake: Intake; createdAt: string };
 
-const tiers = [
-  {
-    label: "Eerste keus",
-    accent: "var(--sage)",
-    pill: "rgba(140,158,110,0.15)",
-    session: "Yoga Nidra — Sage Grounding 20",
-    duration: "20 min · 5x per week · ochtend",
-    rationale:
-      "Lange uitademing en lichaamsscan kalmeren de hyperarousal en herstellen het ritme van het autonome zenuwstelsel.",
+const FALLBACK: Stored = {
+  recipe: {
+    voor_wie_en_waar_nu:
+      "Geen opgeslagen recept gevonden. Start een nieuwe intake om een voorschrift te genereren.",
+    het_voorschrift: {
+      eerste_keus: { sessie: "—", rationale: "Nog geen recept beschikbaar." },
+      lichter: { sessie: "—", rationale: "Nog geen recept beschikbaar." },
+      zwaarder: { sessie: "—", rationale: "Nog geen recept beschikbaar." },
+    },
+    de_dosering: "—",
+    looptijd_en_herijking: "—",
+    waar_je_op_let: "—",
   },
-  {
-    label: "Lichter, als terugval",
-    accent: "rgba(240,237,230,0.25)",
-    pill: "rgba(240,237,230,0.05)",
-    session: "Adempauze — Box 4-4-6",
-    duration: "10 min · 2x per dag · bij signaal",
-    rationale:
-      "Korte, lage-drempel interventie wanneer 20 minuten te veel is. Houdt de regulatie-routine intact zonder belasting.",
+  intake: {
+    context: "",
+    complaint: "",
+    duration: "",
+    treatment: "",
+    somaticCleared: true,
+    phase: "rood-geel",
+    domain: "—",
+    setting: "individueel",
+    time: "20 min",
+    frequency: "Dagelijks",
+    rhythm: "Ochtendmens",
   },
-  {
-    label: "Zwaarder, als opbouw",
-    accent: "#6d8aa8",
-    pill: "rgba(109,138,168,0.12)",
-    session: "Yoga Nidra — Deep Recovery 35",
-    duration: "35 min · 4x per week · avond",
-    rationale:
-      "Wanneer de basis stabiel is, verdiept deze sessie het parasympatische herstel en de slaaparchitectuur.",
-  },
-];
+  createdAt: new Date().toISOString(),
+};
 
 const sections = [
   { num: "01", label: "Voor wie" },
@@ -80,6 +52,69 @@ const sections = [
 
 function RecipePage() {
   const { id } = Route.useParams();
+  const navigate = useNavigate();
+
+  const [data, setData] = useState<Stored | null>(null);
+
+  useEffect(() => {
+    const raw =
+      typeof window !== "undefined"
+        ? sessionStorage.getItem(`nsdr:recipe:${id.toLowerCase()}`)
+        : null;
+    if (raw) {
+      try {
+        setData(JSON.parse(raw));
+        return;
+      } catch {}
+    }
+    setData(FALLBACK);
+  }, [id]);
+
+  const stored = data ?? FALLBACK;
+  const recipe = stored.recipe;
+  const intake = stored.intake;
+
+  const blocks = useMemo(
+    () => [
+      { id: "intro", text: recipe.voor_wie_en_waar_nu },
+      { id: "tiers", text: "" },
+      { id: "dosering", text: recipe.de_dosering },
+      { id: "looptijd", text: recipe.looptijd_en_herijking },
+      { id: "attention", text: recipe.waar_je_op_let },
+      { id: "closing", text: "NSDR komt naast bestaande zorg, niet in plaats daarvan." },
+    ],
+    [recipe],
+  );
+
+  const tiers = useMemo(
+    () => [
+      {
+        label: "Eerste keus",
+        accent: "var(--sage)",
+        pill: "rgba(140,158,110,0.15)",
+        session: recipe.het_voorschrift.eerste_keus.sessie,
+        rationale: recipe.het_voorschrift.eerste_keus.rationale,
+      },
+      {
+        label: "Lichter, als terugval",
+        accent: "rgba(240,237,230,0.25)",
+        pill: "rgba(240,237,230,0.05)",
+        session: recipe.het_voorschrift.lichter.sessie,
+        rationale: recipe.het_voorschrift.lichter.rationale,
+      },
+      {
+        label: "Zwaarder, als opbouw",
+        accent: "#6d8aa8",
+        pill: "rgba(109,138,168,0.12)",
+        session: recipe.het_voorschrift.zwaarder.sessie,
+        rationale: recipe.het_voorschrift.zwaarder.rationale,
+      },
+    ],
+    [recipe],
+  );
+
+  // Re-key typewriter when data loads so it animates fresh content
+  const twKey = data ? "loaded" : "fallback";
   const tw = useTypewriter(blocks, { speed: 14, pauseBetween: 350, startDelay: 250 });
 
   const refs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -104,9 +139,40 @@ function RecipePage() {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
+  const copyToClipboard = () => {
+    const text = [
+      `RX-${id.toUpperCase()}`,
+      "",
+      "VOOR WIE EN WAAR NU",
+      recipe.voor_wie_en_waar_nu,
+      "",
+      "HET VOORSCHRIFT",
+      `Eerste keus: ${recipe.het_voorschrift.eerste_keus.sessie}`,
+      recipe.het_voorschrift.eerste_keus.rationale,
+      "",
+      `Lichter: ${recipe.het_voorschrift.lichter.sessie}`,
+      recipe.het_voorschrift.lichter.rationale,
+      "",
+      `Zwaarder: ${recipe.het_voorschrift.zwaarder.sessie}`,
+      recipe.het_voorschrift.zwaarder.rationale,
+      "",
+      "DOSERING",
+      recipe.de_dosering,
+      "",
+      "LOOPTIJD EN HERIJKING",
+      recipe.looptijd_en_herijking,
+      "",
+      "WAAR JE OP LET",
+      recipe.waar_je_op_let,
+    ].join("\n");
+    navigator.clipboard?.writeText(text);
+  };
+
+  const phase = intake.phase as Phase;
+
   return (
-    <div className="flex w-full flex-col lg:flex-row" style={{ minHeight: "calc(100vh - 44px)" }}>
-      {/* LEFT — sidebar (top on mobile, side sticky on desktop) */}
+    <div key={twKey} className="flex w-full flex-col lg:flex-row" style={{ minHeight: "calc(100vh - 44px)" }}>
+      {/* LEFT — sidebar */}
       <aside
         className="flex w-full flex-col p-6 sm:p-8 lg:sticky lg:top-11 lg:h-[calc(100vh-44px)] lg:w-[280px] lg:min-w-[280px] lg:p-[32px_24px]"
         style={{
@@ -127,32 +193,35 @@ function RecipePage() {
               className="mt-2 font-display text-[24px] lg:text-[28px]"
               style={{ lineHeight: 1.05, color: "#f0ede6" }}
             >
-              RX-{id.toUpperCase()}
+              {id.toUpperCase()}
             </div>
             <div
               className="mt-2 text-[11px] uppercase"
               style={{ letterSpacing: "0.1em", color: "rgba(240,237,230,0.3)" }}
             >
-              {new Date().toLocaleDateString("nl-NL", { day: "2-digit", month: "short", year: "numeric" })}
+              {new Date(stored.createdAt).toLocaleDateString("nl-NL", {
+                day: "2-digit", month: "short", year: "numeric",
+              })}
             </div>
           </div>
 
           <div className="flex flex-row flex-wrap items-center gap-2 lg:mt-8 lg:flex-col lg:items-start">
-            <PhaseBadge phase="rood-geel" />
-            <span
-              className="rounded-full px-2.5 py-1 text-[11px]"
-              style={{
-                background: "rgba(240,237,230,0.04)",
-                color: "rgba(240,237,230,0.7)",
-                border: "1px solid var(--border-default)",
-              }}
-            >
-              Burn-out
-            </span>
+            <PhaseBadge phase={phase} />
+            {intake.domain && (
+              <span
+                className="rounded-full px-2.5 py-1 text-[11px]"
+                style={{
+                  background: "rgba(240,237,230,0.04)",
+                  color: "rgba(240,237,230,0.7)",
+                  border: "1px solid var(--border-default)",
+                }}
+              >
+                {intake.domain}
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Sections nav — horizontal scroll on mobile, vertical on desktop */}
         <div className="mt-6 lg:mt-10">
           <span
             className="hidden text-[10px] uppercase lg:inline-block"
@@ -177,10 +246,7 @@ function RecipePage() {
                     aria-hidden
                     className="absolute hidden lg:block"
                     style={{
-                      left: -24,
-                      top: 10,
-                      height: 14,
-                      width: 2,
+                      left: -24, top: 10, height: 14, width: 2,
                       background: active ? "var(--sage)" : "transparent",
                     }}
                   />
@@ -197,15 +263,14 @@ function RecipePage() {
           </nav>
         </div>
 
-        {/* Actions — row on mobile, stack on desktop */}
         <div className="mt-6 flex flex-row flex-wrap gap-1.5 lg:mt-auto lg:flex-col lg:pt-8">
-          <SidebarAction primary>
+          <SidebarAction primary onClick={() => window.print()}>
             <Download className="h-3.5 w-3.5" strokeWidth={1.5} /> PDF
           </SidebarAction>
-          <SidebarAction>
-            <Pencil className="h-3.5 w-3.5" strokeWidth={1.5} /> Bewerken
+          <SidebarAction onClick={() => navigate({ to: "/nieuw" })}>
+            <Pencil className="h-3.5 w-3.5" strokeWidth={1.5} /> Nieuwe
           </SidebarAction>
-          <SidebarAction>
+          <SidebarAction onClick={copyToClipboard}>
             <Copy className="h-3.5 w-3.5" strokeWidth={1.5} /> Kopiëren
           </SidebarAction>
           <Link
@@ -229,35 +294,10 @@ function RecipePage() {
             num="01"
             title="Voor wie en waar nu"
           >
-            <p
-              className="text-body"
-              style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(240,237,230,0.9)" }}
-            >
+            <p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(240,237,230,0.9)" }}>
               {tw.getText("intro")}
               <Cursor on={tw.isCursorOn("intro")} />
             </p>
-            {tw.isStarted("reality") && (
-              <div
-                className="mt-6"
-                style={{
-                  borderLeft: "3px solid var(--tierra)",
-                  background: "rgba(158,126,94,0.06)",
-                  padding: "16px 20px",
-                  borderRadius: "0 4px 4px 0",
-                }}
-              >
-                <div
-                  className="mb-2 text-[10px] uppercase"
-                  style={{ letterSpacing: "0.12em", color: "var(--tierra)" }}
-                >
-                  Medische realiteit
-                </div>
-                <span style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(240,237,230,0.88)" }}>
-                  {tw.getText("reality")}
-                  <Cursor on={tw.isCursorOn("reality")} />
-                </span>
-              </div>
-            )}
           </Section>
 
           <Section
@@ -289,21 +329,15 @@ function RecipePage() {
                           {t.label}
                         </span>
                         <span
-                          className="font-display-700 lg:flex-1 lg:text-center"
+                          className="font-display-700 lg:flex-1 lg:text-right"
                           style={{ fontSize: 14, color: "#f0ede6" }}
                         >
                           {t.session}
                         </span>
-                        <span
-                          className="text-[11px] uppercase"
-                          style={{ letterSpacing: "0.08em", color: "rgba(240,237,230,0.45)" }}
-                        >
-                          {t.duration}
-                        </span>
                       </div>
                       <p
                         className="mt-3"
-                        style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(240,237,230,0.55)" }}
+                        style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(240,237,230,0.6)" }}
                       >
                         {t.rationale}
                       </p>
@@ -361,10 +395,7 @@ function RecipePage() {
 }
 
 function Section({
-  num,
-  title,
-  innerRef,
-  children,
+  num, title, innerRef, children,
 }: {
   num: string;
   title: string;
@@ -372,10 +403,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section
-      ref={innerRef}
-      style={{ paddingTop: 32, paddingBottom: 32 }}
-    >
+    <section ref={innerRef} style={{ paddingTop: 32, paddingBottom: 32 }}>
       <div className="mb-5 flex items-baseline gap-3">
         <span
           className="text-[10px] uppercase"
@@ -392,9 +420,16 @@ function Section({
   );
 }
 
-function SidebarAction({ children, primary }: { children: React.ReactNode; primary?: boolean }) {
+function SidebarAction({
+  children, primary, onClick,
+}: {
+  children: React.ReactNode;
+  primary?: boolean;
+  onClick?: () => void;
+}) {
   return (
     <button
+      onClick={onClick}
       className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-left text-[12px] transition-colors"
       style={
         primary
