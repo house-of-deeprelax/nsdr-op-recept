@@ -95,7 +95,7 @@ export function Preloader({ onDone }: { onDone: () => void }) {
             style={{
               fontFamily: "'Barlow', system-ui, sans-serif",
               fontWeight: 800,
-              fontSize: "clamp(40px, 7vw, 88px)",
+              fontSize: "40px",
               lineHeight: 1.05,
               color: "#F1F1EE",
               textTransform: "uppercase",
