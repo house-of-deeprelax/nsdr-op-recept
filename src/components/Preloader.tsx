@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 const TOTAL_MS = 5000;
-const FADE_MS = 900;
+const FADE_MS = 1200;
 
 export function Preloader({ onDone }: { onDone: () => void }) {
   const [fadingOut, setFadingOut] = useState(false);
@@ -18,28 +18,28 @@ export function Preloader({ onDone }: { onDone: () => void }) {
   return (
     <>
       <style>{`
-        @keyframes nsdr-cinematic-zoom {
-          0%   { transform: scale(0.985); opacity: 0; filter: blur(6px); }
-          50%  { opacity: 1; filter: blur(0); }
-          100% { transform: scale(1.015); opacity: 1; filter: blur(0); }
-        }
-        @keyframes nsdr-glow-line {
-          0%   { width: 0;     opacity: 0; }
+        @keyframes nsdr-soft-reveal {
+          0%   { transform: scale(0.995); opacity: 0; filter: blur(3px); }
           40%  { opacity: 1; }
+          100% { transform: scale(1); opacity: 1; filter: blur(0); }
+        }
+        @keyframes nsdr-line-grow {
+          0%   { width: 0; opacity: 0; }
+          30%  { opacity: 0.6; }
           100% { width: 260px; opacity: 1; }
         }
-        @keyframes nsdr-subtitle-fade {
-          0%   { opacity: 0; transform: translateY(6px); }
+        @keyframes nsdr-subtitle-soft {
+          0%   { opacity: 0; transform: translateY(4px); }
           100% { opacity: 1; transform: translateY(0); }
         }
-        @keyframes nsdr-bg-pulse {
-          0%, 100% { opacity: 0.55; }
-          50%      { opacity: 0.9; }
+        @keyframes nsdr-bg-breathe {
+          0%, 100% { opacity: 0.6; }
+          50%      { opacity: 0.85; }
         }
-        .nsdr-cinematic { animation: nsdr-cinematic-zoom 4.6s cubic-bezier(0.22,1,0.36,1) forwards; }
-        .nsdr-line      { animation: nsdr-glow-line 2.4s cubic-bezier(0.22,1,0.36,1) 1.1s forwards; }
-        .nsdr-subtitle  { animation: nsdr-subtitle-fade 1.8s ease-out 2.2s both; }
-        .nsdr-bg        { animation: nsdr-bg-pulse 6s ease-in-out infinite; }
+        .nsdr-reveal    { animation: nsdr-soft-reveal 5.5s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .nsdr-line      { animation: nsdr-line-grow 2.8s cubic-bezier(0.22,1,0.36,1) 1.3s forwards; }
+        .nsdr-subtitle  { animation: nsdr-subtitle-soft 2.2s ease-out 2.6s both; }
+        .nsdr-bg        { animation: nsdr-bg-breathe 8s ease-in-out infinite; }
       `}</style>
       <div
         style={{
@@ -62,7 +62,7 @@ export function Preloader({ onDone }: { onDone: () => void }) {
             position: "absolute",
             inset: 0,
             background:
-              "radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.85) 100%)",
+              "radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.7) 100%)",
             pointerEvents: "none",
           }}
         />
@@ -71,17 +71,17 @@ export function Preloader({ onDone }: { onDone: () => void }) {
           className="nsdr-bg"
           style={{
             position: "absolute",
-            width: "780px",
-            height: "780px",
+            width: "600px",
+            height: "600px",
             borderRadius: "9999px",
-            background: "radial-gradient(circle, rgba(122,138,88,0.16), transparent 70%)",
-            filter: "blur(80px)",
+            background: "radial-gradient(circle, rgba(122,138,88,0.10), transparent 70%)",
+            filter: "blur(60px)",
             pointerEvents: "none",
           }}
         />
 
         <div
-          className="nsdr-cinematic"
+          className="nsdr-reveal"
           style={{
             position: "relative",
             display: "flex",
@@ -115,7 +115,7 @@ export function Preloader({ onDone }: { onDone: () => void }) {
               height: "1px",
               maxWidth: "260px",
               backgroundColor: "#7a8a58",
-              boxShadow: "0 0 10px rgba(122,138,88,0.6)",
+              boxShadow: "0 0 6px rgba(122,138,88,0.3)",
             }}
           />
 
@@ -127,7 +127,7 @@ export function Preloader({ onDone }: { onDone: () => void }) {
               fontSize: "12px",
               textTransform: "uppercase",
               letterSpacing: "0.4em",
-              color: "rgba(241,241,238,0.45)",
+              color: "rgba(241,241,238,0.40)",
               margin: "26px 0 0",
             }}
           >
@@ -138,3 +138,4 @@ export function Preloader({ onDone }: { onDone: () => void }) {
     </>
   );
 }
+
