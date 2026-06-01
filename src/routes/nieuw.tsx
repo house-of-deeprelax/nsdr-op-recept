@@ -239,7 +239,7 @@ function NieuwPage() {
                           <motion.button
                             key={p.id}
                             type="button"
-                            onClick={() => setPhase(p.id)}
+                            onClick={() => selectPhase(p.id)}
                             whileTap={{ scale: 0.98 }}
                             transition={{ type: "spring", stiffness: 400, damping: 22 }}
                             className="relative flex flex-col items-center justify-center transition-colors"
@@ -278,10 +278,22 @@ function NieuwPage() {
                     </div>
                   </Field>
 
-                  <Field label="Dominant domein">
+                  {phase && (
+                    <Field label="Variant">
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        {variantsByPhase[phase].map((v) => (
+                          <Chip key={v} active={variant === v} onClick={() => setVariant(v)}>
+                            {v}
+                          </Chip>
+                        ))}
+                      </div>
+                    </Field>
+                  )}
+
+                  <Field label="Dominant domein" optional>
                     <div className="flex flex-wrap gap-2 pt-2">
                       {domains.map((d) => (
-                        <Chip key={d} active={domain === d} onClick={() => setDomain(d)}>
+                        <Chip key={d} active={domain === d} onClick={() => setDomain(domain === d ? "" : d)}>
                           {d}
                         </Chip>
                       ))}
