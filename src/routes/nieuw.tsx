@@ -22,11 +22,30 @@ const domains = [
   "Chronische pijn", "Slaapproblemen",
 ];
 
-const variantsByPhase: Record<Phase, string[]> = {
-  "rood": ["Overdrive", "Freeze", "Oscillatie", "Trigger-respons"],
-  "rood-geel": ["Restspanning", "Restvermoeidheid", "Restoscillatie"],
-  "geel-groen": ["Mentaal hoog", "Fysiek hoog", "Emotioneel hoog"],
-  "groen": ["Stabiel-onderhoudend", "Hoog-presterend"],
+const variantsByPhase: Record<
+  Phase,
+  { label: string; value: string; description: string }[]
+> = {
+  rood: [
+    { label: "Overdrive", value: "overdrive", description: "systeem staat constant aan" },
+    { label: "Freeze", value: "freeze", description: "systeem is bevroren" },
+    { label: "Oscillatie", value: "oscillatie", description: "gaat heen en weer" },
+    { label: "Trigger-respons", value: "trigger-respons", description: "periodiek overspoeld" },
+  ],
+  "rood-geel": [
+    { label: "Restspanning", value: "restspanning", description: "uit Overdrive" },
+    { label: "Restvermoeidheid", value: "restvermoeidheid", description: "uit Freeze" },
+    { label: "Restoscillatie", value: "restoscillatie", description: "uit Oscillatie" },
+  ],
+  "geel-groen": [
+    { label: "Mentaal hoog", value: "mentaal-hoog", description: "hoofd staat niet uit" },
+    { label: "Fysiek hoog", value: "fysiek-hoog", description: "lichaam is nog gespannen" },
+    { label: "Emotioneel hoog", value: "emotioneel-hoog", description: "snel overspoeld" },
+  ],
+  groen: [
+    { label: "Stabiel-onderhoudend", value: "stabiel-onderhoudend", description: "na hersteltraject" },
+    { label: "Hoog-presterend", value: "hoog-presterend", description: "preventief gebruik" },
+  ],
 };
 
 const specialConditions: { label: string; value: string }[] = [
@@ -278,18 +297,6 @@ function NieuwPage() {
                     </div>
                   </Field>
 
-                  {phase && (
-                    <Field label="Variant">
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        {variantsByPhase[phase].map((v) => (
-                          <Chip key={v} active={variant === v} onClick={() => setVariant(v)}>
-                            {v}
-                          </Chip>
-                        ))}
-                      </div>
-                    </Field>
-                  )}
-
                   <Field label="Dominant domein" optional>
                     <div className="flex flex-wrap gap-2 pt-2">
                       {domains.map((d) => (
@@ -299,6 +306,45 @@ function NieuwPage() {
                       ))}
                     </div>
                   </Field>
+
+                  {phase && (
+                    <Field label="Variant">
+                      <div className="grid grid-cols-2 gap-3 pt-2">
+                        {variantsByPhase[phase].map((v) => {
+                          const active = variant === v.value;
+                          return (
+                            <motion.button
+                              key={v.value}
+                              type="button"
+                              onClick={() => setVariant(v.value)}
+                              whileTap={{ scale: 0.98 }}
+                              transition={{ type: "spring", stiffness: 400, damping: 22 }}
+                              className="relative flex flex-col items-start justify-center transition-colors"
+                              style={{
+                                padding: "20px 16px",
+                                borderRadius: 6,
+                                border: `1px solid ${active ? "var(--sage)" : "rgba(255,255,255,0.06)"}`,
+                                background: active ? "color-mix(in oklab, var(--sage) 6%, transparent)" : "transparent",
+                              }}
+                            >
+                              <span
+                                className="font-display-700"
+                                style={{ fontSize: 14, color: "#f0ede6" }}
+                              >
+                                {v.label}
+                              </span>
+                              <span
+                                className="mt-1 text-[11px]"
+                                style={{ color: "rgba(240,237,230,0.45)", lineHeight: 1.4 }}
+                              >
+                                {v.description}
+                              </span>
+                            </motion.button>
+                          );
+                        })}
+                      </div>
+                    </Field>
+                  )}
                 </div>
               )}
 
