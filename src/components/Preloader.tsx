@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 const TOTAL_MS = 5000;
-const FADE_MS = 600;
+const FADE_MS = 900;
 
 export function Preloader({ onDone }: { onDone: () => void }) {
   const [fadingOut, setFadingOut] = useState(false);
@@ -19,28 +19,27 @@ export function Preloader({ onDone }: { onDone: () => void }) {
     <>
       <style>{`
         @keyframes nsdr-cinematic-zoom {
-          0%   { transform: scale(0.92); opacity: 0; filter: blur(14px); }
-          40%  { opacity: 1; filter: blur(0); }
-          100% { transform: scale(1.06); opacity: 1; filter: blur(0); }
+          0%   { transform: scale(0.985); opacity: 0; filter: blur(6px); }
+          50%  { opacity: 1; filter: blur(0); }
+          100% { transform: scale(1.015); opacity: 1; filter: blur(0); }
         }
         @keyframes nsdr-glow-line {
           0%   { width: 0;     opacity: 0; }
-          30%  { opacity: 1; }
-          60%  { width: 220px; opacity: 1; }
-          100% { width: 220px; opacity: 1; }
+          40%  { opacity: 1; }
+          100% { width: 260px; opacity: 1; }
         }
         @keyframes nsdr-subtitle-fade {
-          0%   { opacity: 0; letter-spacing: 0.8em; transform: translateY(8px); }
-          100% { opacity: 1; letter-spacing: 0.4em; transform: translateY(0); }
+          0%   { opacity: 0; transform: translateY(6px); }
+          100% { opacity: 1; transform: translateY(0); }
         }
         @keyframes nsdr-bg-pulse {
-          0%, 100% { opacity: 0.5; }
-          50%      { opacity: 1; }
+          0%, 100% { opacity: 0.55; }
+          50%      { opacity: 0.9; }
         }
-        .nsdr-cinematic { animation: nsdr-cinematic-zoom 4.4s cubic-bezier(0.22,1,0.36,1) forwards; }
-        .nsdr-line      { animation: nsdr-glow-line 2.2s ease-in-out 0.6s forwards; }
-        .nsdr-subtitle  { animation: nsdr-subtitle-fade 1.4s ease-out 1.6s both; }
-        .nsdr-bg        { animation: nsdr-bg-pulse 3.5s ease-in-out infinite; }
+        .nsdr-cinematic { animation: nsdr-cinematic-zoom 4.6s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .nsdr-line      { animation: nsdr-glow-line 2.4s cubic-bezier(0.22,1,0.36,1) 1.1s forwards; }
+        .nsdr-subtitle  { animation: nsdr-subtitle-fade 1.8s ease-out 2.2s both; }
+        .nsdr-bg        { animation: nsdr-bg-pulse 6s ease-in-out infinite; }
       `}</style>
       <div
         style={{
@@ -53,11 +52,10 @@ export function Preloader({ onDone }: { onDone: () => void }) {
           justifyContent: "center",
           overflow: "hidden",
           opacity: fadingOut ? 0 : 1,
-          transition: `opacity ${FADE_MS}ms ease-out`,
+          transition: `opacity ${FADE_MS}ms ease-in-out`,
           pointerEvents: fadingOut ? "none" : "auto",
         }}
       >
-        {/* Cinematic vignette */}
         <div
           aria-hidden
           style={{
@@ -68,17 +66,16 @@ export function Preloader({ onDone }: { onDone: () => void }) {
             pointerEvents: "none",
           }}
         />
-        {/* Ambient backglow */}
         <div
           aria-hidden
           className="nsdr-bg"
           style={{
             position: "absolute",
-            width: "640px",
-            height: "640px",
+            width: "780px",
+            height: "780px",
             borderRadius: "9999px",
-            background: "radial-gradient(circle, rgba(122,138,88,0.18), transparent 70%)",
-            filter: "blur(60px)",
+            background: "radial-gradient(circle, rgba(122,138,88,0.16), transparent 70%)",
+            filter: "blur(80px)",
             pointerEvents: "none",
           }}
         />
@@ -96,14 +93,14 @@ export function Preloader({ onDone }: { onDone: () => void }) {
         >
           <h1
             style={{
-              fontFamily: "Barlow, system-ui, sans-serif",
-              fontWeight: 800,
-              fontSize: "clamp(48px, 8vw, 96px)",
+              fontFamily: "'DM Sans', system-ui, sans-serif",
+              fontWeight: 500,
+              fontSize: "clamp(64px, 11vw, 140px)",
               lineHeight: 1,
               color: "#F1F1EE",
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.035em",
               margin: 0,
-              textShadow: "0 0 30px rgba(241,241,238,0.18)",
+              textShadow: "0 0 40px rgba(241,241,238,0.12)",
               whiteSpace: "nowrap",
             }}
           >
@@ -113,24 +110,24 @@ export function Preloader({ onDone }: { onDone: () => void }) {
           <div
             className="nsdr-line"
             style={{
-              marginTop: "28px",
+              marginTop: "36px",
               height: "1px",
-              maxWidth: "220px",
+              maxWidth: "260px",
               backgroundColor: "#7a8a58",
-              boxShadow: "0 0 12px #7a8a58, 0 0 24px rgba(122,138,88,0.6)",
+              boxShadow: "0 0 10px rgba(122,138,88,0.6)",
             }}
           />
 
           <p
             className="nsdr-subtitle"
             style={{
-              marginTop: "24px",
+              marginTop: "26px",
               fontFamily: "'DM Sans', system-ui, sans-serif",
               fontSize: "12px",
               textTransform: "uppercase",
               letterSpacing: "0.4em",
               color: "rgba(241,241,238,0.45)",
-              margin: "24px 0 0",
+              margin: "26px 0 0",
             }}
           >
             Deeprelax Institute
