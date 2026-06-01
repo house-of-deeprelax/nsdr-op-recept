@@ -13,12 +13,48 @@ export const Route = createFileRoute("/")({
   component: Dashboard,
 });
 
-type RecentRx = { id: string; patient: string; phase: Phase; date: string };
+type RecentRx = {
+  id: string;
+  patient: string;
+  phase: Phase;
+  date: string;
+  variant: string;
+  domain: string;
+};
 
 const recent: RecentRx[] = [
-  { id: "RX-2025-041", patient: "Vrouw, 42 — chronische vermoeidheid", phase: "rood", date: "Vandaag" },
-  { id: "RX-2025-040", patient: "Man, 56 — herstel na hartoperatie", phase: "rood-geel", date: "Gisteren" },
-  { id: "RX-2025-039", patient: "Vrouw, 34 — burn-out, paniek", phase: "geel-groen", date: "2 dagen" },
+  {
+    id: "RX-2025-041",
+    patient: "Vrouw, 44 — burn-out, overspanning",
+    phase: "rood",
+    date: "Vandaag",
+    variant: "Overdrive",
+    domain: "Burn-out",
+  },
+  {
+    id: "RX-2025-040",
+    patient: "Man, 38 — post-COVID, slaapproblemen",
+    phase: "rood-geel",
+    date: "Gisteren",
+    variant: "Restvermoeidheid",
+    domain: "Postviraal",
+  },
+  {
+    id: "RX-2025-039",
+    patient: "Vrouw, 51 — perimenopauze, emotioneel labil",
+    phase: "geel-groen",
+    date: "2 dagen geleden",
+    variant: "Emotioneel hoog",
+    domain: "Hormonaal",
+  },
+  {
+    id: "RX-2025-038",
+    patient: "Man, 45 — preventief, hoog prestatieniveau",
+    phase: "groen",
+    date: "3 dagen geleden",
+    variant: "Hoog-presterend",
+    domain: "Burn-out",
+  },
 ];
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -215,22 +251,50 @@ function RecentRow({ rx, last }: { rx: RecentRx; last: boolean }) {
       <Link
         to="/recept/$id"
         params={{ id: rx.id.toLowerCase() }}
-        className="group relative flex items-center justify-between gap-3 py-3 transition-colors sm:py-4"
+        className="group relative flex flex-col gap-2 py-4 transition-colors sm:py-5"
         style={{ borderBottom: last ? "none" : "1px solid var(--border-default)" }}
       >
+        {/* Top row: RX + Date */}
+        <div className="flex items-center justify-between">
+          <span
+            className="text-[10px] uppercase"
+            style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.4)" }}
+          >
+            {rx.id}
+          </span>
+          <span
+            className="text-[10px] uppercase"
+            style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.35)" }}
+          >
+            {rx.date}
+          </span>
+        </div>
+
+        {/* Patient */}
         <span
-          className="hidden text-[10px] uppercase sm:inline-block"
-          style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.4)", width: 96 }}
-        >
-          {rx.id}
-        </span>
-        <span
-          className="min-w-0 flex-1 truncate text-[13px]"
+          className="text-[13px]"
           style={{ color: "rgba(240,237,230,0.85)" }}
         >
           {rx.patient}
         </span>
-        <PhaseBadge phase={rx.phase} />
+
+        {/* Badges row */}
+        <div className="flex items-center gap-2">
+          <PhaseBadge phase={rx.phase} />
+          <span className="text-[11px]" style={{ color: "rgba(240,237,230,0.5)" }}>
+            · {rx.variant}
+          </span>
+          <span
+            className="ml-auto rounded-full border px-2 py-0.5 text-[10px] uppercase"
+            style={{
+              borderColor: "var(--border-default)",
+              color: "rgba(240,237,230,0.45)",
+              letterSpacing: "0.08em",
+            }}
+          >
+            {rx.domain}
+          </span>
+        </div>
       </Link>
     </li>
   );
