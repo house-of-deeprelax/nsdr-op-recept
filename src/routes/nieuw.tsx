@@ -306,45 +306,6 @@ function NieuwPage() {
                       ))}
                     </div>
                   </Field>
-
-                  {phase && (
-                    <Field label="Variant">
-                      <div className="grid grid-cols-2 gap-3 pt-2">
-                        {variantsByPhase[phase].map((v) => {
-                          const active = variant === v.value;
-                          return (
-                            <motion.button
-                              key={v.value}
-                              type="button"
-                              onClick={() => setVariant(v.value)}
-                              whileTap={{ scale: 0.98 }}
-                              transition={{ type: "spring", stiffness: 400, damping: 22 }}
-                              className="relative flex flex-col items-start justify-center transition-colors"
-                              style={{
-                                padding: "20px 16px",
-                                borderRadius: 6,
-                                border: `1px solid ${active ? "var(--sage)" : "rgba(255,255,255,0.06)"}`,
-                                background: active ? "color-mix(in oklab, var(--sage) 6%, transparent)" : "transparent",
-                              }}
-                            >
-                              <span
-                                className="font-display-700"
-                                style={{ fontSize: 14, color: "#f0ede6" }}
-                              >
-                                {v.label}
-                              </span>
-                              <span
-                                className="mt-1 text-[11px]"
-                                style={{ color: "rgba(240,237,230,0.45)", lineHeight: 1.4 }}
-                              >
-                                {v.description}
-                              </span>
-                            </motion.button>
-                          );
-                        })}
-                      </div>
-                    </Field>
-                  )}
                 </div>
               )}
 
