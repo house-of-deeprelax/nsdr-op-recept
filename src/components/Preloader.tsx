@@ -93,19 +93,18 @@ export function Preloader({ onDone }: { onDone: () => void }) {
         >
           <h1
             style={{
-              fontFamily: "'DM Sans', system-ui, sans-serif",
-              fontWeight: 400,
-              fontSize: "clamp(20px, 2.6vw, 32px)",
-              lineHeight: 1,
+              fontFamily: "'Barlow', system-ui, sans-serif",
+              fontWeight: 800,
+              fontSize: "clamp(40px, 7vw, 88px)",
+              lineHeight: 1.05,
               color: "#F1F1EE",
               textTransform: "uppercase",
-              letterSpacing: "0.32em",
-              paddingLeft: "0.32em",
+              letterSpacing: "-0.01em",
               margin: 0,
               whiteSpace: "nowrap",
             }}
           >
-            NSDR op Recept
+            NSDR OP RECEPT
           </h1>
 
           <div
