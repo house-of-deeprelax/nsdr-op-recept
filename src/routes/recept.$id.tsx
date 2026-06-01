@@ -418,14 +418,22 @@ function RecipePage() {
         </div>
 
         <div className="mt-6 flex flex-row flex-wrap gap-1.5 lg:mt-auto lg:flex-col lg:pt-8">
-          <SidebarAction primary onClick={() => window.print()}>
-            <Download className="h-3.5 w-3.5" strokeWidth={1.5} /> PDF
+          <SidebarAction primary onClick={downloadPDF}>
+            <Download className="h-3.5 w-3.5" strokeWidth={1.5} /> PDF downloaden
           </SidebarAction>
           <SidebarAction onClick={() => navigate({ to: "/nieuw" })}>
             <Pencil className="h-3.5 w-3.5" strokeWidth={1.5} /> Nieuwe
           </SidebarAction>
           <SidebarAction onClick={copyToClipboard}>
-            <Copy className="h-3.5 w-3.5" strokeWidth={1.5} /> Kopiëren
+            {copied ? (
+              <>
+                <Check className="h-3.5 w-3.5" strokeWidth={1.5} /> Gekopieerd!
+              </>
+            ) : (
+              <>
+                <Copy className="h-3.5 w-3.5" strokeWidth={1.5} /> Kopiëren
+              </>
+            )}
           </SidebarAction>
           <Link
             to="/"
