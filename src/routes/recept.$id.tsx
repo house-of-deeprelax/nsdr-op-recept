@@ -146,24 +146,27 @@ function RecipePage() {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
-  const copyToClipboard = () => {
+  const rxNumber = id.toUpperCase();
+  const dateStr = new Date(stored.createdAt).toLocaleDateString("nl-NL", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
+  const copyToClipboard = async () => {
     const text = [
-      `RX-${id.toUpperCase()}`,
+      `NSDR op Recept — ${rxNumber}`,
+      dateStr,
       "",
       "VOOR WIE EN WAAR NU",
       recipe.voor_wie_en_waar_nu,
       "",
       "HET VOORSCHRIFT",
-      `Eerste keus: ${recipe.het_voorschrift.eerste_keus.sessie}`,
-      recipe.het_voorschrift.eerste_keus.rationale,
+      `Eerste keus: ${recipe.het_voorschrift.eerste_keus.sessie} — ${recipe.het_voorschrift.eerste_keus.rationale}`,
+      `Lichter: ${recipe.het_voorschrift.lichter.sessie} — ${recipe.het_voorschrift.lichter.rationale}`,
+      `Zwaarder: ${recipe.het_voorschrift.zwaarder.sessie} — ${recipe.het_voorschrift.zwaarder.rationale}`,
       "",
-      `Lichter: ${recipe.het_voorschrift.lichter.sessie}`,
-      recipe.het_voorschrift.lichter.rationale,
-      "",
-      `Zwaarder: ${recipe.het_voorschrift.zwaarder.sessie}`,
-      recipe.het_voorschrift.zwaarder.rationale,
-      "",
-      "DOSERING",
+      "DE DOSERING",
       recipe.de_dosering,
       "",
       "LOOPTIJD EN HERIJKING",
@@ -171,9 +174,153 @@ function RecipePage() {
       "",
       "WAAR JE OP LET",
       recipe.waar_je_op_let,
+      "",
+      "---",
+      "NSDR komt naast bestaande zorg, niet in plaats daarvan.",
+      "Deeprelax Institute — deeprelax.com",
     ].join("\n");
-    navigator.clipboard?.writeText(text);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Kopiëren mislukt");
+    }
   };
+
+  const downloadPDF = () => {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const marginX = 56;
+    const maxW = pageW - marginX * 2;
+    let y = 56;
+
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(20, 20, 20);
+
+    // Header
+    doc.setFontSize(10);
+    doc.setTextColor(120, 120, 120);
+    doc.text("Deeprelax Institute · NSDR op Recept", marginX, y);
+    doc.text(dateStr, pageW - marginX, y, { align: "right" });
+    y += 22;
+
+    doc.setFontSize(20);
+    doc.setTextColor(20, 20, 20);
+    doc.setFont("helvetica", "bold");
+    doc.text(rxNumber, marginX, y);
+    y += 10;
+    doc.setDrawColor(220, 220, 220);
+    doc.line(marginX, y, pageW - marginX, y);
+    y += 24;
+
+    const addSection = (title: string, body: string) => {
+      if (y > pageH - 100) {
+        doc.addPage();
+        y = 56;
+      }
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(80, 80, 80);
+      doc.text(title.toUpperCase(), marginX, y);
+      y += 16;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.setTextColor(30, 30, 30);
+      const lines = doc.splitTextToSize(body, maxW);
+      for (const line of lines) {
+        if (y > pageH - 80) {
+          doc.addPage();
+          y = 56;
+        }
+        doc.text(line, marginX, y);
+        y += 15;
+      }
+      y += 14;
+    };
+
+    addSection("Voor wie en waar nu", recipe.voor_wie_en_waar_nu);
+
+    // Voorschrift section as three cards
+    if (y > pageH - 100) {
+      doc.addPage();
+      y = 56;
+    }
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.setTextColor(80, 80, 80);
+    doc.text("HET VOORSCHRIFT", marginX, y);
+    y += 16;
+
+    const tiersData = [
+      { label: "Eerste keus", ...recipe.het_voorschrift.eerste_keus },
+      { label: "Lichter, als terugval", ...recipe.het_voorschrift.lichter },
+      { label: "Zwaarder, als opbouw", ...recipe.het_voorschrift.zwaarder },
+    ];
+    for (const t of tiersData) {
+      if (y > pageH - 120) {
+        doc.addPage();
+        y = 56;
+      }
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(110, 110, 110);
+      doc.text(t.label.toUpperCase(), marginX, y);
+      y += 14;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(20, 20, 20);
+      const sLines = doc.splitTextToSize(t.sessie, maxW);
+      for (const l of sLines) {
+        doc.text(l, marginX, y);
+        y += 14;
+      }
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10.5);
+      doc.setTextColor(60, 60, 60);
+      const rLines = doc.splitTextToSize(t.rationale, maxW);
+      for (const l of rLines) {
+        if (y > pageH - 80) {
+          doc.addPage();
+          y = 56;
+        }
+        doc.text(l, marginX, y);
+        y += 14;
+      }
+      y += 12;
+    }
+    y += 4;
+
+    addSection("De dosering", recipe.de_dosering);
+    addSection("Looptijd en herijking", recipe.looptijd_en_herijking);
+    addSection("Waar je op let", recipe.waar_je_op_let);
+
+    // Footer on every page
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setDrawColor(230, 230, 230);
+      doc.line(marginX, pageH - 56, pageW - marginX, pageH - 56);
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(9);
+      doc.setTextColor(120, 120, 120);
+      doc.text(
+        "NSDR komt naast bestaande zorg, niet in plaats daarvan.",
+        marginX,
+        pageH - 38,
+      );
+      doc.setFont("helvetica", "normal");
+      doc.text("Deeprelax Institute — deeprelax.com", marginX, pageH - 24);
+      doc.text(`${i} / ${pageCount}`, pageW - marginX, pageH - 24, {
+        align: "right",
+      });
+    }
+
+    doc.save(`${rxNumber}.pdf`);
+  };
+
+
 
   const phase = intake.phase as Phase;
 
