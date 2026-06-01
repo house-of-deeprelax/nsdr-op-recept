@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { generateRecipe } from "@/lib/recipe.functions";
 
 export const Route = createFileRoute("/genereren")({
   head: () => ({ meta: [{ title: "We schrijven je recept — NSDR op Recept" }] }),
@@ -17,25 +19,56 @@ const generationSteps = [
 
 function GenererenPage() {
   const navigate = useNavigate();
+  const callGenerate = useServerFn(generateRecipe);
   const [active, setActive] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const started = useRef(false);
 
   useEffect(() => {
-    const timers: ReturnType<typeof setTimeout>[] = [];
+    if (started.current) return;
+    started.current = true;
+
+    const raw = typeof window !== "undefined" ? sessionStorage.getItem("nsdr:intake") : null;
+    if (!raw) {
+      navigate({ to: "/nieuw" });
+      return;
+    }
+    const intake = JSON.parse(raw);
+
+    // Animate the step list independently from the network call
+    const stepTimers: ReturnType<typeof setTimeout>[] = [];
     generationSteps.forEach((_, i) => {
-      timers.push(setTimeout(() => setActive(i + 1), (i + 1) * 900));
+      stepTimers.push(setTimeout(() => setActive(i + 1), (i + 1) * 900));
     });
-    timers.push(
-      setTimeout(() => navigate({ to: "/recept/$id", params: { id: "demo" } }), generationSteps.length * 900 + 700),
-    );
-    return () => timers.forEach(clearTimeout);
-  }, [navigate]);
+
+    (async () => {
+      try {
+        const recipe = await callGenerate({ data: intake });
+        const id = `RX-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 900) + 100)}`;
+        sessionStorage.setItem(
+          `nsdr:recipe:${id.toLowerCase()}`,
+          JSON.stringify({ recipe, intake, createdAt: new Date().toISOString() }),
+        );
+        const minWait = generationSteps.length * 900 + 700;
+        const elapsed = 0; // simplified; we just always wait full anim
+        setTimeout(
+          () => navigate({ to: "/recept/$id", params: { id: id.toLowerCase() } }),
+          Math.max(0, minWait - elapsed),
+        );
+      } catch (e) {
+        console.error(e);
+        setError(e instanceof Error ? e.message : "Er ging iets mis bij het genereren.");
+      }
+    })();
+
+    return () => stepTimers.forEach(clearTimeout);
+  }, [navigate, callGenerate]);
 
   return (
     <div
-      className="flex w-full flex-col items-center justify-center"
+      className="flex w-full flex-col items-center justify-center px-6"
       style={{ minHeight: "calc(100vh - 44px)", background: "var(--background)" }}
     >
-      {/* Breathing circle */}
       <motion.div
         animate={{ scale: [0.9, 1.1, 0.9] }}
         transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
@@ -51,7 +84,7 @@ function GenererenPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="font-display"
+        className="font-display text-center"
         style={{ marginTop: 28, fontSize: 32, color: "#f0ede6", lineHeight: 1.05 }}
       >
         We schrijven je recept.
@@ -101,6 +134,26 @@ function GenererenPage() {
           );
         })}
       </ul>
+
+      {error && (
+        <div
+          className="mt-10 max-w-[420px] rounded-md p-4 text-center text-[13px]"
+          style={{
+            background: "rgba(158,126,94,0.08)",
+            border: "1px solid rgba(158,126,94,0.3)",
+            color: "var(--tierra)",
+          }}
+        >
+          {error}
+          <button
+            onClick={() => navigate({ to: "/nieuw" })}
+            className="mt-3 block w-full text-[12px] underline"
+            style={{ color: "rgba(240,237,230,0.7)" }}
+          >
+            Terug naar intake
+          </button>
+        </div>
+      )}
     </div>
   );
 }

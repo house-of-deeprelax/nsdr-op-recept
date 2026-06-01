@@ -70,6 +70,14 @@ function NieuwPage() {
 
   const go = (delta: 1 | -1) => {
     if (delta === 1 && step === 2) {
+      const intake = {
+        context, complaint, duration, treatment,
+        somaticCleared: somatic === true,
+        phase, domain, setting, time, frequency, rhythm,
+      };
+      try {
+        sessionStorage.setItem("nsdr:intake", JSON.stringify(intake));
+      } catch {}
       navigate({ to: "/genereren" });
       return;
     }
