@@ -22,11 +22,30 @@ const domains = [
   "Chronische pijn", "Slaapproblemen",
 ];
 
-const variantsByPhase: Record<Phase, string[]> = {
-  "rood": ["Overdrive", "Freeze", "Oscillatie", "Trigger-respons"],
-  "rood-geel": ["Restspanning", "Restvermoeidheid", "Restoscillatie"],
-  "geel-groen": ["Mentaal hoog", "Fysiek hoog", "Emotioneel hoog"],
-  "groen": ["Stabiel-onderhoudend", "Hoog-presterend"],
+const variantsByPhase: Record<
+  Phase,
+  { label: string; value: string; description: string }[]
+> = {
+  rood: [
+    { label: "Overdrive", value: "overdrive", description: "systeem staat constant aan" },
+    { label: "Freeze", value: "freeze", description: "systeem is bevroren" },
+    { label: "Oscillatie", value: "oscillatie", description: "gaat heen en weer" },
+    { label: "Trigger-respons", value: "trigger-respons", description: "periodiek overspoeld" },
+  ],
+  "rood-geel": [
+    { label: "Restspanning", value: "restspanning", description: "uit Overdrive" },
+    { label: "Restvermoeidheid", value: "restvermoeidheid", description: "uit Freeze" },
+    { label: "Restoscillatie", value: "restoscillatie", description: "uit Oscillatie" },
+  ],
+  "geel-groen": [
+    { label: "Mentaal hoog", value: "mentaal-hoog", description: "hoofd staat niet uit" },
+    { label: "Fysiek hoog", value: "fysiek-hoog", description: "lichaam is nog gespannen" },
+    { label: "Emotioneel hoog", value: "emotioneel-hoog", description: "snel overspoeld" },
+  ],
+  groen: [
+    { label: "Stabiel-onderhoudend", value: "stabiel-onderhoudend", description: "na hersteltraject" },
+    { label: "Hoog-presterend", value: "hoog-presterend", description: "preventief gebruik" },
+  ],
 };
 
 const specialConditions: { label: string; value: string }[] = [
