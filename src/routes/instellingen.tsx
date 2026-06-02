@@ -20,16 +20,15 @@ const PROFESSIONS = [
   "Anders",
 ];
 
-const PROTOCOLS = [
-  "Basisprotocol",
-  "Sessiebibliotheek",
+const KENNISBANK = ["Basisprotocol", "Sessiebibliotheek", "Groepsbehandeling"];
+
+const VERDIEPINGEN = [
   "Pijn",
   "Neurodivergentie",
   "Post-viraal",
   "Slaap",
   "Burn-out",
   "Hormonaal",
-  "Groepsbehandeling",
   "Postcommotioneel",
   "Rouw",
 ];
