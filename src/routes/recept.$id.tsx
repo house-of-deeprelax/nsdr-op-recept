@@ -693,7 +693,7 @@ function RecipePage() {
                 <button
                   key={s.num}
                   onClick={() => scrollTo(s.num)}
-                  className="relative flex shrink-0 items-baseline gap-2 px-3 py-2 text-left transition-colors lg:gap-3 lg:px-0"
+                  className="relative flex shrink-0 cursor-pointer items-baseline gap-2 px-3 py-2 text-left transition-colors hover:text-[#f0ede6] lg:gap-3 lg:px-0"
                   style={{
                     color: active ? "#f0ede6" : "rgba(240,237,230,0.45)",
                     borderBottom: active ? "1px solid var(--sage)" : "1px solid transparent",
