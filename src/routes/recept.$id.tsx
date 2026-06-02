@@ -895,7 +895,8 @@ function SidebarAction({
   return (
     <button
       onClick={onClick}
-      className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-left text-[12px] transition-colors"
+      data-primary={primary ? "true" : "false"}
+      className="sidebar-action inline-flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-left text-[12px] transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)]"
       style={
         primary
           ? { background: "var(--sage)", color: "#0c0c0a", fontWeight: 500 }
