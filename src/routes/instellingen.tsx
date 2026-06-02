@@ -290,3 +290,25 @@ function Row({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+function ProtocolList({ items }: { items: string[] }) {
+  return (
+    <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+      {items.map((p) => (
+        <li
+          key={p}
+          className="flex items-center gap-2 rounded-md border px-3 py-2"
+          style={{
+            borderColor: "var(--border-default)",
+            background: "var(--surface-1)",
+          }}
+        >
+          <Check className="h-4 w-4" strokeWidth={2.5} style={{ color: "var(--sage)" }} />
+          <span className="text-[13px]" style={{ color: "#f0ede6" }}>
+            {p}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
