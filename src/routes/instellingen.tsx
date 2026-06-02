@@ -174,35 +174,26 @@ function InstellingenPage() {
           </div>
         </Section>
 
-        {/* KENNISBASIS */}
-        <Section number="02" title="Kennisbasis">
+        {/* KENNISBANK */}
+        <Section number="02a" title="Kennisbank">
           <div
             className="text-[11px] uppercase"
             style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.45)" }}
           >
             Actieve protocollen in de kennisbank
           </div>
-          <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {PROTOCOLS.map((p) => (
-              <li
-                key={p}
-                className="flex items-center gap-2 rounded-md border px-3 py-2"
-                style={{
-                  borderColor: "var(--border-default)",
-                  background: "var(--surface-1)",
-                }}
-              >
-                <Check
-                  className="h-4 w-4"
-                  strokeWidth={2.5}
-                  style={{ color: "var(--sage)" }}
-                />
-                <span className="text-[13px]" style={{ color: "#f0ede6" }}>
-                  {p}
-                </span>
-              </li>
-            ))}
-          </ul>
+          <ProtocolList items={KENNISBANK} />
+        </Section>
+
+        {/* VERDIEPINGEN */}
+        <Section number="02b" title="Verdiepingen">
+          <div
+            className="text-[11px] uppercase"
+            style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.45)" }}
+          >
+            Actieve verdiepingen
+          </div>
+          <ProtocolList items={VERDIEPINGEN} />
           <p
             className="mt-4 text-[12px]"
             style={{ color: "rgba(240,237,230,0.45)" }}
@@ -210,6 +201,7 @@ function InstellingenPage() {
             Protocollen worden beheerd door Deeprelax Institute.
           </p>
         </Section>
+
 
         {/* OVER */}
         <Section number="03" title="Over">
