@@ -178,4 +178,15 @@
 
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { scrollbar-width: none; }
+
+  .sidebar-action[data-primary="true"]:hover {
+    background: color-mix(in oklab, var(--sage) 88%, white 12%) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px -6px rgba(140, 158, 110, 0.5);
+  }
+  .sidebar-action[data-primary="false"]:hover {
+    background: rgba(240, 237, 230, 0.05) !important;
+    border-color: var(--border-hover) !important;
+    color: #f0ede6 !important;
+  }
 }
