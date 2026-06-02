@@ -12,9 +12,10 @@ export const Route = createFileRoute("/instellingen")({
 const PROFESSIONS = [
   "Arts",
   "Psycholoog",
+  "Psychotherapeut",
   "Fysiotherapeut",
-  "Coach",
   "Ergotherapeut",
+  "Coach",
   "Yogadocent",
   "Anders",
 ];
