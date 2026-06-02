@@ -36,29 +36,58 @@ const PROTOCOLS = [
 
 const STORAGE_KEY = "nsdr:settings:profile";
 
-type Profile = { name: string; profession: string; organization: string };
+type Profile = {
+  name: string;
+  profession: string;
+  organization: string;
+  address: string;
+  city: string;
+  phone: string;
+  email: string;
+  bigNumber: string;
+};
+
+const DEFAULT_PROFILE: Profile = {
+  name: "",
+  profession: "Arts",
+  organization: "",
+  address: "",
+  city: "",
+  phone: "",
+  email: "",
+  bigNumber: "",
+};
 
 function InstellingenPage() {
-  const [profile, setProfile] = useState<Profile>({
-    name: "",
-    profession: "Arts",
-    organization: "",
-  });
+  const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       try {
-        setProfile(JSON.parse(raw));
+        setProfile({ ...DEFAULT_PROFILE, ...JSON.parse(raw) });
       } catch {}
     }
   }, []);
 
   const save = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
-    toast.success("Opgeslagen");
+    toast.success("Profiel opgeslagen");
+    setSaved(true);
+    window.setTimeout(() => setSaved(false), 2400);
   };
+
+  const update = (key: keyof Profile) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setProfile({ ...profile, [key]: e.target.value });
+
+  const inputClass =
+    "w-full rounded-md border bg-transparent px-3 py-2 text-[13px] outline-none";
+  const inputStyle = {
+    borderColor: "var(--border-default)",
+    color: "#f0ede6",
+  } as const;
 
   return (
     <PageTransition>
@@ -73,31 +102,16 @@ function InstellingenPage() {
         {/* PROFIEL */}
         <Section number="01" title="Profiel">
           <div className="flex flex-col gap-4">
-            <Field label="Naam">
-              <input
-                type="text"
-                value={profile.name}
-                onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                className="w-full rounded-md border bg-transparent px-3 py-2 text-[13px] outline-none"
-                style={{
-                  borderColor: "var(--border-default)",
-                  color: "#f0ede6",
-                }}
-              />
+            <Field label="Volledige naam">
+              <input type="text" value={profile.name} onChange={update("name")} className={inputClass} style={inputStyle} />
             </Field>
 
-            <Field label="Beroep">
+            <Field label="Titel">
               <select
                 value={profile.profession}
-                onChange={(e) =>
-                  setProfile({ ...profile, profession: e.target.value })
-                }
-                className="w-full rounded-md border bg-transparent px-3 py-2 text-[13px] outline-none"
-                style={{
-                  borderColor: "var(--border-default)",
-                  color: "#f0ede6",
-                  background: "var(--surface-1)",
-                }}
+                onChange={update("profession")}
+                className={inputClass}
+                style={{ ...inputStyle, background: "var(--surface-1)" }}
               >
                 {PROFESSIONS.map((p) => (
                   <option key={p} value={p} style={{ background: "#0c0c0a" }}>
@@ -107,22 +121,31 @@ function InstellingenPage() {
               </select>
             </Field>
 
-            <Field label="Organisatie">
-              <input
-                type="text"
-                value={profile.organization}
-                onChange={(e) =>
-                  setProfile({ ...profile, organization: e.target.value })
-                }
-                className="w-full rounded-md border bg-transparent px-3 py-2 text-[13px] outline-none"
-                style={{
-                  borderColor: "var(--border-default)",
-                  color: "#f0ede6",
-                }}
-              />
+            <Field label="Praktijk / organisatie">
+              <input type="text" value={profile.organization} onChange={update("organization")} className={inputClass} style={inputStyle} />
             </Field>
 
-            <div>
+            <Field label="Adres">
+              <input type="text" value={profile.address} onChange={update("address")} className={inputClass} style={inputStyle} />
+            </Field>
+
+            <Field label="Plaats">
+              <input type="text" value={profile.city} onChange={update("city")} className={inputClass} style={inputStyle} />
+            </Field>
+
+            <Field label="Telefoonnummer">
+              <input type="tel" value={profile.phone} onChange={update("phone")} className={inputClass} style={inputStyle} />
+            </Field>
+
+            <Field label="Email">
+              <input type="email" value={profile.email} onChange={update("email")} className={inputClass} style={inputStyle} />
+            </Field>
+
+            <Field label="BIG-nummer (optioneel)">
+              <input type="text" value={profile.bigNumber} onChange={update("bigNumber")} className={inputClass} style={inputStyle} />
+            </Field>
+
+            <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={save}
@@ -136,9 +159,19 @@ function InstellingenPage() {
                   letterSpacing: "0.02em",
                 }}
               >
-                Opslaan
+                Profiel opslaan
               </button>
+              {saved && (
+                <span
+                  className="inline-flex items-center gap-1 text-[12px]"
+                  style={{ color: "var(--sage)" }}
+                >
+                  <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  Opgeslagen
+                </span>
+              )}
             </div>
+
           </div>
         </Section>
 
