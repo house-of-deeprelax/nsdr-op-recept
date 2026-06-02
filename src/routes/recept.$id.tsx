@@ -189,136 +189,439 @@ function RecipePage() {
   };
 
   const downloadPDF = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const pageW = doc.internal.pageSize.getWidth();
-    const pageH = doc.internal.pageSize.getHeight();
-    const marginX = 56;
-    const maxW = pageW - marginX * 2;
-    let y = 56;
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const pageW = doc.internal.pageSize.getWidth(); // 210
+    const pageH = doc.internal.pageSize.getHeight(); // 297
+    const mL = 20;
+    const mR = 20;
+    const mT = 18;
+    const mB = 18;
+    const contentW = pageW - mL - mR;
 
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(20, 20, 20);
+    // Load profile from localStorage
+    type Profile = {
+      name: string;
+      profession: string;
+      organization: string;
+      address: string;
+      city: string;
+      phone: string;
+      email: string;
+      bigNumber: string;
+    };
+    let profile: Profile = {
+      name: "",
+      profession: "",
+      organization: "",
+      address: "",
+      city: "",
+      phone: "",
+      email: "",
+      bigNumber: "",
+    };
+    try {
+      const raw =
+        typeof window !== "undefined"
+          ? localStorage.getItem("nsdr:settings:profile")
+          : null;
+      if (raw) profile = { ...profile, ...JSON.parse(raw) };
+    } catch {}
 
-    // Header
-    doc.setFontSize(10);
-    doc.setTextColor(120, 120, 120);
-    doc.text("Deeprelax Institute · NSDR op Recept", marginX, y);
-    doc.text(dateStr, pageW - marginX, y, { align: "right" });
-    y += 22;
+    const phaseColors: Record<string, [number, number, number]> = {
+      rood: [226, 75, 74],
+      "rood-geel": [212, 128, 32],
+      "geel-groen": [122, 176, 64],
+      groen: [58, 128, 64],
+    };
+    const phaseLabels: Record<string, string> = {
+      rood: "Rood",
+      "rood-geel": "Rood-Geel",
+      "geel-groen": "Geel-Groen",
+      groen: "Groen",
+    };
+    const phaseKey = (intake.phase as string) || "";
+    const phaseRGB = phaseColors[phaseKey] ?? [120, 120, 120];
+    const phaseLbl = phaseLabels[phaseKey] ?? phaseKey;
 
-    doc.setFontSize(20);
-    doc.setTextColor(20, 20, 20);
-    doc.setFont("helvetica", "bold");
-    doc.text(rxNumber, marginX, y);
-    y += 10;
-    doc.setDrawColor(220, 220, 220);
-    doc.line(marginX, y, pageW - marginX, y);
-    y += 24;
-
-    const addSection = (title: string, body: string) => {
-      if (y > pageH - 100) {
-        doc.addPage();
-        y = 56;
-      }
+    // ── HEADER (drawn once on first page) ──
+    const drawHeader = () => {
+      let yL = mT;
+      // Left — behandelaar
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.setTextColor(80, 80, 80);
-      doc.text(title.toUpperCase(), marginX, y);
-      y += 16;
+      doc.setFontSize(13);
+      doc.setTextColor(0, 0, 0);
+      doc.text(profile.name || "—", mL, yL + 4);
+      yL += 5.5;
+
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(11);
-      doc.setTextColor(30, 30, 30);
-      const lines = doc.splitTextToSize(body, maxW);
-      for (const line of lines) {
-        if (y > pageH - 80) {
-          doc.addPage();
-          y = 56;
-        }
-        doc.text(line, marginX, y);
-        y += 15;
+      doc.setFontSize(10);
+      doc.setTextColor(85, 85, 85);
+      const leftLines: string[] = [];
+      if (profile.profession) leftLines.push(profile.profession);
+      if (profile.organization) leftLines.push(profile.organization);
+      const addr = [profile.address, profile.city].filter(Boolean).join(", ");
+      if (addr) leftLines.push(addr);
+      if (profile.phone) leftLines.push(profile.phone);
+      if (profile.email) leftLines.push(profile.email);
+      for (const line of leftLines) {
+        yL += 4.2;
+        doc.text(line, mL, yL);
       }
-      y += 14;
+      if (profile.bigNumber) {
+        yL += 4.5;
+        doc.setFontSize(9);
+        doc.setTextColor(136, 136, 136);
+        doc.text(`BIG-nummer: ${profile.bigNumber}`, mL, yL);
+      }
+
+      // Right — recept info
+      let yR = mT;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(136, 136, 136);
+      doc.setCharSpace(0.8);
+      doc.text("NSDR OP RECEPT", pageW - mR, yR + 3, { align: "right" });
+      doc.setCharSpace(0);
+      yR += 9;
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(22);
+      doc.setTextColor(0, 0, 0);
+      doc.text(rxNumber, pageW - mR, yR + 4, { align: "right" });
+      yR += 9;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(85, 85, 85);
+      doc.text(`Datum: ${dateStr}`, pageW - mR, yR + 2, { align: "right" });
+
+      const headerBottom = Math.max(yL, yR + 2) + 4;
+
+      // Divider
+      doc.setDrawColor(51, 51, 51);
+      doc.setLineWidth(0.18);
+      doc.line(mL, headerBottom, pageW - mR, headerBottom);
+
+      return headerBottom + 8; // gap 8mm
     };
 
-    addSection("Voor wie en waar nu", recipe.voor_wie_en_waar_nu);
-
-    // Voorschrift section as three cards
-    if (y > pageH - 100) {
-      doc.addPage();
-      y = 56;
-    }
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.setTextColor(80, 80, 80);
-    doc.text("HET VOORSCHRIFT", marginX, y);
-    y += 16;
-
-    const tiersData = [
-      { label: "Eerste keus", ...recipe.het_voorschrift.eerste_keus },
-      { label: "Lichter, als terugval", ...recipe.het_voorschrift.lichter },
-      { label: "Zwaarder, als opbouw", ...recipe.het_voorschrift.zwaarder },
-    ];
-    for (const t of tiersData) {
-      if (y > pageH - 120) {
-        doc.addPage();
-        y = 56;
-      }
+    // ── COMPACT HEADER for continuation pages ──
+    const drawContinuationHeader = () => {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
-      doc.setTextColor(110, 110, 110);
-      doc.text(t.label.toUpperCase(), marginX, y);
-      y += 14;
+      doc.setTextColor(0, 0, 0);
+      doc.text(rxNumber, mL, mT + 3);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(136, 136, 136);
+      doc.text(profile.name || "", pageW - mR, mT + 3, { align: "right" });
+
+      const yLine = mT + 6;
+      doc.setDrawColor(51, 51, 51);
+      doc.setLineWidth(0.18);
+      doc.line(mL, yLine, pageW - mR, yLine);
+      return yLine + 6;
+    };
+
+    let y = drawHeader();
+
+    // ── PATIENT CONTEXT BLOCK ──
+    const drawContextBox = (startY: number) => {
+      const padding = 5;
+      const boxX = mL;
+      const boxW = contentW;
+      const colW = (boxW - padding * 3) / 2;
+
+      // Measure content
+      doc.setFontSize(10);
+      const clientText = intake.context || "—";
+      const clientLines = doc.splitTextToSize(clientText, colW);
+      const variantText = intake.variant ? ` ${intake.variant}` : "";
+      const faseTextLines = doc.splitTextToSize(
+        `${phaseLbl}${variantText}`,
+        colW - 4,
+      );
+
+      const labelH = 4;
+      const lineH = 4.6;
+      const leftH = labelH + 2 + clientLines.length * lineH;
+      const rightH = labelH + 2 + faseTextLines.length * lineH;
+      const boxH = Math.max(leftH, rightH) + padding * 2;
+
+      // Box
+      doc.setFillColor(248, 248, 248);
+      doc.setDrawColor(248, 248, 248);
+      doc.roundedRect(boxX, startY, boxW, boxH, 2, 2, "F");
+
+      // Left col — CLIËNT
+      const leftX = boxX + padding;
+      let ly = startY + padding + 3;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.setTextColor(136, 136, 136);
+      doc.setCharSpace(0.5);
+      doc.text("CLIËNT", leftX, ly);
+      doc.setCharSpace(0);
+      ly += 5;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0);
+      for (const l of clientLines) {
+        doc.text(l, leftX, ly);
+        ly += lineH;
+      }
+
+      // Right col — FASE
+      const rightX = boxX + padding * 2 + colW;
+      let ry = startY + padding + 3;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.setTextColor(136, 136, 136);
+      doc.setCharSpace(0.5);
+      doc.text("FASE", rightX, ry);
+      doc.setCharSpace(0);
+      ry += 5;
+
+      // Phase color dot/pill
+      doc.setFillColor(phaseRGB[0], phaseRGB[1], phaseRGB[2]);
+      doc.circle(rightX + 1.6, ry - 1.2, 1.4, "F");
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0);
+      doc.text(faseTextLines[0] ?? "", rightX + 5, ry);
+      ry += lineH;
+      for (let i = 1; i < faseTextLines.length; i++) {
+        doc.text(faseTextLines[i], rightX + 5, ry);
+        ry += lineH;
+      }
+
+      return startY + boxH + 8; // gap 8mm
+    };
+
+    y = drawContextBox(y);
+
+    // ── SECTIONS ──
+    const footerReserve = 18; // mm reserved at bottom
+    const availableBottom = () => pageH - mB - footerReserve;
+
+    const measureSection = (title: string, body: string) => {
+      doc.setFontSize(11);
+      const titleH = 6 + 2 + 2; // title + rule + gap
+      doc.setFontSize(11);
+      const lines = doc.splitTextToSize(body, contentW);
+      return titleH + lines.length * 5.2 + 6;
+    };
+
+    const ensureSpace = (needed: number) => {
+      if (y + needed > availableBottom()) {
+        doc.addPage();
+        y = drawContinuationHeader();
+      }
+    };
+
+    const drawSection = (num: string, title: string, body: string) => {
+      const needed = measureSection(title, body);
+      ensureSpace(needed);
+
+      // Number + label
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.setTextColor(136, 136, 136);
+      doc.setCharSpace(0.6);
+      doc.text(num, mL, y);
+      doc.setCharSpace(0);
+
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
       doc.setTextColor(20, 20, 20);
-      const sLines = doc.splitTextToSize(t.sessie, maxW);
-      for (const l of sLines) {
-        doc.text(l, marginX, y);
-        y += 14;
-      }
+      doc.text(title.toUpperCase(), mL + 8, y);
+      y += 2;
+
+      // Thin rule
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.15);
+      doc.line(mL, y, pageW - mR, y);
+      y += 5;
+
+      // Body
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(10.5);
-      doc.setTextColor(60, 60, 60);
-      const rLines = doc.splitTextToSize(t.rationale, maxW);
-      for (const l of rLines) {
-        if (y > pageH - 80) {
-          doc.addPage();
-          y = 56;
-        }
-        doc.text(l, marginX, y);
-        y += 14;
+      doc.setFontSize(11);
+      doc.setTextColor(30, 30, 30);
+      const lines = doc.splitTextToSize(body, contentW);
+      for (const l of lines) {
+        doc.text(l, mL, y);
+        y += 5.2;
       }
-      y += 12;
+      y += 6;
+    };
+
+    // Section 02 — Voorschrift (three tiers)
+    const drawVoorschrift = () => {
+      const tiersArr = [
+        {
+          label: "Eerste keus",
+          ...recipe.het_voorschrift.eerste_keus,
+          color: [140, 158, 110] as [number, number, number],
+        },
+        {
+          label: "Lichter, als terugval",
+          ...recipe.het_voorschrift.lichter,
+          color: [160, 160, 160] as [number, number, number],
+        },
+        {
+          label: "Zwaarder, als opbouw",
+          ...recipe.het_voorschrift.zwaarder,
+          color: [109, 138, 168] as [number, number, number],
+        },
+      ];
+
+      // Measure full block
+      doc.setFontSize(11);
+      let blockH = 6 + 2 + 5; // header + rule + gap
+      for (const t of tiersArr) {
+        const sLines = doc.splitTextToSize(t.sessie, contentW - 4);
+        const rLines = doc.splitTextToSize(t.rationale, contentW - 4);
+        blockH += 5 + sLines.length * 5 + rLines.length * 4.8 + 5;
+      }
+      ensureSpace(blockH);
+
+      // Header
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.setTextColor(136, 136, 136);
+      doc.setCharSpace(0.6);
+      doc.text("02", mL, y);
+      doc.setCharSpace(0);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(20, 20, 20);
+      doc.text("HET VOORSCHRIFT", mL + 8, y);
+      y += 2;
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.15);
+      doc.line(mL, y, pageW - mR, y);
+      y += 5;
+
+      for (const t of tiersArr) {
+        // Left color bar
+        const startY = y - 1;
+        const sLines = doc.splitTextToSize(t.sessie, contentW - 6);
+        const rLines = doc.splitTextToSize(t.rationale, contentW - 6);
+        const tierH = 4 + sLines.length * 5 + rLines.length * 4.6 + 2;
+        doc.setFillColor(t.color[0], t.color[1], t.color[2]);
+        doc.rect(mL, startY, 1.2, tierH, "F");
+
+        const tx = mL + 5;
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.setTextColor(t.color[0], t.color[1], t.color[2]);
+        doc.setCharSpace(0.5);
+        doc.text(t.label.toUpperCase(), tx, y + 1);
+        doc.setCharSpace(0);
+        y += 4;
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.setTextColor(0, 0, 0);
+        for (const l of sLines) {
+          doc.text(l, tx, y + 2);
+          y += 5;
+        }
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(85, 85, 85);
+        for (const l of rLines) {
+          doc.text(l, tx, y + 2);
+          y += 4.6;
+        }
+        y += 4;
+      }
+      y += 2;
+    };
+
+    drawSection("01", "Voor wie en waar nu", recipe.voor_wie_en_waar_nu);
+    drawVoorschrift();
+    drawSection("03", "De dosering", recipe.de_dosering);
+    drawSection("04", "Looptijd en herijking", recipe.looptijd_en_herijking);
+    drawSection("05", "Waar je op let", recipe.waar_je_op_let);
+
+    // ── SIGNATURE BLOCK on last page ──
+    const sigH = 28;
+    if (y + sigH > availableBottom()) {
+      doc.addPage();
+      y = drawContinuationHeader();
     }
-    y += 4;
+    const sigY = Math.max(y + 10, availableBottom() - sigH);
+    const colGap = 10;
+    const leftColW = 70;
 
-    addSection("De dosering", recipe.de_dosering);
-    addSection("Looptijd en herijking", recipe.looptijd_en_herijking);
-    addSection("Waar je op let", recipe.waar_je_op_let);
+    // Left — handtekening
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(136, 136, 136);
+    doc.setCharSpace(0.5);
+    doc.text("HANDTEKENING BEHANDELAAR", mL, sigY);
+    doc.setCharSpace(0);
 
-    // Footer on every page
+    doc.setDrawColor(80, 80, 80);
+    doc.setLineWidth(0.3);
+    doc.line(mL, sigY + 14, mL + leftColW, sigY + 14);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(0, 0, 0);
+    doc.text(profile.name || "", mL, sigY + 19);
+    if (profile.profession) {
+      doc.setTextColor(136, 136, 136);
+      doc.text(profile.profession, mL, sigY + 23);
+    }
+
+    // Right — datum
+    const rightX = mL + leftColW + colGap;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(136, 136, 136);
+    doc.setCharSpace(0.5);
+    doc.text("DATUM", rightX, sigY);
+    doc.setCharSpace(0);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    doc.text(dateStr, rightX, sigY + 14);
+
+    // ── FOOTER on every page ──
     const pageCount = doc.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
-      doc.setDrawColor(230, 230, 230);
-      doc.line(marginX, pageH - 56, pageW - marginX, pageH - 56);
+      const fy = pageH - mB;
+      doc.setDrawColor(221, 221, 221);
+      doc.setLineWidth(0.1);
+      doc.line(mL, fy - 6, pageW - mR, fy - 6);
+
       doc.setFont("helvetica", "italic");
-      doc.setFontSize(9);
-      doc.setTextColor(120, 120, 120);
+      doc.setFontSize(8);
+      doc.setTextColor(153, 153, 153);
       doc.text(
         "NSDR komt naast bestaande zorg, niet in plaats daarvan.",
-        marginX,
-        pageH - 38,
+        mL,
+        fy - 1,
       );
+
       doc.setFont("helvetica", "normal");
-      doc.text("Deeprelax Institute — deeprelax.com", marginX, pageH - 24);
-      doc.text(`${i} / ${pageCount}`, pageW - marginX, pageH - 24, {
-        align: "right",
-      });
+      doc.text(
+        `Deeprelax Institute — deeprelax.com   pagina ${i} / ${pageCount}`,
+        pageW - mR,
+        fy - 1,
+        { align: "right" },
+      );
     }
 
     doc.save(`${rxNumber}.pdf`);
   };
+
+
 
 
 
