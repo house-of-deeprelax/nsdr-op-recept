@@ -130,7 +130,7 @@ function Dashboard() {
             <Step
               n="02"
               title="Systeemscan"
-              body="Bepaal fase en variant. Het systeem koppelt RESET-PRO domeinen aan de juiste interventies."
+              body="Bepaal fase en variant. Het systeem koppelt de juiste domeinen aan passende interventies."
               middle
             />
             <Step
