@@ -1,6 +1,50 @@
 import { Bell } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
+function computeInitials(name: string | null | undefined, email: string | null | undefined): string {
+  const source = (name ?? "").trim();
+  if (source) {
+    const parts = source.split(/\s+/).filter(Boolean);
+    const first = parts[0]?.[0] ?? "";
+    const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
+    return (first + last).toUpperCase().slice(0, 2);
+  }
+  const e = (email ?? "").trim();
+  if (e) return e.slice(0, 2).toUpperCase();
+  return "··";
+}
 
 export function TopBar() {
+  const [initials, setInitials] = useState<string>("··");
+
+  useEffect(() => {
+    let active = true;
+
+    async function load() {
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+      if (!user) {
+        if (active) setInitials("··");
+        return;
+      }
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, email")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (!active) return;
+      setInitials(computeInitials(profile?.full_name, profile?.email ?? user.email));
+    }
+
+    load();
+    const { data: sub } = supabase.auth.onAuthStateChange(() => load());
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
   return (
     <header
       className="sticky top-0 z-10 flex h-11 items-center justify-between bg-background px-4 sm:px-5"
@@ -37,7 +81,7 @@ export function TopBar() {
           className="grid h-7 w-7 place-items-center rounded-full text-[10px]"
           style={{ background: "rgba(140,158,110,0.15)", color: "var(--sage)", letterSpacing: "0.05em" }}
         >
-          PM
+          {initials}
         </div>
       </div>
     </header>
