@@ -115,7 +115,7 @@ function Dashboard() {
             className="mt-4 max-w-[720px] font-display text-[28px] sm:text-[36px] lg:text-[44px]"
             style={{ lineHeight: 1.1, letterSpacing: "-0.02em", color: "#f0ede6" }}
           >
-            Van casus naar voorschrift in drie stappen.
+            Van casus naar voorschrift<br className="hidden lg:inline" /> in drie stappen.
           </h2>
 
           <div
