@@ -115,9 +115,11 @@ export async function saveRecipe(args: {
       fase: phaseMap[args.intake.phase],
       variant: args.intake.variant || null,
       dominant_domein: args.intake.domain || null,
-      recipe: args.recipe as unknown as Record<string, unknown>,
-      intake: args.intake as unknown as Record<string, unknown>,
-    },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      recipe: args.recipe as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      intake: args.intake as any,
+    } as never,
     { onConflict: "user_id,rx_number" },
   );
 
