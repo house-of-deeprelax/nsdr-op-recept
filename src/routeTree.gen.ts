@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedReceptenRouteImport } from './routes/_authenticated/recepten'
 import { Route as AuthenticatedNieuwRouteImport } from './routes/_authenticated/nieuw'
 import { Route as AuthenticatedInstellingenRouteImport } from './routes/_authenticated/instellingen'
@@ -31,10 +31,10 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedReceptenRoute = AuthenticatedReceptenRouteImport.update({
   id: '/recepten',
@@ -85,7 +85,7 @@ const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/genereren': typeof AuthenticatedGenererenRoute
@@ -98,13 +98,13 @@ export interface FileRoutesByFullPath {
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/genereren': typeof AuthenticatedGenererenRoute
   '/instellingen': typeof AuthenticatedInstellingenRoute
   '/nieuw': typeof AuthenticatedNieuwRoute
   '/recepten': typeof AuthenticatedReceptenRoute
+  '/': typeof AuthenticatedIndexRoute
   '/recept/$id': typeof AuthenticatedReceptIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -112,7 +112,6 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -120,6 +119,7 @@ export interface FileRoutesById {
   '/_authenticated/instellingen': typeof AuthenticatedInstellingenRoute
   '/_authenticated/nieuw': typeof AuthenticatedNieuwRoute
   '/_authenticated/recepten': typeof AuthenticatedReceptenRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/recept/$id': typeof AuthenticatedReceptIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -141,20 +141,19 @@ export interface FileRouteTypes {
     | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/auth'
     | '/admin'
     | '/genereren'
     | '/instellingen'
     | '/nieuw'
     | '/recepten'
+    | '/'
     | '/recept/$id'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
   id:
     | '__root__'
-    | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/admin'
@@ -162,6 +161,7 @@ export interface FileRouteTypes {
     | '/_authenticated/instellingen'
     | '/_authenticated/nieuw'
     | '/_authenticated/recepten'
+    | '/_authenticated/'
     | '/_authenticated/recept/$id'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -169,7 +169,6 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -193,12 +192,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/recepten': {
       id: '/_authenticated/recepten'
@@ -272,6 +271,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInstellingenRoute: typeof AuthenticatedInstellingenRoute
   AuthenticatedNieuwRoute: typeof AuthenticatedNieuwRoute
   AuthenticatedReceptenRoute: typeof AuthenticatedReceptenRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedReceptIdRoute: typeof AuthenticatedReceptIdRoute
 }
 
@@ -281,6 +281,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedInstellingenRoute: AuthenticatedInstellingenRoute,
   AuthenticatedNieuwRoute: AuthenticatedNieuwRoute,
   AuthenticatedReceptenRoute: AuthenticatedReceptenRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedReceptIdRoute: AuthenticatedReceptIdRoute,
 }
 
@@ -288,7 +289,6 @@ const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
