@@ -188,17 +188,29 @@ function AuthPage() {
               {loading ? "Verifiëren…" : "Bevestig en log in"}
               <ArrowRight className="h-4 w-4" strokeWidth={2} />
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                setStep("email");
-                setCode("");
-              }}
-              className="text-[12px] underline"
-              style={{ color: "rgba(240,237,230,0.55)" }}
-            >
-              Ander e-mailadres gebruiken
-            </button>
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={resendCode}
+                disabled={resendIn > 0 || loading}
+                className="text-[12px] underline disabled:no-underline disabled:opacity-60"
+                style={{ color: "rgba(240,237,230,0.55)" }}
+              >
+                {resendIn > 0 ? `Nieuwe code over ${resendIn}s` : "Stuur nieuwe code"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setStep("email");
+                  setCode("");
+                }}
+                className="text-[12px] underline"
+                style={{ color: "rgba(240,237,230,0.55)" }}
+              >
+                Ander e-mailadres
+              </button>
+            </div>
+
           </form>
         )}
       </motion.div>
