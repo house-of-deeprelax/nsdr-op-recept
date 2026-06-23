@@ -20,6 +20,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resendIn, setResendIn] = useState(0);
 
   // Already signed in? Go home.
   useEffect(() => {
@@ -28,23 +29,48 @@ function AuthPage() {
     });
   }, [navigate]);
 
+  // Countdown for resend
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const t = setTimeout(() => setResendIn((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendIn]);
+
+  const requestCode = async (targetEmail: string) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email: targetEmail,
+      options: { shouldCreateUser: true },
+    });
+    if (error) {
+      toast.error(error.message);
+      return false;
+    }
+    setResendIn(45);
+    return true;
+  };
+
   const sendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = email.trim().toLowerCase();
     if (!trimmed) return;
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email: trimmed,
-      options: { shouldCreateUser: true },
-    });
+    const ok = await requestCode(trimmed);
     setLoading(false);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
+    if (!ok) return;
     toast.success("Code verstuurd naar je e-mail");
     setStep("code");
   };
+
+  const resendCode = async () => {
+    if (resendIn > 0 || loading) return;
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed) return;
+    setLoading(true);
+    const ok = await requestCode(trimmed);
+    setLoading(false);
+    if (ok) toast.success("Nieuwe code verstuurd");
+  };
+
 
   const verifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
