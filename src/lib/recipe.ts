@@ -68,9 +68,11 @@ export async function generateRecipe(
     special_conditions: intake.special_conditions,
   };
 
+  // De recept-edge-function draait in een apart Supabase-project. Een Bearer
+  // token van dit project zou daar niet valideren; gebruik de (publieke) anon
+  // key van dat project als Authorization + apikey.
   const { data: sessionData } = await supabase.auth.getSession();
-  const accessToken = sessionData.session?.access_token;
-  if (!accessToken) {
+  if (!sessionData.session) {
     throw new Error("Niet ingelogd — log opnieuw in om een recept te genereren.");
   }
 
@@ -78,7 +80,7 @@ export async function generateRecipe(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${GENERATION_ANON}`,
       apikey: GENERATION_ANON,
     },
     body: JSON.stringify(payload),
