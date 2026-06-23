@@ -78,7 +78,7 @@ function Dashboard() {
             style={{ lineHeight: 1.65, color: "rgba(240,237,230,0.5)" }}
           >
             Drie stappen: casus, systeemscan, setting. We stellen een passend
-            voorschrift samen volgens de RESET-PRO methode.
+            voorschrift samen volgens onze methode.
           </motion.p>
 
           <motion.div
@@ -130,7 +130,7 @@ function Dashboard() {
             <Step
               n="02"
               title="Systeemscan"
-              body="Bepaal fase en variant. Het systeem koppelt RESET-PRO domeinen aan de juiste interventies."
+              body="Bepaal fase en variant. Het systeem koppelt de juiste domeinen aan passende interventies."
               middle
             />
             <Step
