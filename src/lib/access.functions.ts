@@ -30,9 +30,15 @@ export const requestLoginCode = createServerFn({ method: "POST" })
     }
 
     if (!row) {
+      await supabaseAdmin
+        .from("denied_login_attempts")
+        .insert({ email, reason: "not_allowed" });
       return { ok: false as const, reason: "not_allowed" as const };
     }
     if (new Date(row.expires_at).getTime() <= Date.now()) {
+      await supabaseAdmin
+        .from("denied_login_attempts")
+        .insert({ email, reason: "expired" });
       return { ok: false as const, reason: "expired" as const };
     }
 
