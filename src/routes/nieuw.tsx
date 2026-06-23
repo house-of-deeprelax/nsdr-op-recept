@@ -124,7 +124,7 @@ function NieuwPage() {
         context, complaint, duration, treatment,
         somaticCleared: somatic === true,
         phase, variant, domain,
-        setting, time, frequency, rhythm,
+        setting, time, frequency, dailyTimes, rhythm,
         special_conditions: specialConds,
       };
       try {
