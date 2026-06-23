@@ -167,6 +167,15 @@ function InstellingenPage() {
               <span className="text-[12px]" style={{ color: "rgba(240,237,230,0.5)" }}>
                 {userEmail}
               </span>
+              {(Route.useRouteContext() as { isAdmin?: boolean }).isAdmin && (
+                <Link
+                  to="/admin"
+                  className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[12px] transition-colors hover:opacity-80"
+                  style={{ borderColor: "var(--border-default)", color: "#f0ede6" }}
+                >
+                  Beheer
+                </Link>
+              )}
               <button
                 type="button"
                 onClick={signOut}
@@ -178,6 +187,7 @@ function InstellingenPage() {
               </button>
             </div>
           )}
+
         </div>
 
         {/* PROFIEL */}
