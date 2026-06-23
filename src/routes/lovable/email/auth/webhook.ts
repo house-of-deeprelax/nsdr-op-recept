@@ -31,7 +31,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "nsdr-op-recept"
+const SITE_NAME = "NSDR op Recept"
 const SENDER_DOMAIN = "notify.deeprelaxinstitute.com"
 const ROOT_DOMAIN = "deeprelaxinstitute.com"
 const FROM_DOMAIN = "deeprelaxinstitute.com"
