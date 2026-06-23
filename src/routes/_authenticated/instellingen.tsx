@@ -62,6 +62,7 @@ const STORAGE_KEY = "nsdr:settings:profile";
 
 function InstellingenPage() {
   const navigate = useNavigate();
+  const { isAdmin } = Route.useRouteContext() as { isAdmin?: boolean };
   const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE);
   const [saved, setSaved] = useState(false);
   const [userEmail, setUserEmail] = useState<string>("");
@@ -167,7 +168,7 @@ function InstellingenPage() {
               <span className="text-[12px]" style={{ color: "rgba(240,237,230,0.5)" }}>
                 {userEmail}
               </span>
-              {(Route.useRouteContext() as { isAdmin?: boolean }).isAdmin && (
+              {isAdmin && (
                 <Link
                   to="/admin"
                   className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[12px] transition-colors hover:opacity-80"
