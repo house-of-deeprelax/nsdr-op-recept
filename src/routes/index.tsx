@@ -177,6 +177,35 @@ function CTAButton({ to, children }: { to: string; children: React.ReactNode }) 
   );
 }
 
+function SecondaryButton({ to, children }: { to: string; children: React.ReactNode }) {
+  return (
+    <Link
+      to={to}
+      className="group inline-flex items-center gap-2 rounded-md border px-5 py-3 transition-all duration-[120ms]"
+      style={{
+        borderColor: "var(--border-default)",
+        color: "#f0ede6",
+        background: "transparent",
+        fontFamily: "var(--font-display)",
+        fontWeight: 600,
+        fontSize: 13,
+        letterSpacing: "0.02em",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = "rgba(240,237,230,0.05)";
+        e.currentTarget.style.borderColor = "var(--border-hover)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = "transparent";
+        e.currentTarget.style.borderColor = "var(--border-default)";
+      }}
+    >
+      {children}
+      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
+    </Link>
+  );
+}
+
 function Step({
   n,
   title,
