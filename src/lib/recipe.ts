@@ -68,11 +68,17 @@ export async function generateRecipe(
     special_conditions: intake.special_conditions,
   };
 
+  const { data: sessionData } = await supabase.auth.getSession();
+  const accessToken = sessionData.session?.access_token;
+  if (!accessToken) {
+    throw new Error("Niet ingelogd — log opnieuw in om een recept te genereren.");
+  }
+
   const res = await fetch(`${GENERATION_URL}/functions/v1/generate-recipe`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${GENERATION_ANON}`,
+      Authorization: `Bearer ${accessToken}`,
       apikey: GENERATION_ANON,
     },
     body: JSON.stringify(payload),
