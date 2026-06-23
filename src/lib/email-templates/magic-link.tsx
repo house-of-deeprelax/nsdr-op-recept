@@ -14,27 +14,30 @@ import {
 interface MagicLinkEmailProps {
   siteName: string
   confirmationUrl: string
+  token?: string
 }
 
 export const MagicLinkEmail = ({
   siteName,
   confirmationUrl,
+  token,
 }: MagicLinkEmailProps) => (
-  <Html lang="en" dir="ltr">
+  <Html lang="nl" dir="ltr">
     <Head />
-    <Preview>Your login link for {siteName}</Preview>
+    <Preview>Je inlogcode voor {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Your login link</Heading>
+        <Heading style={h1}>Je inlogcode</Heading>
         <Text style={text}>
-          Click the button below to log in to {siteName}. This link will expire
-          shortly.
+          Gebruik deze eenmalige code om in te loggen bij {siteName}. De code verloopt binnenkort.
         </Text>
+        {token ? <Text style={codeStyle}>{token}</Text> : null}
+        <Text style={text}>Werkt de code niet? Dan kun je ook via onderstaande knop inloggen.</Text>
         <Button style={button} href={confirmationUrl}>
-          Log In
+          Inloggen
         </Button>
         <Text style={footer}>
-          If you didn't request this link, you can safely ignore this email.
+          Heb je dit niet aangevraagd? Dan kun je deze e-mail veilig negeren.
         </Text>
       </Container>
     </Body>
@@ -44,22 +47,34 @@ export const MagicLinkEmail = ({
 export default MagicLinkEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
+const container = { padding: '32px 28px', border: '1px solid #e7e2d7', borderRadius: '14px' }
 const h1 = {
-  fontSize: '22px',
+  fontSize: '28px',
   fontWeight: 'bold' as const,
-  color: '#000000',
+  color: '#0c0c0a',
   margin: '0 0 20px',
 }
 const text = {
   fontSize: '14px',
   color: '#55575d',
   lineHeight: '1.5',
-  margin: '0 0 25px',
+  margin: '0 0 18px',
+}
+const codeStyle = {
+  fontFamily: 'Courier, monospace',
+  fontSize: '34px',
+  fontWeight: 'bold' as const,
+  letterSpacing: '0.18em',
+  color: '#0c0c0a',
+  backgroundColor: '#f3f0e8',
+  borderRadius: '12px',
+  padding: '18px 20px',
+  textAlign: 'center' as const,
+  margin: '8px 0 22px',
 }
 const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
+  backgroundColor: '#8c9e6e',
+  color: '#0c0c0a',
   fontSize: '14px',
   borderRadius: '8px',
   padding: '12px 20px',
