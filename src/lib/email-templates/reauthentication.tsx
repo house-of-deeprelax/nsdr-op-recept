@@ -15,17 +15,17 @@ interface ReauthenticationEmailProps {
 }
 
 export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
-  <Html lang="nl" dir="ltr">
+  <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Je verificatiecode</Preview>
+    <Preview>Your verification code</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={eyebrow}>NSDR op Recept</Text>
-        <Heading style={h1}>Bevestig je identiteit</Heading>
-        <Text style={text}>Gebruik onderstaande code om je identiteit te bevestigen.</Text>
+        <Heading style={h1}>Confirm reauthentication</Heading>
+        <Text style={text}>Use the code below to confirm your identity:</Text>
         <Text style={codeStyle}>{token}</Text>
         <Text style={footer}>
-          Deze code verloopt binnenkort. Heb je dit niet aangevraagd? Dan kun je deze e-mail veilig negeren.
+          This code will expire shortly. If you didn't request this, you can
+          safely ignore this email.
         </Text>
       </Container>
     </Body>
@@ -35,12 +35,11 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
 export default ReauthenticationEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '32px 28px', border: '1px solid #e7e2d7', borderRadius: '14px' }
-const eyebrow = { color: '#8c9e6e', fontSize: '12px', fontWeight: 'bold' as const, letterSpacing: '0.08em', textTransform: 'uppercase' as const, margin: '0 0 12px' }
+const container = { padding: '20px 25px' }
 const h1 = {
-  fontSize: '28px',
+  fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: '#0c0c0a',
+  color: '#000000',
   margin: '0 0 20px',
 }
 const text = {
@@ -51,14 +50,9 @@ const text = {
 }
 const codeStyle = {
   fontFamily: 'Courier, monospace',
-  fontSize: '34px',
+  fontSize: '22px',
   fontWeight: 'bold' as const,
-  letterSpacing: '0.18em',
-  color: '#0c0c0a',
-  backgroundColor: '#f3f0e8',
-  borderRadius: '12px',
-  padding: '18px 20px',
-  textAlign: 'center' as const,
-  margin: '8px 0 22px',
+  color: '#000000',
+  margin: '0 0 30px',
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }

@@ -17,7 +17,6 @@ interface SignupEmailProps {
   siteUrl: string
   recipient: string
   confirmationUrl: string
-  token?: string
 }
 
 export const SignupEmail = ({
@@ -25,34 +24,32 @@ export const SignupEmail = ({
   siteUrl,
   recipient,
   confirmationUrl,
-  token,
 }: SignupEmailProps) => (
-  <Html lang="nl" dir="ltr">
+  <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Je verificatiecode voor {siteName}</Preview>
+    <Preview>Confirm your email for {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={eyebrow}>{siteName}</Text>
-        <Heading style={h1}>Bevestig je e-mailadres</Heading>
+        <Heading style={h1}>Confirm your email</Heading>
         <Text style={text}>
-          Bedankt voor je aanmelding bij{' '}
+          Thanks for signing up for{' '}
           <Link href={siteUrl} style={link}>
             <strong>{siteName}</strong>
           </Link>
-          .
+          !
         </Text>
         <Text style={text}>
-          Gebruik deze code om je e-mailadres (
+          Please confirm your email address (
           <Link href={`mailto:${recipient}`} style={link}>
             {recipient}
           </Link>
-          ) te bevestigen. De code verloopt binnenkort.
+          ) by clicking the button below:
         </Text>
-        {token ? <Text style={codeStyle}>{token}</Text> : null}
-        <Text style={text}>Werkt de code niet? Dan kun je ook via onderstaande knop verdergaan.</Text>
-        <Button style={button} href={confirmationUrl}>E-mailadres bevestigen</Button>
+        <Button style={button} href={confirmationUrl}>
+          Verify Email
+        </Button>
         <Text style={footer}>
-          Heb je geen account aangemaakt? Dan kun je deze e-mail veilig negeren.
+          If you didn't create an account, you can safely ignore this email.
         </Text>
       </Container>
     </Body>
@@ -62,12 +59,11 @@ export const SignupEmail = ({
 export default SignupEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '32px 28px', border: '1px solid #e7e2d7', borderRadius: '14px' }
-const eyebrow = { color: '#8c9e6e', fontSize: '12px', fontWeight: 'bold' as const, letterSpacing: '0.08em', textTransform: 'uppercase' as const, margin: '0 0 12px' }
+const container = { padding: '20px 25px' }
 const h1 = {
-  fontSize: '28px',
+  fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: '#0c0c0a',
+  color: '#000000',
   margin: '0 0 20px',
 }
 const text = {
@@ -77,21 +73,9 @@ const text = {
   margin: '0 0 25px',
 }
 const link = { color: 'inherit', textDecoration: 'underline' }
-const codeStyle = {
-  fontFamily: 'Courier, monospace',
-  fontSize: '34px',
-  fontWeight: 'bold' as const,
-  letterSpacing: '0.18em',
-  color: '#0c0c0a',
-  backgroundColor: '#f3f0e8',
-  borderRadius: '12px',
-  padding: '18px 20px',
-  textAlign: 'center' as const,
-  margin: '8px 0 22px',
-}
 const button = {
-  backgroundColor: '#8c9e6e',
-  color: '#0c0c0a',
+  backgroundColor: '#000000',
+  color: '#ffffff',
   fontSize: '14px',
   borderRadius: '8px',
   padding: '12px 20px',

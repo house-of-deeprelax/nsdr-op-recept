@@ -30,32 +30,32 @@ export const EmailChangeEmail = ({
   newEmail,
   confirmationUrl,
 }: EmailChangeEmailProps) => (
-  <Html lang="nl" dir="ltr">
+  <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Bevestig je wijziging voor {siteName}</Preview>
+    <Preview>Confirm your email change for {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={eyebrow}>{siteName}</Text>
-        <Heading style={h1}>Bevestig je e-mailadreswijziging</Heading>
+        <Heading style={h1}>Confirm your email change</Heading>
         <Text style={text}>
-          Je hebt gevraagd om je e-mailadres voor {siteName} te wijzigen van{' '}
+          You requested to change your email address for {siteName} from{' '}
           <Link href={`mailto:${oldEmail}`} style={link}>
             {oldEmail}
           </Link>{' '}
-          naar{' '}
+          to{' '}
           <Link href={`mailto:${newEmail}`} style={link}>
             {newEmail}
           </Link>
           .
         </Text>
         <Text style={text}>
-          Klik op de knop hieronder om deze wijziging te bevestigen:
+          Click the button below to confirm this change:
         </Text>
         <Button style={button} href={confirmationUrl}>
-          Wijziging bevestigen
+          Confirm Email Change
         </Button>
         <Text style={footer}>
-          Heb je dit niet aangevraagd? Beveilig je account dan direct.
+          If you didn't request this change, please secure your account
+          immediately.
         </Text>
       </Container>
     </Body>
@@ -65,12 +65,11 @@ export const EmailChangeEmail = ({
 export default EmailChangeEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '32px 28px', border: '1px solid #e7e2d7', borderRadius: '14px' }
-const eyebrow = { color: '#8c9e6e', fontSize: '12px', fontWeight: 'bold' as const, letterSpacing: '0.08em', textTransform: 'uppercase' as const, margin: '0 0 12px' }
+const container = { padding: '20px 25px' }
 const h1 = {
-  fontSize: '28px',
+  fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: '#0c0c0a',
+  color: '#000000',
   margin: '0 0 20px',
 }
 const text = {
@@ -81,8 +80,8 @@ const text = {
 }
 const link = { color: 'inherit', textDecoration: 'underline' }
 const button = {
-  backgroundColor: '#8c9e6e',
-  color: '#0c0c0a',
+  backgroundColor: '#000000',
+  color: '#ffffff',
   fontSize: '14px',
   borderRadius: '8px',
   padding: '12px 20px',
