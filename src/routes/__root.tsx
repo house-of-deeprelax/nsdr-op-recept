@@ -8,11 +8,15 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
+import { toast } from "sonner";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileTabs } from "@/components/layout/MobileTabs";
 import { TopBar } from "@/components/layout/TopBar";
 import { Toaster } from "@/components/ui/sonner";
 import { Preloader } from "@/components/Preloader";
+
+const SESSION_MAX_MS = 30 * 24 * 60 * 60 * 1000; // 30 dagen
+const LOGGED_IN_AT_KEY = "nsdr:loggedInAt";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
