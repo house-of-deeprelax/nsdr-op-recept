@@ -8,11 +8,15 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
+import { toast } from "sonner";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileTabs } from "@/components/layout/MobileTabs";
 import { TopBar } from "@/components/layout/TopBar";
 import { Toaster } from "@/components/ui/sonner";
 import { Preloader } from "@/components/Preloader";
+
+const SESSION_MAX_MS = 30 * 24 * 60 * 60 * 1000; // 30 dagen
+const LOGGED_IN_AT_KEY = "nsdr:loggedInAt";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -131,9 +135,55 @@ function RootComponent() {
 
   useEffect(() => {
     let mounted = true;
-    import("@/integrations/supabase/client").then(({ supabase }) => {
+
+    const enforceMaxAge = async (
+      supabase: typeof import("@/integrations/supabase/client")["supabase"],
+      reason: "expired" | "missing",
+    ) => {
+      try {
+        await supabase.auth.signOut();
+      } catch {
+        // ignore
+      }
+      localStorage.removeItem(LOGGED_IN_AT_KEY);
+      toast.error(
+        reason === "expired"
+          ? "Je sessie is verlopen (max. 1 maand). Log opnieuw in."
+          : "Je sessie is verlopen. Log opnieuw in.",
+      );
+    };
+
+    import("@/integrations/supabase/client").then(async ({ supabase }) => {
       if (!mounted) return;
-      const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+
+      // Check sessie-leeftijd bij elke app-load
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session) {
+        const raw = localStorage.getItem(LOGGED_IN_AT_KEY);
+        const loggedInAt = raw ? parseInt(raw, 10) : NaN;
+        if (!Number.isFinite(loggedInAt)) {
+          // Bestaande sessie zonder timestamp: zet nu, zodat we vanaf hier 30 dagen tellen
+          localStorage.setItem(LOGGED_IN_AT_KEY, String(Date.now()));
+        } else if (Date.now() - loggedInAt > SESSION_MAX_MS) {
+          await enforceMaxAge(supabase, "expired");
+        }
+      }
+
+      const { data: sub } = supabase.auth.onAuthStateChange(async (event) => {
+        if (event === "SIGNED_IN") {
+          localStorage.setItem(LOGGED_IN_AT_KEY, String(Date.now()));
+        }
+        if (event === "SIGNED_OUT") {
+          localStorage.removeItem(LOGGED_IN_AT_KEY);
+        }
+        if (event === "TOKEN_REFRESHED") {
+          const raw = localStorage.getItem(LOGGED_IN_AT_KEY);
+          const loggedInAt = raw ? parseInt(raw, 10) : NaN;
+          if (Number.isFinite(loggedInAt) && Date.now() - loggedInAt > SESSION_MAX_MS) {
+            await enforceMaxAge(supabase, "expired");
+            return;
+          }
+        }
         if (
           event !== "SIGNED_IN" &&
           event !== "SIGNED_OUT" &&
