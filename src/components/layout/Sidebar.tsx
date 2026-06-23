@@ -39,9 +39,9 @@ export function Sidebar(_props: { collapsed?: boolean; onToggle?: () => void }) 
                 />
               )}
               <Icon
-                className="h-4 w-4 transition-colors"
+                className="h-4 w-4 transition-colors hover:!text-foreground"
                 strokeWidth={1.5}
-                style={{ color: active ? "var(--foreground)" : "rgba(240,237,230,0.2)" }}
+                style={{ color: active ? "var(--foreground)" : "rgba(240,237,230,0.55)" }}
               />
             </Link>
           );
