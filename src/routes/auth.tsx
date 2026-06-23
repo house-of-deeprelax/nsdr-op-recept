@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { requestLoginCode } from "@/lib/access.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -37,12 +38,15 @@ function AuthPage() {
   }, [resendIn]);
 
   const requestCode = async (targetEmail: string) => {
-    const { error } = await supabase.auth.signInWithOtp({
-      email: targetEmail,
-      options: { shouldCreateUser: true },
-    });
-    if (error) {
-      toast.error(error.message);
+    const result = await requestLoginCode({ data: { email: targetEmail } });
+    if (!result.ok) {
+      if (result.reason === "not_allowed") {
+        toast.error("Geen toegang — dit e-mailadres staat niet op de uitnodigingslijst.");
+      } else if (result.reason === "expired") {
+        toast.error("Je toegang is verlopen. Neem contact op voor verlenging.");
+      } else {
+        toast.error("Er ging iets mis. Probeer het opnieuw.");
+      }
       return false;
     }
     setResendIn(45);
@@ -70,6 +74,8 @@ function AuthPage() {
     setLoading(false);
     if (ok) toast.success("Nieuwe code verstuurd");
   };
+
+
 
 
   const verifyCode = async (e: React.FormEvent) => {
