@@ -85,9 +85,10 @@ function Dashboard() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4, ease }}
-            className="mt-8 sm:mt-10"
+            className="mt-8 flex flex-wrap items-center gap-3 sm:mt-10"
           >
             <CTAButton to="/nieuw">Schrijf een recept</CTAButton>
+            <SecondaryButton to="/recepten">Alle recepten</SecondaryButton>
           </motion.div>
         </div>
       </motion.section>
@@ -168,6 +169,35 @@ function CTAButton({ to, children }: { to: string; children: React.ReactNode }) 
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = "scale(1)";
         e.currentTarget.style.filter = "brightness(1)";
+      }}
+    >
+      {children}
+      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
+    </Link>
+  );
+}
+
+function SecondaryButton({ to, children }: { to: string; children: React.ReactNode }) {
+  return (
+    <Link
+      to={to}
+      className="group inline-flex items-center gap-2 rounded-md border px-5 py-3 transition-all duration-[120ms]"
+      style={{
+        borderColor: "var(--border-default)",
+        color: "#f0ede6",
+        background: "transparent",
+        fontFamily: "var(--font-display)",
+        fontWeight: 600,
+        fontSize: 13,
+        letterSpacing: "0.02em",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = "rgba(240,237,230,0.05)";
+        e.currentTarget.style.borderColor = "var(--border-hover)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = "transparent";
+        e.currentTarget.style.borderColor = "var(--border-default)";
       }}
     >
       {children}
