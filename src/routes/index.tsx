@@ -67,7 +67,7 @@ function Dashboard() {
               color: "#f0ede6",
             }}
           >
-            Schrijf een recept op basis van de casus.
+            Schrijf een recept op<br className="hidden lg:inline" /> basis van de casus.
           </motion.h1>
 
           <motion.p
