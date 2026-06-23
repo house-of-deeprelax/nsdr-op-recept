@@ -47,7 +47,7 @@ export const SignupEmail = ({
           </Link>
           ) met onderstaande code.
         </Text>
-        {token ? <Text style={codeStyle}>{token}</Text> : null}
+        <Text style={codeStyle}>{token ?? '••••••'}</Text>
         <Text style={text}>Werkt de code niet? Dan kun je ook via onderstaande knop bevestigen.</Text>
         <Button style={button} href={confirmationUrl}>
           E-mailadres bevestigen

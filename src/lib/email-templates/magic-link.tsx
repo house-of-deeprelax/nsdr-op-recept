@@ -31,7 +31,7 @@ export const MagicLinkEmail = ({
         <Text style={text}>
           Gebruik deze eenmalige code om in te loggen bij {siteName}. De code verloopt binnenkort.
         </Text>
-        {token ? <Text style={codeStyle}>{token}</Text> : null}
+        <Text style={codeStyle}>{token ?? '••••••'}</Text>
         <Text style={text}>Werkt de code niet? Dan kun je ook via onderstaande knop inloggen.</Text>
         <Button style={button} href={confirmationUrl}>
           Inloggen
