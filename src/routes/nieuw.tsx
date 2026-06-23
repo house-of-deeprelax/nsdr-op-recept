@@ -96,13 +96,14 @@ function NieuwPage() {
   const [setting, setSetting] = useState<"individueel" | "groep">("individueel");
   const [time, setTime] = useState("");
   const [frequency, setFrequency] = useState("");
+  const [dailyTimes, setDailyTimes] = useState("");
   const [rhythm, setRhythm] = useState("");
   const [specialConds, setSpecialConds] = useState<string[]>([]);
 
   const canNext =
     (step === 0 && context && complaint && duration && somatic !== null) ||
     (step === 1 && phase && variant) ||
-    (step === 2 && time && frequency && rhythm);
+    (step === 2 && frequency && (frequency !== "Dagelijks" || dailyTimes));
 
   const progress = ((step + 1) / 3) * 100;
 
@@ -123,7 +124,7 @@ function NieuwPage() {
         context, complaint, duration, treatment,
         somaticCleared: somatic === true,
         phase, variant, domain,
-        setting, time, frequency, rhythm,
+        setting, time, frequency, dailyTimes, rhythm,
         special_conditions: specialConds,
       };
       try {
@@ -356,49 +357,28 @@ function NieuwPage() {
                       <LineToggle active={setting === "groep"} onClick={() => setSetting("groep")} label="Groep" />
                     </div>
                   </Field>
-                  <Field label="Beschikbare tijd">
-                    <ChipRow value={time} onChange={setTime} options={["10 min", "20 min", "30 min", "45 min"]} />
-                  </Field>
                   <Field label="Frequentie">
-                    <ChipRow value={frequency} onChange={setFrequency} options={["Dagelijks", "3x per week", "2x per week", "1x per week"]} />
-                  </Field>
-                  <Field label="Dagritme">
-                    <ChipRow value={rhythm} onChange={setRhythm} options={["Ochtendmens", "Avondmens", "Wisselend"]} />
-                  </Field>
-                  <Field label="Bijzondere omstandigheden" optional>
-                    <div className="flex flex-col gap-2 pt-2">
-                      {specialConditions.map((c) => {
-                        const active = specialConds.includes(c.value);
-                        return (
-                          <button
-                            key={c.value}
-                            type="button"
-                            onClick={() => toggleCondition(c.value)}
-                            className="flex items-center gap-3 rounded-md px-3 py-2.5 text-left text-[13px] transition-colors"
-                            style={{
-                              border: `1px solid ${active ? "var(--sage)" : "rgba(255,255,255,0.06)"}`,
-                              color: active ? "#f0ede6" : "rgba(240,237,230,0.6)",
-                              background: active ? "color-mix(in oklab, var(--sage) 6%, transparent)" : "transparent",
-                            }}
-                          >
-                            <span
-                              className="flex h-4 w-4 items-center justify-center rounded-[3px]"
-                              style={{
-                                border: `1px solid ${active ? "var(--sage)" : "rgba(255,255,255,0.2)"}`,
-                                background: active ? "var(--sage)" : "transparent",
-                              }}
-                            >
-                              {active && (
-                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                                  <path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0c0c0a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                              )}
-                            </span>
-                            {c.label}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    <ChipRow value={frequency} onChange={(v) => { setFrequency(v); if (v !== "Dagelijks") setDailyTimes(""); }} options={["Dagelijks", "3x per week", "2x per week", "1x per week"]} />
+                    {frequency === "Dagelijks" && (
+                      <div className="pt-3">
+                        <select
+                          value={dailyTimes}
+                          onChange={(e) => setDailyTimes(e.target.value)}
+                          className="w-full rounded-md px-3 py-2.5 text-[13px] outline-none transition-colors"
+                          style={{
+                            border: "1px solid rgba(255,255,255,0.08)",
+                            background: "rgba(255,255,255,0.02)",
+                            color: "#f0ede6",
+                          }}
+                        >
+                          <option value="">Hoe vaak per dag?</option>
+                          <option value="1x per dag">1x per dag</option>
+                          <option value="2x per dag">2x per dag</option>
+                          <option value="3x per dag">3x per dag</option>
+                          <option value="4x per dag">4x per dag</option>
+                        </select>
+                      </div>
+                    )}
                   </Field>
                 </div>
               )}
