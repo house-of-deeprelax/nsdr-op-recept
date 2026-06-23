@@ -14,11 +14,13 @@ import {
 interface RecoveryEmailProps {
   siteName: string
   confirmationUrl: string
+  token?: string
 }
 
 export const RecoveryEmail = ({
   siteName,
   confirmationUrl,
+  token,
 }: RecoveryEmailProps) => (
   <Html lang="nl" dir="ltr">
     <Head />
@@ -28,14 +30,16 @@ export const RecoveryEmail = ({
         <Heading style={h1}>Wachtwoord herstellen</Heading>
         <Text style={text}>
           We hebben een verzoek ontvangen om je wachtwoord voor {siteName} te herstellen.
-          Gebruik onderstaande knop om een nieuw wachtwoord te kiezen.
+          Gebruik onderstaande code om verder te gaan, of klik op de knop hieronder.
         </Text>
+        <Text style={codeStyle}>{token ?? '••••••'}</Text>
         <Button style={button} href={confirmationUrl}>
           Wachtwoord herstellen
         </Button>
         <Text style={footer}>
           Heb je dit niet aangevraagd? Dan kun je deze e-mail veilig negeren.
-          Je wachtwoord wordt niet gewijzigd.
+          Je wachtwoord wordt niet gewijzigd. De code is 1 uur geldig en wordt
+          ongeldig zodra je een nieuwe aanvraagt.
         </Text>
       </Container>
     </Body>
@@ -57,6 +61,15 @@ const text = {
   color: '#55575d',
   lineHeight: '1.5',
   margin: '0 0 18px',
+}
+const codeStyle = {
+  fontSize: '34px',
+  fontWeight: 'bold' as const,
+  color: '#0c0c0a',
+  letterSpacing: '0.3em',
+  textAlign: 'center' as const,
+  margin: '20px 0 24px',
+  fontFamily: 'monospace',
 }
 const button = {
   backgroundColor: '#8c9e6e',
