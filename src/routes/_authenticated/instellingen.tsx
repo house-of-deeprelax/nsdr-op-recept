@@ -155,12 +155,30 @@ function InstellingenPage() {
   return (
     <PageTransition>
       <div className="mx-auto w-full max-w-3xl px-6 py-10 sm:px-8 lg:px-12">
-        <h1
-          className="font-display text-[28px] sm:text-[36px]"
-          style={{ letterSpacing: "-0.02em", color: "#f0ede6" }}
-        >
-          Instellingen
-        </h1>
+        <div className="flex flex-wrap items-baseline justify-between gap-4">
+          <h1
+            className="font-display text-[28px] sm:text-[36px]"
+            style={{ letterSpacing: "-0.02em", color: "#f0ede6" }}
+          >
+            Instellingen
+          </h1>
+          {userEmail && (
+            <div className="flex items-center gap-3">
+              <span className="text-[12px]" style={{ color: "rgba(240,237,230,0.5)" }}>
+                {userEmail}
+              </span>
+              <button
+                type="button"
+                onClick={signOut}
+                className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[12px] transition-colors hover:opacity-80"
+                style={{ borderColor: "var(--border-default)", color: "#f0ede6" }}
+              >
+                <LogOut className="h-3.5 w-3.5" strokeWidth={1.8} />
+                Uitloggen
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* PROFIEL */}
         <Section number="01" title="Profiel">
