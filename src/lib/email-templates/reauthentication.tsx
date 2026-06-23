@@ -20,7 +20,6 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
     <Preview>Je verificatiecode</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={eyebrow}>NSDR op Recept</Text>
         <Heading style={h1}>Bevestig je identiteit</Heading>
         <Text style={text}>Gebruik onderstaande code om je identiteit te bevestigen.</Text>
         <Text style={codeStyle}>{token}</Text>
@@ -36,7 +35,6 @@ export default ReauthenticationEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
 const container = { padding: '32px 28px', border: '1px solid #e7e2d7', borderRadius: '14px' }
-const eyebrow = { color: '#8c9e6e', fontSize: '12px', fontWeight: 'bold' as const, letterSpacing: '0.08em', textTransform: 'uppercase' as const, margin: '0 0 12px' }
 const h1 = {
   fontSize: '28px',
   fontWeight: 'bold' as const,
@@ -47,7 +45,7 @@ const text = {
   fontSize: '14px',
   color: '#55575d',
   lineHeight: '1.5',
-  margin: '0 0 25px',
+  margin: '0 0 18px',
 }
 const codeStyle = {
   fontFamily: 'Courier, monospace',

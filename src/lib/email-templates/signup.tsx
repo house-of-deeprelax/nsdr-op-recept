@@ -32,8 +32,7 @@ export const SignupEmail = ({
     <Preview>Je verificatiecode voor {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={eyebrow}>{siteName}</Text>
-        <Heading style={h1}>Bevestig je e-mailadres</Heading>
+        <Heading style={h1}>Je verificatiecode</Heading>
         <Text style={text}>
           Bedankt voor je aanmelding bij{' '}
           <Link href={siteUrl} style={link}>
@@ -42,15 +41,17 @@ export const SignupEmail = ({
           .
         </Text>
         <Text style={text}>
-          Gebruik deze code om je e-mailadres (
+          Bevestig je e-mailadres (
           <Link href={`mailto:${recipient}`} style={link}>
             {recipient}
           </Link>
-          ) te bevestigen. De code verloopt binnenkort.
+          ) met onderstaande code.
         </Text>
         {token ? <Text style={codeStyle}>{token}</Text> : null}
-        <Text style={text}>Werkt de code niet? Dan kun je ook via onderstaande knop verdergaan.</Text>
-        <Button style={button} href={confirmationUrl}>E-mailadres bevestigen</Button>
+        <Text style={text}>Werkt de code niet? Dan kun je ook via onderstaande knop bevestigen.</Text>
+        <Button style={button} href={confirmationUrl}>
+          E-mailadres bevestigen
+        </Button>
         <Text style={footer}>
           Heb je geen account aangemaakt? Dan kun je deze e-mail veilig negeren.
         </Text>
@@ -63,7 +64,6 @@ export default SignupEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
 const container = { padding: '32px 28px', border: '1px solid #e7e2d7', borderRadius: '14px' }
-const eyebrow = { color: '#8c9e6e', fontSize: '12px', fontWeight: 'bold' as const, letterSpacing: '0.08em', textTransform: 'uppercase' as const, margin: '0 0 12px' }
 const h1 = {
   fontSize: '28px',
   fontWeight: 'bold' as const,
@@ -74,7 +74,7 @@ const text = {
   fontSize: '14px',
   color: '#55575d',
   lineHeight: '1.5',
-  margin: '0 0 25px',
+  margin: '0 0 18px',
 }
 const link = { color: 'inherit', textDecoration: 'underline' }
 const codeStyle = {

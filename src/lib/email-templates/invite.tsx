@@ -28,14 +28,13 @@ export const InviteEmail = ({
     <Preview>Je bent uitgenodigd voor {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={eyebrow}>{siteName}</Text>
         <Heading style={h1}>Je bent uitgenodigd</Heading>
         <Text style={text}>
-          Je bent uitgenodigd voor{' '}
+          Je bent uitgenodigd om deel te nemen aan{' '}
           <Link href={siteUrl} style={link}>
             <strong>{siteName}</strong>
           </Link>
-          . Klik op de knop hieronder om de uitnodiging te accepteren en je account aan te maken.
+          . Gebruik onderstaande knop om de uitnodiging te accepteren en je account aan te maken.
         </Text>
         <Button style={button} href={confirmationUrl}>
           Uitnodiging accepteren
@@ -52,7 +51,6 @@ export default InviteEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
 const container = { padding: '32px 28px', border: '1px solid #e7e2d7', borderRadius: '14px' }
-const eyebrow = { color: '#8c9e6e', fontSize: '12px', fontWeight: 'bold' as const, letterSpacing: '0.08em', textTransform: 'uppercase' as const, margin: '0 0 12px' }
 const h1 = {
   fontSize: '28px',
   fontWeight: 'bold' as const,
@@ -63,7 +61,7 @@ const text = {
   fontSize: '14px',
   color: '#55575d',
   lineHeight: '1.5',
-  margin: '0 0 25px',
+  margin: '0 0 18px',
 }
 const link = { color: 'inherit', textDecoration: 'underline' }
 const button = {

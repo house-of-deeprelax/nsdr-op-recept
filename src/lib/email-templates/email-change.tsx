@@ -32,13 +32,12 @@ export const EmailChangeEmail = ({
 }: EmailChangeEmailProps) => (
   <Html lang="nl" dir="ltr">
     <Head />
-    <Preview>Bevestig je wijziging voor {siteName}</Preview>
+    <Preview>Bevestig je nieuwe e-mailadres voor {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={eyebrow}>{siteName}</Text>
-        <Heading style={h1}>Bevestig je e-mailadreswijziging</Heading>
+        <Heading style={h1}>E-mailadres wijzigen</Heading>
         <Text style={text}>
-          Je hebt gevraagd om je e-mailadres voor {siteName} te wijzigen van{' '}
+          Je hebt aangevraagd om je e-mailadres voor {siteName} te wijzigen van{' '}
           <Link href={`mailto:${oldEmail}`} style={link}>
             {oldEmail}
           </Link>{' '}
@@ -49,13 +48,13 @@ export const EmailChangeEmail = ({
           .
         </Text>
         <Text style={text}>
-          Klik op de knop hieronder om deze wijziging te bevestigen:
+          Gebruik onderstaande knop om deze wijziging te bevestigen.
         </Text>
         <Button style={button} href={confirmationUrl}>
           Wijziging bevestigen
         </Button>
         <Text style={footer}>
-          Heb je dit niet aangevraagd? Beveilig je account dan direct.
+          Heb je dit niet aangevraagd? Beveilig dan direct je account.
         </Text>
       </Container>
     </Body>
@@ -66,7 +65,6 @@ export default EmailChangeEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
 const container = { padding: '32px 28px', border: '1px solid #e7e2d7', borderRadius: '14px' }
-const eyebrow = { color: '#8c9e6e', fontSize: '12px', fontWeight: 'bold' as const, letterSpacing: '0.08em', textTransform: 'uppercase' as const, margin: '0 0 12px' }
 const h1 = {
   fontSize: '28px',
   fontWeight: 'bold' as const,
@@ -77,7 +75,7 @@ const text = {
   fontSize: '14px',
   color: '#55575d',
   lineHeight: '1.5',
-  margin: '0 0 25px',
+  margin: '0 0 18px',
 }
 const link = { color: 'inherit', textDecoration: 'underline' }
 const button = {
