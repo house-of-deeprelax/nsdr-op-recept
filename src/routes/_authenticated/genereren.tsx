@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { generateRecipe, type Intake } from "@/lib/recipe";
 
-export const Route = createFileRoute("/genereren")({
+export const Route = createFileRoute("/_authenticated/genereren")({
   head: () => ({ meta: [{ title: "We schrijven je recept — NSDR op Recept" }] }),
   component: GenererenPage,
 });

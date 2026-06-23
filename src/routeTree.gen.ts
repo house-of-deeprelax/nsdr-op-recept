@@ -9,68 +9,69 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ReceptenRouteImport } from './routes/recepten'
-import { Route as NieuwRouteImport } from './routes/nieuw'
-import { Route as InstellingenRouteImport } from './routes/instellingen'
-import { Route as GenererenRouteImport } from './routes/genereren'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ReceptIdRouteImport } from './routes/recept.$id'
+import { Route as AuthenticatedReceptenRouteImport } from './routes/_authenticated/recepten'
+import { Route as AuthenticatedNieuwRouteImport } from './routes/_authenticated/nieuw'
+import { Route as AuthenticatedInstellingenRouteImport } from './routes/_authenticated/instellingen'
+import { Route as AuthenticatedGenererenRouteImport } from './routes/_authenticated/genereren'
+import { Route as AuthenticatedReceptIdRouteImport } from './routes/_authenticated/recept.$id'
 
-const ReceptenRoute = ReceptenRouteImport.update({
-  id: '/recepten',
-  path: '/recepten',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NieuwRoute = NieuwRouteImport.update({
-  id: '/nieuw',
-  path: '/nieuw',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InstellingenRoute = InstellingenRouteImport.update({
-  id: '/instellingen',
-  path: '/instellingen',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GenererenRoute = GenererenRouteImport.update({
-  id: '/genereren',
-  path: '/genereren',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReceptIdRoute = ReceptIdRouteImport.update({
-  id: '/recept/$id',
+const AuthenticatedReceptenRoute = AuthenticatedReceptenRouteImport.update({
+  id: '/_authenticated/recepten',
+  path: '/recepten',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedNieuwRoute = AuthenticatedNieuwRouteImport.update({
+  id: '/_authenticated/nieuw',
+  path: '/nieuw',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedInstellingenRoute =
+  AuthenticatedInstellingenRouteImport.update({
+    id: '/_authenticated/instellingen',
+    path: '/instellingen',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedGenererenRoute = AuthenticatedGenererenRouteImport.update({
+  id: '/_authenticated/genereren',
+  path: '/genereren',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedReceptIdRoute = AuthenticatedReceptIdRouteImport.update({
+  id: '/_authenticated/recept/$id',
   path: '/recept/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/genereren': typeof GenererenRoute
-  '/instellingen': typeof InstellingenRoute
-  '/nieuw': typeof NieuwRoute
-  '/recepten': typeof ReceptenRoute
-  '/recept/$id': typeof ReceptIdRoute
+  '/genereren': typeof AuthenticatedGenererenRoute
+  '/instellingen': typeof AuthenticatedInstellingenRoute
+  '/nieuw': typeof AuthenticatedNieuwRoute
+  '/recepten': typeof AuthenticatedReceptenRoute
+  '/recept/$id': typeof AuthenticatedReceptIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/genereren': typeof GenererenRoute
-  '/instellingen': typeof InstellingenRoute
-  '/nieuw': typeof NieuwRoute
-  '/recepten': typeof ReceptenRoute
-  '/recept/$id': typeof ReceptIdRoute
+  '/genereren': typeof AuthenticatedGenererenRoute
+  '/instellingen': typeof AuthenticatedInstellingenRoute
+  '/nieuw': typeof AuthenticatedNieuwRoute
+  '/recepten': typeof AuthenticatedReceptenRoute
+  '/recept/$id': typeof AuthenticatedReceptIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/genereren': typeof GenererenRoute
-  '/instellingen': typeof InstellingenRoute
-  '/nieuw': typeof NieuwRoute
-  '/recepten': typeof ReceptenRoute
-  '/recept/$id': typeof ReceptIdRoute
+  '/_authenticated/genereren': typeof AuthenticatedGenererenRoute
+  '/_authenticated/instellingen': typeof AuthenticatedInstellingenRoute
+  '/_authenticated/nieuw': typeof AuthenticatedNieuwRoute
+  '/_authenticated/recepten': typeof AuthenticatedReceptenRoute
+  '/_authenticated/recept/$id': typeof AuthenticatedReceptIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -92,52 +93,24 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/genereren'
-    | '/instellingen'
-    | '/nieuw'
-    | '/recepten'
-    | '/recept/$id'
+    | '/_authenticated/genereren'
+    | '/_authenticated/instellingen'
+    | '/_authenticated/nieuw'
+    | '/_authenticated/recepten'
+    | '/_authenticated/recept/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  GenererenRoute: typeof GenererenRoute
-  InstellingenRoute: typeof InstellingenRoute
-  NieuwRoute: typeof NieuwRoute
-  ReceptenRoute: typeof ReceptenRoute
-  ReceptIdRoute: typeof ReceptIdRoute
+  AuthenticatedGenererenRoute: typeof AuthenticatedGenererenRoute
+  AuthenticatedInstellingenRoute: typeof AuthenticatedInstellingenRoute
+  AuthenticatedNieuwRoute: typeof AuthenticatedNieuwRoute
+  AuthenticatedReceptenRoute: typeof AuthenticatedReceptenRoute
+  AuthenticatedReceptIdRoute: typeof AuthenticatedReceptIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/recepten': {
-      id: '/recepten'
-      path: '/recepten'
-      fullPath: '/recepten'
-      preLoaderRoute: typeof ReceptenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/nieuw': {
-      id: '/nieuw'
-      path: '/nieuw'
-      fullPath: '/nieuw'
-      preLoaderRoute: typeof NieuwRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/instellingen': {
-      id: '/instellingen'
-      path: '/instellingen'
-      fullPath: '/instellingen'
-      preLoaderRoute: typeof InstellingenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/genereren': {
-      id: '/genereren'
-      path: '/genereren'
-      fullPath: '/genereren'
-      preLoaderRoute: typeof GenererenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -145,11 +118,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/recept/$id': {
-      id: '/recept/$id'
+    '/_authenticated/recepten': {
+      id: '/_authenticated/recepten'
+      path: '/recepten'
+      fullPath: '/recepten'
+      preLoaderRoute: typeof AuthenticatedReceptenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/nieuw': {
+      id: '/_authenticated/nieuw'
+      path: '/nieuw'
+      fullPath: '/nieuw'
+      preLoaderRoute: typeof AuthenticatedNieuwRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/instellingen': {
+      id: '/_authenticated/instellingen'
+      path: '/instellingen'
+      fullPath: '/instellingen'
+      preLoaderRoute: typeof AuthenticatedInstellingenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/genereren': {
+      id: '/_authenticated/genereren'
+      path: '/genereren'
+      fullPath: '/genereren'
+      preLoaderRoute: typeof AuthenticatedGenererenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/recept/$id': {
+      id: '/_authenticated/recept/$id'
       path: '/recept/$id'
       fullPath: '/recept/$id'
-      preLoaderRoute: typeof ReceptIdRouteImport
+      preLoaderRoute: typeof AuthenticatedReceptIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -157,11 +158,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  GenererenRoute: GenererenRoute,
-  InstellingenRoute: InstellingenRoute,
-  NieuwRoute: NieuwRoute,
-  ReceptenRoute: ReceptenRoute,
-  ReceptIdRoute: ReceptIdRoute,
+  AuthenticatedGenererenRoute: AuthenticatedGenererenRoute,
+  AuthenticatedInstellingenRoute: AuthenticatedInstellingenRoute,
+  AuthenticatedNieuwRoute: AuthenticatedNieuwRoute,
+  AuthenticatedReceptenRoute: AuthenticatedReceptenRoute,
+  AuthenticatedReceptIdRoute: AuthenticatedReceptIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

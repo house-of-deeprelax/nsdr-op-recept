@@ -4,7 +4,7 @@ import { Check } from "lucide-react";
 import { toast } from "sonner";
 import { PageTransition } from "@/components/layout/PageTransition";
 
-export const Route = createFileRoute("/instellingen")({
+export const Route = createFileRoute("/_authenticated/instellingen")({
   head: () => ({ meta: [{ title: "Instellingen — NSDR op Recept" }] }),
   component: InstellingenPage,
 });

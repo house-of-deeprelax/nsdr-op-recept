@@ -5,7 +5,7 @@ import { PageTransition } from "@/components/layout/PageTransition";
 import { PhaseBadge, type Phase } from "@/components/brand/PhaseBadge";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/recipe";
 
-export const Route = createFileRoute("/recepten")({
+export const Route = createFileRoute("/_authenticated/recepten")({
   head: () => ({ meta: [{ title: "Recepten — NSDR op Recept" }] }),
   component: ReceptenPage,
 });
