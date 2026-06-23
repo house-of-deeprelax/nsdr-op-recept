@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Check } from "lucide-react";
+import { Check, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/instellingen")({
   head: () => ({ meta: [{ title: "Instellingen — NSDR op Recept" }] }),
@@ -33,8 +34,6 @@ const VERDIEPINGEN = [
   "Rouw",
 ];
 
-const STORAGE_KEY = "nsdr:settings:profile";
-
 type Profile = {
   name: string;
   profession: string;
@@ -57,25 +56,90 @@ const DEFAULT_PROFILE: Profile = {
   bigNumber: "",
 };
 
+// Cache profile in localStorage so the PDF generator (which reads synchronously)
+// keeps working — but the source of truth is the DB.
+const STORAGE_KEY = "nsdr:settings:profile";
+
 function InstellingenPage() {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE);
   const [saved, setSaved] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>("");
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      try {
-        setProfile({ ...DEFAULT_PROFILE, ...JSON.parse(raw) });
-      } catch {}
-    }
+    (async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+      if (!user) return;
+      setUserEmail(user.email ?? "");
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("full_name,titel,praktijk,adres,plaats,telefoon,email,big_nummer")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+      if (data) {
+        const next: Profile = {
+          name: data.full_name ?? "",
+          profession: data.titel ?? "Arts",
+          organization: data.praktijk ?? "",
+          address: data.adres ?? "",
+          city: data.plaats ?? "",
+          phone: data.telefoon ?? "",
+          email: data.email ?? user.email ?? "",
+          bigNumber: data.big_nummer ?? "",
+        };
+        setProfile(next);
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        } catch {}
+      }
+    })();
   }, []);
 
-  const save = () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+  const save = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData.user;
+    if (!user) {
+      toast.error("Niet ingelogd");
+      return;
+    }
+    const { error } = await supabase
+      .from("profiles")
+      .upsert({
+        id: user.id,
+        full_name: profile.name,
+        titel: profile.profession,
+        praktijk: profile.organization,
+        adres: profile.address,
+        plaats: profile.city,
+        telefoon: profile.phone,
+        email: profile.email,
+        big_nummer: profile.bigNumber,
+      } as never);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    } catch {}
     toast.success("Profiel opgeslagen");
     setSaved(true);
     window.setTimeout(() => setSaved(false), 2400);
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {}
+    navigate({ to: "/auth" });
   };
 
   const update = (key: keyof Profile) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
