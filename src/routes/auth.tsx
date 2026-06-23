@@ -171,17 +171,17 @@ function AuthPage() {
               inputMode="numeric"
               autoFocus
               required
-              maxLength={6}
+              maxLength={OTP_LENGTH}
               pattern="[0-9]*"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              placeholder="000000"
+              placeholder="00000000"
               className="w-full rounded-md border bg-transparent px-3 py-3 text-center text-[20px] tracking-[0.5em] outline-none transition-colors"
               style={{ borderColor: "var(--border-default)", color: "#f0ede6" }}
             />
             <button
               type="submit"
-              disabled={loading || code.length < 6}
+              disabled={loading || code.length < OTP_LENGTH}
               className="inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 transition-all disabled:opacity-60"
               style={{
                 background: "var(--sage)",
