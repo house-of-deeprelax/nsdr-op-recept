@@ -16,6 +16,7 @@ import { Route as AuthenticatedReceptenRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedNieuwRouteImport } from './routes/_authenticated/nieuw'
 import { Route as AuthenticatedInstellingenRouteImport } from './routes/_authenticated/instellingen'
 import { Route as AuthenticatedGenererenRouteImport } from './routes/_authenticated/genereren'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedReceptIdRouteImport } from './routes/_authenticated/recept.$id'
 
 const AuthRoute = AuthRouteImport.update({
@@ -53,6 +54,11 @@ const AuthenticatedGenererenRoute = AuthenticatedGenererenRouteImport.update({
   path: '/genereren',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedReceptIdRoute = AuthenticatedReceptIdRouteImport.update({
   id: '/recept/$id',
   path: '/recept/$id',
@@ -62,6 +68,7 @@ const AuthenticatedReceptIdRoute = AuthenticatedReceptIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/genereren': typeof AuthenticatedGenererenRoute
   '/instellingen': typeof AuthenticatedInstellingenRoute
   '/nieuw': typeof AuthenticatedNieuwRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/genereren': typeof AuthenticatedGenererenRoute
   '/instellingen': typeof AuthenticatedInstellingenRoute
   '/nieuw': typeof AuthenticatedNieuwRoute
@@ -82,6 +90,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/genereren': typeof AuthenticatedGenererenRoute
   '/_authenticated/instellingen': typeof AuthenticatedInstellingenRoute
   '/_authenticated/nieuw': typeof AuthenticatedNieuwRoute
@@ -93,6 +102,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/admin'
     | '/genereren'
     | '/instellingen'
     | '/nieuw'
@@ -102,6 +112,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/admin'
     | '/genereren'
     | '/instellingen'
     | '/nieuw'
@@ -112,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/admin'
     | '/_authenticated/genereren'
     | '/_authenticated/instellingen'
     | '/_authenticated/nieuw'
@@ -176,6 +188,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGenererenRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/recept/$id': {
       id: '/_authenticated/recept/$id'
       path: '/recept/$id'
@@ -187,6 +206,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedGenererenRoute: typeof AuthenticatedGenererenRoute
   AuthenticatedInstellingenRoute: typeof AuthenticatedInstellingenRoute
   AuthenticatedNieuwRoute: typeof AuthenticatedNieuwRoute
@@ -195,6 +215,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedGenererenRoute: AuthenticatedGenererenRoute,
   AuthenticatedInstellingenRoute: AuthenticatedInstellingenRoute,
   AuthenticatedNieuwRoute: AuthenticatedNieuwRoute,
