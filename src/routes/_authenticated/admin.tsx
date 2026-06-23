@@ -7,13 +7,19 @@ import {
   adminAddAllowedUser,
   adminExtendAllowedUser,
   adminDeleteAllowedUser,
+  checkMyAccess,
 } from "@/lib/access.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Beheer — NSDR op Recept" }] }),
-  beforeLoad: ({ context }) => {
-    const ctx = context as { isAdmin?: boolean };
-    if (!ctx.isAdmin) throw redirect({ to: "/" });
+  beforeLoad: async () => {
+    try {
+      const access = await checkMyAccess();
+      if (!access.isAdmin) throw redirect({ to: "/" });
+    } catch (e) {
+      if (e && typeof e === "object" && "to" in e) throw e;
+      throw redirect({ to: "/" });
+    }
   },
   component: AdminPage,
 });
