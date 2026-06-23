@@ -14,6 +14,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 const ease = [0.22, 1, 0.36, 1] as const;
+const OTP_LENGTH = 8;
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -91,7 +92,7 @@ function AuthPage() {
     });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      toast.error("Code verlopen of ongeldig. Controleer of je alle 8 cijfers uit de laatste e-mail hebt ingevuld.");
       return;
     }
     toast.success("Ingelogd");
@@ -129,7 +130,7 @@ function AuthPage() {
           style={{ lineHeight: 1.6, color: "rgba(240,237,230,0.55)" }}
         >
           {step === "email"
-            ? "We sturen je een 6-cijferige code per e-mail."
+            ? "We sturen je een 8-cijferige code per e-mail."
             : `We hebben een code gestuurd naar ${email}.`}
         </p>
 
