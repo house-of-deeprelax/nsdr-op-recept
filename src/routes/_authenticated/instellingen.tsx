@@ -62,6 +62,7 @@ const STORAGE_KEY = "nsdr:settings:profile";
 
 function InstellingenPage() {
   const navigate = useNavigate();
+  const { isAdmin } = Route.useRouteContext() as { isAdmin?: boolean };
   const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE);
   const [saved, setSaved] = useState(false);
   const [userEmail, setUserEmail] = useState<string>("");
