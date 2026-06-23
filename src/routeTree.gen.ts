@@ -17,6 +17,7 @@ import { Route as AuthenticatedNieuwRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedInstellingenRouteImport } from './routes/_authenticated/instellingen'
 import { Route as AuthenticatedGenererenRouteImport } from './routes/_authenticated/genereren'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiPublicAcWebhookRouteImport } from './routes/api/public/ac-webhook'
 import { Route as AuthenticatedReceptIdRouteImport } from './routes/_authenticated/recept.$id'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -62,6 +63,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicAcWebhookRoute = ApiPublicAcWebhookRouteImport.update({
+  id: '/api/public/ac-webhook',
+  path: '/api/public/ac-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedReceptIdRoute = AuthenticatedReceptIdRouteImport.update({
   id: '/recept/$id',
   path: '/recept/$id',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/nieuw': typeof AuthenticatedNieuwRoute
   '/recepten': typeof AuthenticatedReceptenRoute
   '/recept/$id': typeof AuthenticatedReceptIdRoute
+  '/api/public/ac-webhook': typeof ApiPublicAcWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByTo {
   '/recepten': typeof AuthenticatedReceptenRoute
   '/': typeof AuthenticatedIndexRoute
   '/recept/$id': typeof AuthenticatedReceptIdRoute
+  '/api/public/ac-webhook': typeof ApiPublicAcWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -121,6 +129,7 @@ export interface FileRoutesById {
   '/_authenticated/recepten': typeof AuthenticatedReceptenRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/recept/$id': typeof AuthenticatedReceptIdRoute
+  '/api/public/ac-webhook': typeof ApiPublicAcWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/nieuw'
     | '/recepten'
     | '/recept/$id'
+    | '/api/public/ac-webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/recepten'
     | '/'
     | '/recept/$id'
+    | '/api/public/ac-webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/_authenticated/recepten'
     | '/_authenticated/'
     | '/_authenticated/recept/$id'
+    | '/api/public/ac-webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -171,6 +183,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicAcWebhookRoute: typeof ApiPublicAcWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -234,6 +247,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/ac-webhook': {
+      id: '/api/public/ac-webhook'
+      path: '/api/public/ac-webhook'
+      fullPath: '/api/public/ac-webhook'
+      preLoaderRoute: typeof ApiPublicAcWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/recept/$id': {
       id: '/_authenticated/recept/$id'
       path: '/recept/$id'
@@ -291,6 +311,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicAcWebhookRoute: ApiPublicAcWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
@@ -298,13 +319,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
