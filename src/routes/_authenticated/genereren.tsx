@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { generateRecipe, type Intake } from "@/lib/recipe";
+import { generateRecipe, saveRecipe, type Intake } from "@/lib/recipe";
 
-export const Route = createFileRoute("/genereren")({
+export const Route = createFileRoute("/_authenticated/genereren")({
   head: () => ({ meta: [{ title: "We schrijven je recept — NSDR op Recept" }] }),
   component: GenererenPage,
 });
@@ -47,6 +47,10 @@ function GenererenPage() {
           `nsdr:recipe:${idLower}`,
           JSON.stringify({ recipe, intake, createdAt: new Date().toISOString() }),
         );
+        // Persist to Lovable Cloud — best-effort, don't block navigation.
+        saveRecipe({ id, recipe, intake }).catch((err) => {
+          console.error("saveRecipe failed", err);
+        });
         const minWait = generationSteps.length * 900 + 700;
         setTimeout(
           () => navigate({ to: "/recept/$id", params: { id: idLower } }),

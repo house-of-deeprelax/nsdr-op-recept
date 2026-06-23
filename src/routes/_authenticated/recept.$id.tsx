@@ -6,9 +6,9 @@ import { toast } from "sonner";
 import jsPDF from "jspdf";
 import { PhaseBadge, type Phase } from "@/components/brand/PhaseBadge";
 import { useTypewriter, Cursor } from "@/lib/typewriter";
-import type { Recipe, Intake } from "@/lib/recipe";
+import { getPrescriptionByRx, type Recipe, type Intake } from "@/lib/recipe";
 
-export const Route = createFileRoute("/recept/$id")({
+export const Route = createFileRoute("/_authenticated/recept/$id")({
   head: () => ({ meta: [{ title: "Voorschrift — NSDR op Recept" }] }),
   component: RecipePage,
 });
@@ -61,6 +61,7 @@ function RecipePage() {
   const [data, setData] = useState<Stored | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     const raw =
       typeof window !== "undefined"
         ? sessionStorage.getItem(`nsdr:recipe:${id.toLowerCase()}`)
@@ -72,7 +73,27 @@ function RecipePage() {
         return;
       } catch {}
     }
-    setData(FALLBACK);
+    // Fall back to DB lookup for older recipes opened from /recepten.
+    (async () => {
+      try {
+        const stored = await getPrescriptionByRx(id);
+        if (cancelled) return;
+        if (stored) {
+          setData(stored);
+          sessionStorage.setItem(
+            `nsdr:recipe:${id.toLowerCase()}`,
+            JSON.stringify(stored),
+          );
+        } else {
+          setData(FALLBACK);
+        }
+      } catch {
+        if (!cancelled) setData(FALLBACK);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   const [copied, setCopied] = useState(false);

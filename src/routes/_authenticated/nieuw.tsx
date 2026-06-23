@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import type { Phase } from "@/components/brand/PhaseBadge";
 
-export const Route = createFileRoute("/nieuw")({
+export const Route = createFileRoute("/_authenticated/nieuw")({
   head: () => ({ meta: [{ title: "Nieuw recept — NSDR op Recept" }] }),
   component: NieuwPage,
 });
