@@ -14,6 +14,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 const ease = [0.22, 1, 0.36, 1] as const;
+const OTP_LENGTH = 8;
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -91,7 +92,7 @@ function AuthPage() {
     });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      toast.error("Code verlopen of ongeldig. Controleer of je alle 8 cijfers uit de laatste e-mail hebt ingevuld.");
       return;
     }
     toast.success("Ingelogd");
@@ -129,7 +130,7 @@ function AuthPage() {
           style={{ lineHeight: 1.6, color: "rgba(240,237,230,0.55)" }}
         >
           {step === "email"
-            ? "We sturen je een 6-cijferige code per e-mail."
+            ? "We sturen je een 8-cijferige code per e-mail."
             : `We hebben een code gestuurd naar ${email}.`}
         </p>
 
@@ -170,17 +171,17 @@ function AuthPage() {
               inputMode="numeric"
               autoFocus
               required
-              maxLength={6}
+              maxLength={OTP_LENGTH}
               pattern="[0-9]*"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              placeholder="000000"
+              placeholder="00000000"
               className="w-full rounded-md border bg-transparent px-3 py-3 text-center text-[20px] tracking-[0.5em] outline-none transition-colors"
               style={{ borderColor: "var(--border-default)", color: "#f0ede6" }}
             />
             <button
               type="submit"
-              disabled={loading || code.length < 6}
+              disabled={loading || code.length < OTP_LENGTH}
               className="inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 transition-all disabled:opacity-60"
               style={{
                 background: "var(--sage)",
