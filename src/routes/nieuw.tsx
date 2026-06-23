@@ -96,13 +96,14 @@ function NieuwPage() {
   const [setting, setSetting] = useState<"individueel" | "groep">("individueel");
   const [time, setTime] = useState("");
   const [frequency, setFrequency] = useState("");
+  const [dailyTimes, setDailyTimes] = useState("");
   const [rhythm, setRhythm] = useState("");
   const [specialConds, setSpecialConds] = useState<string[]>([]);
 
   const canNext =
     (step === 0 && context && complaint && duration && somatic !== null) ||
     (step === 1 && phase && variant) ||
-    (step === 2 && time && frequency && rhythm);
+    (step === 2 && frequency && (frequency !== "Dagelijks" || dailyTimes));
 
   const progress = ((step + 1) / 3) * 100;
 
