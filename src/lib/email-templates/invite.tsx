@@ -23,26 +23,25 @@ export const InviteEmail = ({
   siteUrl,
   confirmationUrl,
 }: InviteEmailProps) => (
-  <Html lang="en" dir="ltr">
+  <Html lang="nl" dir="ltr">
     <Head />
-    <Preview>You've been invited to join {siteName}</Preview>
+    <Preview>Je bent uitgenodigd voor {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>You've been invited</Heading>
+        <Text style={eyebrow}>{siteName}</Text>
+        <Heading style={h1}>Je bent uitgenodigd</Heading>
         <Text style={text}>
-          You've been invited to join{' '}
+          Je bent uitgenodigd voor{' '}
           <Link href={siteUrl} style={link}>
             <strong>{siteName}</strong>
           </Link>
-          . Click the button below to accept the invitation and create your
-          account.
+          . Klik op de knop hieronder om de uitnodiging te accepteren en je account aan te maken.
         </Text>
         <Button style={button} href={confirmationUrl}>
-          Accept Invitation
+          Uitnodiging accepteren
         </Button>
         <Text style={footer}>
-          If you weren't expecting this invitation, you can safely ignore this
-          email.
+          Verwachtte je deze uitnodiging niet? Dan kun je deze e-mail veilig negeren.
         </Text>
       </Container>
     </Body>
@@ -52,11 +51,12 @@ export const InviteEmail = ({
 export default InviteEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
+const container = { padding: '32px 28px', border: '1px solid #e7e2d7', borderRadius: '14px' }
+const eyebrow = { color: '#8c9e6e', fontSize: '12px', fontWeight: 'bold' as const, letterSpacing: '0.08em', textTransform: 'uppercase' as const, margin: '0 0 12px' }
 const h1 = {
-  fontSize: '22px',
+  fontSize: '28px',
   fontWeight: 'bold' as const,
-  color: '#000000',
+  color: '#0c0c0a',
   margin: '0 0 20px',
 }
 const text = {
@@ -67,8 +67,8 @@ const text = {
 }
 const link = { color: 'inherit', textDecoration: 'underline' }
 const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
+  backgroundColor: '#8c9e6e',
+  color: '#0c0c0a',
   fontSize: '14px',
   borderRadius: '8px',
   padding: '12px 20px',
