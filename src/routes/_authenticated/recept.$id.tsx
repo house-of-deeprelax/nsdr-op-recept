@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import jsPDF from "jspdf";
 import { PhaseBadge, type Phase } from "@/components/brand/PhaseBadge";
 import { useTypewriter, Cursor } from "@/lib/typewriter";
-import type { Recipe, Intake } from "@/lib/recipe";
+import { getPrescriptionByRx, type Recipe, type Intake } from "@/lib/recipe";
 
 export const Route = createFileRoute("/_authenticated/recept/$id")({
   head: () => ({ meta: [{ title: "Voorschrift — NSDR op Recept" }] }),
