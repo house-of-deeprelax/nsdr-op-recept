@@ -17,28 +17,23 @@ export const requestLoginCode = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // Check whitelist via security-definer function
-    const { data: hasAccess, error: accessErr } = await supabaseAdmin.rpc(
-      "email_has_access",
-      { _email: email },
-    );
+    // Check whitelist directly (admin client bypasses RLS)
+    const { data: row, error: accessErr } = await supabaseAdmin
+      .from("allowed_users")
+      .select("expires_at")
+      .eq("email", email)
+      .maybeSingle();
 
     if (accessErr) {
-      console.error("email_has_access error", accessErr);
+      console.error("allowed_users lookup error", accessErr);
       return { ok: false as const, reason: "error" as const };
     }
 
-    if (!hasAccess) {
-      // Differentiate expired vs not-on-list
-      const { data: row } = await supabaseAdmin
-        .from("allowed_users")
-        .select("expires_at")
-        .eq("email", email)
-        .maybeSingle();
-      return {
-        ok: false as const,
-        reason: row ? ("expired" as const) : ("not_allowed" as const),
-      };
+    if (!row) {
+      return { ok: false as const, reason: "not_allowed" as const };
+    }
+    if (new Date(row.expires_at).getTime() <= Date.now()) {
+      return { ok: false as const, reason: "expired" as const };
     }
 
     // Send OTP using the publishable key client (server-side, no session)
