@@ -68,9 +68,13 @@ export const checkMyAccess = createServerFn({ method: "GET" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: allowed } = await supabaseAdmin.rpc("email_has_access", {
-      _email: email,
-    });
+    const { data: allowedRow } = await supabaseAdmin
+      .from("allowed_users")
+      .select("expires_at")
+      .eq("email", email.toLowerCase().trim())
+      .maybeSingle();
+    const allowed =
+      !!allowedRow && new Date(allowedRow.expires_at).getTime() > Date.now();
     const { data: adminRole } = await supabaseAdmin
       .from("user_roles")
       .select("role")
