@@ -14,7 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      prescriptions: {
+        Row: {
+          created_at: string
+          dominant_domein: string | null
+          fase: string | null
+          id: string
+          intake: Json
+          patient_context: string | null
+          recipe: Json
+          rx_number: string
+          user_id: string
+          variant: string | null
+        }
+        Insert: {
+          created_at?: string
+          dominant_domein?: string | null
+          fase?: string | null
+          id?: string
+          intake: Json
+          patient_context?: string | null
+          recipe: Json
+          rx_number: string
+          user_id: string
+          variant?: string | null
+        }
+        Update: {
+          created_at?: string
+          dominant_domein?: string | null
+          fase?: string | null
+          id?: string
+          intake?: Json
+          patient_context?: string | null
+          recipe?: Json
+          rx_number?: string
+          user_id?: string
+          variant?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          adres: string
+          big_nummer: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          plaats: string
+          praktijk: string
+          telefoon: string
+          titel: string
+          updated_at: string
+        }
+        Insert: {
+          adres?: string
+          big_nummer?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id: string
+          plaats?: string
+          praktijk?: string
+          telefoon?: string
+          titel?: string
+          updated_at?: string
+        }
+        Update: {
+          adres?: string
+          big_nummer?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          plaats?: string
+          praktijk?: string
+          telefoon?: string
+          titel?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
