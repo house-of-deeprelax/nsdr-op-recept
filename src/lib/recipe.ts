@@ -42,12 +42,6 @@ export type StoredRecipe = {
   createdAt: string;
 };
 
-function createRecipeId() {
-  return `RX-${Date.now().toString(36).toUpperCase()}-${Math.random()
-    .toString(36)
-    .slice(2, 6)
-    .toUpperCase()}`;
-}
 
 export async function generateRecipe(
   intake: Intake,
@@ -106,9 +100,11 @@ export async function generateRecipe(
     rx_number?: unknown;
     recipe: Recipe;
   };
-  const rawId = data.id ?? data.rx_number;
-  const id = typeof rawId === "string" && rawId.trim() ? rawId.trim() : createRecipeId();
-  return { id, recipe: data.recipe };
+  const rawId = data.rx_number ?? data.id;
+  if (typeof rawId !== "string" || !rawId.trim()) {
+    throw new Error("Generator gaf geen receptnummer terug.");
+  }
+  return { id: rawId.trim(), recipe: data.recipe };
 }
 
 // ── Persistence in Lovable Cloud ──────────────────────────────────────────────
