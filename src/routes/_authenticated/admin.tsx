@@ -9,6 +9,11 @@ import {
   adminDeleteAllowedUser,
   checkMyAccess,
 } from "@/lib/access.functions";
+import {
+  adminListErrors,
+  adminToggleErrorResolved,
+  adminDeleteError,
+} from "@/lib/errors.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Beheer — NSDR op Recept" }] }),
