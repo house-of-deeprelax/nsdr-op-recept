@@ -19,7 +19,7 @@ const SESSION_MAX_MS = 30 * 24 * 60 * 60 * 1000; // 30 dagen
 const LOGGED_IN_AT_KEY = "nsdr:loggedInAt";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { reportLovableError, installGlobalErrorReporting } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
@@ -134,6 +134,7 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
+    installGlobalErrorReporting();
     let mounted = true;
 
     const enforceMaxAge = async (
