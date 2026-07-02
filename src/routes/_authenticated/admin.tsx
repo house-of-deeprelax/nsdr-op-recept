@@ -54,6 +54,7 @@ function isExpired(iso: string) {
 }
 
 function AdminPage() {
+  const [tab, setTab] = useState<"users" | "errors">("users");
   const [rows, setRows] = useState<Row[] | null>(null);
   const [email, setEmail] = useState("");
   const [note, setNote] = useState("");
