@@ -69,7 +69,6 @@ function RecipePage() {
     if (raw) {
       try {
         setData(JSON.parse(raw));
-        toast.success("Opgeslagen");
         return;
       } catch {}
     }
@@ -745,7 +744,10 @@ function RecipePage() {
           <SidebarAction primary onClick={downloadPDF}>
             <Download className="h-3.5 w-3.5" strokeWidth={1.5} /> PDF downloaden
           </SidebarAction>
-          <SidebarAction onClick={() => navigate({ to: "/nieuw" })}>
+          <SidebarAction onClick={() => {
+            sessionStorage.removeItem("nsdr:intake");
+            navigate({ to: "/nieuw" });
+          }}>
             <Pencil className="h-3.5 w-3.5" strokeWidth={1.5} /> Nieuwe
           </SidebarAction>
           <SidebarAction onClick={copyToClipboard}>
