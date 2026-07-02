@@ -42,7 +42,7 @@ function GenererenPage() {
     (async () => {
       try {
         const { id, recipe } = await generateRecipe(intake);
-        const idLower = id.toLowerCase();
+        const idLower = String(id).toLowerCase();
         sessionStorage.setItem(
           `nsdr:recipe:${idLower}`,
           JSON.stringify({ recipe, intake, createdAt: new Date().toISOString() }),

@@ -42,6 +42,13 @@ export type StoredRecipe = {
   createdAt: string;
 };
 
+function createRecipeId() {
+  return `RX-${Date.now().toString(36).toUpperCase()}-${Math.random()
+    .toString(36)
+    .slice(2, 6)
+    .toUpperCase()}`;
+}
+
 export async function generateRecipe(
   intake: Intake,
 ): Promise<{ id: string; recipe: Recipe }> {
@@ -94,8 +101,14 @@ export async function generateRecipe(
     );
   }
 
-  const data = (await res.json()) as { id: string; recipe: Recipe };
-  return data;
+  const data = (await res.json()) as {
+    id?: unknown;
+    rx_number?: unknown;
+    recipe: Recipe;
+  };
+  const rawId = data.id ?? data.rx_number;
+  const id = typeof rawId === "string" && rawId.trim() ? rawId.trim() : createRecipeId();
+  return { id, recipe: data.recipe };
 }
 
 // ── Persistence in Lovable Cloud ──────────────────────────────────────────────
