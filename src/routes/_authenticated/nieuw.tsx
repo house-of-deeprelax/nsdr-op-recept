@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import type { Phase } from "@/components/brand/PhaseBadge";
 
@@ -99,6 +99,42 @@ function NieuwPage() {
   const [dailyTimes, setDailyTimes] = useState("");
   const [rhythm, setRhythm] = useState("");
   const [specialConds, setSpecialConds] = useState<string[]>([]);
+
+  // Hydrate uit sessionStorage zodat intake bewaard blijft bij fouten / terugkeer
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("nsdr:intake");
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      if (d.context) setContext(d.context);
+      if (d.complaint) setComplaint(d.complaint);
+      if (d.duration) setDuration(d.duration);
+      if (d.treatment) setTreatment(d.treatment);
+      if (typeof d.somaticCleared === "boolean") setSomatic(d.somaticCleared);
+      if (d.phase) setPhase(d.phase);
+      if (d.variant) setVariant(d.variant);
+      if (d.domain) setDomain(d.domain);
+      if (d.setting) setSetting(d.setting);
+      if (d.time) setTime(d.time);
+      if (d.frequency) setFrequency(d.frequency);
+      if (d.dailyTimes) setDailyTimes(d.dailyTimes);
+      if (d.rhythm) setRhythm(d.rhythm);
+      if (Array.isArray(d.special_conditions)) setSpecialConds(d.special_conditions);
+    } catch {}
+  }, []);
+
+  // Autosave bij elke wijziging
+  useEffect(() => {
+    try {
+      sessionStorage.setItem("nsdr:intake", JSON.stringify({
+        context, complaint, duration, treatment,
+        somaticCleared: somatic === true,
+        phase, variant, domain,
+        setting, time, frequency, dailyTimes, rhythm,
+        special_conditions: specialConds,
+      }));
+    } catch {}
+  }, [context, complaint, duration, treatment, somatic, phase, variant, domain, setting, time, frequency, dailyTimes, rhythm, specialConds]);
 
   const canNext =
     (step === 0 && context && complaint && duration && somatic !== null) ||
