@@ -58,8 +58,8 @@ export async function generateRecipe(
     duur_klachten: intake.duration,
     lopende_behandeling: intake.treatment || "",
     somatisch_uitgesloten: intake.somaticCleared,
-    fase: phaseMap[intake.phase].toLowerCase(),
-    variant: intake.variant.toLowerCase(),
+    fase: (phaseMap[intake.phase] ?? "").toLowerCase(),
+    variant: (intake.variant ?? "").toLowerCase(),
     dominant_domein: intake.domain,
     setting: intake.setting,
     beschikbare_tijd: intake.time,
@@ -67,6 +67,7 @@ export async function generateRecipe(
     dagritme: intake.rhythm,
     special_conditions: intake.special_conditions,
   };
+
 
   // De recept-edge-function draait in een apart Supabase-project. Een Bearer
   // token van dit project zou daar niet valideren; gebruik de (publieke) anon
