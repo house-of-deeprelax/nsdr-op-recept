@@ -311,7 +311,166 @@ function UsersPanel({ rows, email, note, busy, setEmail, setNote, addUser, exten
             </tbody>
           </table>
         </div>
-      </div>
-    </PageTransition>
+    </>
   );
+}
+
+type ErrorRow = {
+  id: string;
+  created_at: string;
+  source: string;
+  message: string;
+  route: string | null;
+  user_email: string | null;
+  fingerprint: string;
+  resolved: boolean;
+  stack: string | null;
+};
+
+function ErrorsPanel() {
+  const [rows, setRows] = useState<ErrorRow[] | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [showResolved, setShowResolved] = useState(false);
+
+  const load = async () => {
+    try {
+      const data = await adminListErrors();
+      setRows(data as ErrorRow[]);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Kon fouten niet laden");
+    }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const toggleResolved = async (r: ErrorRow) => {
+    try {
+      await adminToggleErrorResolved({ data: { id: r.id, resolved: !r.resolved } });
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Bijwerken mislukt");
+    }
+  };
+
+  const removeRow = async (r: ErrorRow) => {
+    if (!confirm("Deze foutmelding verwijderen?")) return;
+    try {
+      await adminDeleteError({ data: { id: r.id } });
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Verwijderen mislukt");
+    }
+  };
+
+  const visible = (rows ?? []).filter((r) => showResolved || !r.resolved);
+  const openCount = (rows ?? []).filter((r) => !r.resolved).length;
+
+  return (
+    <div className="mt-6">
+      <div className="flex items-center justify-between">
+        <p className="text-[13px]" style={{ color: "rgba(240,237,230,0.55)" }}>
+          {openCount} open · admins krijgen max. 1 e-mail per uur per unieke fout.
+        </p>
+        <label className="flex items-center gap-2 text-[12px]" style={{ color: "rgba(240,237,230,0.6)" }}>
+          <input
+            type="checkbox"
+            checked={showResolved}
+            onChange={(e) => setShowResolved(e.target.checked)}
+          />
+          Toon opgeloste
+        </label>
+      </div>
+
+      <div
+        className="mt-4 overflow-hidden rounded-md border"
+        style={{ borderColor: "var(--border-default)" }}
+      >
+        {rows === null && (
+          <div className="px-4 py-6 text-center text-[13px]" style={{ color: "rgba(240,237,230,0.4)" }}>
+            Laden…
+          </div>
+        )}
+        {rows && visible.length === 0 && (
+          <div className="px-4 py-6 text-center text-[13px]" style={{ color: "rgba(240,237,230,0.4)" }}>
+            Geen foutmeldingen.
+          </div>
+        )}
+        {visible.map((r) => {
+          const open = expanded === r.id;
+          return (
+            <div key={r.id} style={{ borderTop: "1px solid var(--border-default)" }}>
+              <div className="flex items-start gap-3 px-4 py-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="text-[10px] uppercase px-2 py-0.5 rounded"
+                      style={{
+                        background: r.resolved ? "rgba(140,158,110,0.15)" : "rgba(224,138,122,0.15)",
+                        color: r.resolved ? "#8c9e6e" : "#e08a7a",
+                        letterSpacing: "0.1em",
+                      }}
+                    >
+                      {r.resolved ? "opgelost" : r.source}
+                    </span>
+                    <span className="text-[11px]" style={{ color: "rgba(240,237,230,0.4)" }}>
+                      {new Date(r.created_at).toLocaleString("nl-NL")}
+                    </span>
+                    {r.route && (
+                      <span className="text-[11px]" style={{ color: "rgba(240,237,230,0.4)" }}>
+                        · {r.route}
+                      </span>
+                    )}
+                    {r.user_email && (
+                      <span className="text-[11px]" style={{ color: "rgba(240,237,230,0.4)" }}>
+                        · {r.user_email}
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className="mt-1 text-[13px] truncate cursor-pointer"
+                    style={{ color: "#f0ede6" }}
+                    onClick={() => setExpanded(open ? null : r.id)}
+                  >
+                    {r.message}
+                  </div>
+                  {open && r.stack && (
+                    <pre
+                      className="mt-2 text-[11px] whitespace-pre-wrap"
+                      style={{
+                        color: "rgba(240,237,230,0.6)",
+                        background: "rgba(0,0,0,0.2)",
+                        padding: "10px 12px",
+                        borderRadius: 6,
+                        maxHeight: 240,
+                        overflow: "auto",
+                      }}
+                    >
+                      {r.stack}
+                    </pre>
+                  )}
+                </div>
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <button
+                    onClick={() => toggleResolved(r)}
+                    className="text-[11px] underline"
+                    style={{ color: "rgba(240,237,230,0.7)" }}
+                  >
+                    {r.resolved ? "Heropenen" : "Markeer opgelost"}
+                  </button>
+                  <button
+                    onClick={() => removeRow(r)}
+                    className="text-[11px] underline"
+                    style={{ color: "#e08a7a" }}
+                  >
+                    Verwijderen
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 }
