@@ -44,24 +44,11 @@ async function sendToServer(error: unknown, context: Record<string, unknown>) {
 
     if (!shouldLogToServer(`${route}::${message.slice(0, 200)}`)) return;
 
-    // Attach bearer if available via the client supabase session
-    let authHeader: Record<string, string> = {};
-    try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { data } = await supabase.auth.getSession();
-      const token = data.session?.access_token;
-      if (token) authHeader = { Authorization: `Bearer ${token}` };
-    } catch {
-      // ignore
-    }
-
-    await fetch("/_serverFn/src_lib_errors_functions_ts--logClientError", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...authHeader },
-      body: JSON.stringify({ data: { message, stack, route, userAgent, context } }),
-      keepalive: true,
+    const { logClientError } = await import("./errors.functions");
+    await logClientError({
+      data: { message, stack, route, userAgent, context },
     }).catch(() => {
-      // Fallback: try alternate path shape if endpoint differs
+      // best-effort — never surface reporting failures
     });
   } catch {
     // never let the reporter itself throw
