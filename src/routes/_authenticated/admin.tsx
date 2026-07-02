@@ -473,4 +473,4 @@ function ErrorsPanel() {
     </div>
   );
 }
-}
+
