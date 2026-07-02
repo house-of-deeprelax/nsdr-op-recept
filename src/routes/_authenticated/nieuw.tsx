@@ -123,6 +123,19 @@ function NieuwPage() {
     } catch {}
   }, []);
 
+  // Autosave bij elke wijziging
+  useEffect(() => {
+    try {
+      sessionStorage.setItem("nsdr:intake", JSON.stringify({
+        context, complaint, duration, treatment,
+        somaticCleared: somatic === true,
+        phase, variant, domain,
+        setting, time, frequency, dailyTimes, rhythm,
+        special_conditions: specialConds,
+      }));
+    } catch {}
+  }, [context, complaint, duration, treatment, somatic, phase, variant, domain, setting, time, frequency, dailyTimes, rhythm, specialConds]);
+
   const canNext =
     (step === 0 && context && complaint && duration && somatic !== null) ||
     (step === 1 && phase && variant) ||
