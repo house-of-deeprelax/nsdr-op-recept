@@ -100,6 +100,29 @@ function NieuwPage() {
   const [rhythm, setRhythm] = useState("");
   const [specialConds, setSpecialConds] = useState<string[]>([]);
 
+  // Hydrate uit sessionStorage zodat intake bewaard blijft bij fouten / terugkeer
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("nsdr:intake");
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      if (d.context) setContext(d.context);
+      if (d.complaint) setComplaint(d.complaint);
+      if (d.duration) setDuration(d.duration);
+      if (d.treatment) setTreatment(d.treatment);
+      if (typeof d.somaticCleared === "boolean") setSomatic(d.somaticCleared);
+      if (d.phase) setPhase(d.phase);
+      if (d.variant) setVariant(d.variant);
+      if (d.domain) setDomain(d.domain);
+      if (d.setting) setSetting(d.setting);
+      if (d.time) setTime(d.time);
+      if (d.frequency) setFrequency(d.frequency);
+      if (d.dailyTimes) setDailyTimes(d.dailyTimes);
+      if (d.rhythm) setRhythm(d.rhythm);
+      if (Array.isArray(d.special_conditions)) setSpecialConds(d.special_conditions);
+    } catch {}
+  }, []);
+
   const canNext =
     (step === 0 && context && complaint && duration && somatic !== null) ||
     (step === 1 && phase && variant) ||
