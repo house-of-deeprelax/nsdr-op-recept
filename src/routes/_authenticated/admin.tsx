@@ -123,14 +123,64 @@ function AdminPage() {
           className="font-display text-[36px]"
           style={{ lineHeight: 1.05, letterSpacing: "-0.03em", color: "#f0ede6" }}
         >
-          Deelnemersbeheer
+          Beheer
         </h1>
-        <p
-          className="mt-3 text-[13px]"
-          style={{ color: "rgba(240,237,230,0.55)" }}
-        >
-          Alleen e-mailadressen op deze lijst kunnen inloggen. Standaard 1 jaar geldig.
-        </p>
+
+        <div className="mt-6 flex gap-6 border-b" style={{ borderColor: "var(--border-default)" }}>
+          {(["users", "errors"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className="pb-3 text-[13px]"
+              style={{
+                color: tab === t ? "#f0ede6" : "rgba(240,237,230,0.5)",
+                borderBottom: tab === t ? "2px solid var(--sage)" : "2px solid transparent",
+                marginBottom: -1,
+              }}
+            >
+              {t === "users" ? "Deelnemers" : "Foutmeldingen"}
+            </button>
+          ))}
+        </div>
+
+        {tab === "users" && (
+          <UsersPanel
+            rows={rows}
+            email={email}
+            note={note}
+            busy={busy}
+            setEmail={setEmail}
+            setNote={setNote}
+            addUser={addUser}
+            extend={extend}
+            remove={remove}
+          />
+        )}
+        {tab === "errors" && <ErrorsPanel />}
+      </div>
+    </PageTransition>
+  );
+}
+
+type UsersPanelProps = {
+  rows: Row[] | null;
+  email: string;
+  note: string;
+  busy: boolean;
+  setEmail: (v: string) => void;
+  setNote: (v: string) => void;
+  addUser: (e: React.FormEvent) => void;
+  extend: (row: Row) => void;
+  remove: (row: Row) => void;
+};
+
+function UsersPanel({ rows, email, note, busy, setEmail, setNote, addUser, extend, remove }: UsersPanelProps) {
+  return (
+    <>
+      <p className="mt-6 text-[13px]" style={{ color: "rgba(240,237,230,0.55)" }}>
+        Alleen e-mailadressen op deze lijst kunnen inloggen. Standaard 1 jaar geldig.
+      </p>
+
 
         <form
           onSubmit={addUser}
