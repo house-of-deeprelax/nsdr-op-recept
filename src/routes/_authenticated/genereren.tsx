@@ -43,14 +43,12 @@ function GenererenPage() {
       try {
         const { id, recipe } = await generateRecipe(intake);
         const idLower = String(id).toLowerCase();
+        await saveRecipe({ id, recipe, intake });
         sessionStorage.setItem(
           `nsdr:recipe:${idLower}`,
           JSON.stringify({ recipe, intake, createdAt: new Date().toISOString() }),
         );
-        // Persist to Lovable Cloud — best-effort, don't block navigation.
-        saveRecipe({ id, recipe, intake }).catch((err) => {
-          console.error("saveRecipe failed", err);
-        });
+        sessionStorage.removeItem("nsdr:intake");
         const minWait = generationSteps.length * 900 + 700;
         setTimeout(
           () => navigate({ to: "/recept/$id", params: { id: idLower } }),
