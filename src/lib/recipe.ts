@@ -125,23 +125,34 @@ export async function saveRecipe(args: {
     groen: "groen",
   };
 
-  const { error } = await supabase.from("prescriptions").upsert(
-    {
-      user_id: user.id,
-      rx_number: args.id,
-      patient_context: args.intake.context || null,
-      fase: phaseMap[args.intake.phase],
-      variant: args.intake.variant || null,
-      dominant_domein: args.intake.domain || null,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      recipe: args.recipe as any,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      intake: args.intake as any,
-    } as never,
-    { onConflict: "user_id,rx_number" },
-  );
+  const row = {
+    user_id: user.id,
+    rx_number: args.id,
+    patient_context: args.intake.context || null,
+    fase: phaseMap[args.intake.phase],
+    variant: args.intake.variant || null,
+    dominant_domein: args.intake.domain || null,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recipe: args.recipe as any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    intake: args.intake as any,
+  } as never;
 
-  if (error) throw error;
+  const { error } = await supabase.from("prescriptions").insert(row);
+
+  if (!error) return;
+
+  if (error.code === "23505") {
+    const { error: updateError } = await supabase
+      .from("prescriptions")
+      .update(row)
+      .eq("user_id", user.id)
+      .eq("rx_number", args.id);
+    if (!updateError) return;
+    throw updateError;
+  }
+
+  throw error;
 }
 
 export type PrescriptionRow = {
