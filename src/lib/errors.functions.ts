@@ -68,7 +68,7 @@ export const logClientError = createServerFn({ method: "POST" })
         user_id: userId,
         user_email: userEmail,
         fingerprint,
-        context: data.context ?? null,
+        context: (data.context ?? null) as never,
       })
       .select("id")
       .single();
