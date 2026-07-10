@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { PhaseBadge, type Phase } from "@/components/brand/PhaseBadge";
-import { listPrescriptions, type PrescriptionRow } from "@/lib/recipe";
+import { listPrescriptions, deletePrescription, type PrescriptionRow } from "@/lib/recipe";
 
 export const Route = createFileRoute("/_authenticated/recepten")({
   head: () => ({ meta: [{ title: "Recepten — NSDR op Recept" }] }),
@@ -34,6 +34,26 @@ function ReceptenPage() {
   const [items, setItems] = useState<PrescriptionRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  async function handleDelete(e: React.MouseEvent, rx: PrescriptionRow) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (deletingId) return;
+    const ok = window.confirm(
+      `Recept ${rx.rx_number} definitief verwijderen?`,
+    );
+    if (!ok) return;
+    setDeletingId(rx.id);
+    try {
+      await deletePrescription(rx.id);
+      setItems((prev) => (prev ? prev.filter((p) => p.id !== rx.id) : prev));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Verwijderen mislukt");
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -121,15 +141,18 @@ function ReceptenPage() {
             </li>
           )}
           {filtered.map((rx, i) => (
-            <li key={rx.id}>
+            <li
+              key={rx.id}
+              className="relative"
+              style={{
+                borderBottom:
+                  i === filtered.length - 1 ? "none" : "1px solid var(--border-default)",
+              }}
+            >
               <Link
                 to="/recept/$id"
                 params={{ id: rx.rx_number.toLowerCase() }}
-                className="group relative flex flex-col gap-2 py-4 transition-colors sm:py-5"
-                style={{
-                  borderBottom:
-                    i === filtered.length - 1 ? "none" : "1px solid var(--border-default)",
-                }}
+                className="group relative flex flex-col gap-2 py-4 pr-12 transition-colors sm:py-5"
               >
                 <div className="flex items-center justify-between">
                   <span
@@ -169,6 +192,16 @@ function ReceptenPage() {
                   )}
                 </div>
               </Link>
+              <button
+                type="button"
+                onClick={(e) => handleDelete(e, rx)}
+                disabled={deletingId === rx.id}
+                aria-label={`Verwijder ${rx.rx_number}`}
+                className="absolute right-0 top-4 flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-[rgba(240,237,230,0.06)] disabled:opacity-40"
+                style={{ color: "rgba(240,237,230,0.45)" }}
+              >
+                <Trash2 className="h-4 w-4" strokeWidth={1.5} />
+              </button>
             </li>
           ))}
         </ul>

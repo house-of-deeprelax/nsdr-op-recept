@@ -199,3 +199,8 @@ export async function getPrescriptionByRx(
     createdAt: data.created_at,
   };
 }
+
+export async function deletePrescription(id: string): Promise<void> {
+  const { error } = await supabase.from("prescriptions").delete().eq("id", id);
+  if (error) throw error;
+}
