@@ -421,26 +421,53 @@ function NieuwPage() {
                       <LineToggle active={setting === "groep"} onClick={() => setSetting("groep")} label="Groep" />
                     </div>
                   </Field>
-                  <Field label="Frequentie">
-                    <ChipRow value={frequency} onChange={(v) => { setFrequency(v); if (v !== "Dagelijks") setDailyTimes(""); }} options={["Dagelijks", "3x per week", "2x per week", "1x per week"]} />
-                    {frequency === "Dagelijks" && (
+
+                  <Field label="Hoe vaak per week?">
+                    <ChipRow
+                      value={frequencyPerWeek}
+                      onChange={setFrequencyPerWeek}
+                      options={["1×", "2×", "3×", "4×", "5–7×"]}
+                    />
+                  </Field>
+
+                  <Field label="Moment van de dag">
+                    <ChipRow
+                      value={timeOfDay}
+                      onChange={(v) => { setTimeOfDay(v); if (v !== "Anders") setTimeOfDayOther(""); }}
+                      options={["Ochtend", "Middag", "Avond", "Voor het slapen", "Na een stressvol moment", "Anders"]}
+                    />
+                    {timeOfDay === "Anders" && (
                       <div className="pt-3">
-                        <select
-                          value={dailyTimes}
-                          onChange={(e) => setDailyTimes(e.target.value)}
-                          className="w-full rounded-md px-3 py-2.5 text-[13px] outline-none transition-colors"
-                          style={{
-                            border: "1px solid rgba(255,255,255,0.08)",
-                            background: "rgba(255,255,255,0.02)",
-                            color: "#f0ede6",
-                          }}
-                        >
-                          <option value="">Hoe vaak per dag?</option>
-                          <option value="1x per dag">1x per dag</option>
-                          <option value="2x per dag">2x per dag</option>
-                          <option value="3x per dag">3x per dag</option>
-                          <option value="4x per dag">4x per dag</option>
-                        </select>
+                        <LineInput
+                          value={timeOfDayOther}
+                          onChange={setTimeOfDayOther}
+                          placeholder="Bijvoorbeeld: na de lunch, voor een belangrijk gesprek"
+                        />
+                      </div>
+                    )}
+                  </Field>
+
+                  <Field label="Sessieduur">
+                    <ChipRow
+                      value={sessionDuration}
+                      onChange={setSessionDuration}
+                      options={["5–10 minuten", "10–20 minuten", "20–30 minuten", "30+ minuten"]}
+                    />
+                  </Field>
+
+                  <Field label="Duur van het recept">
+                    <ChipRow
+                      value={recipeDuration}
+                      onChange={(v) => { setRecipeDuration(v); if (v !== "Anders") setRecipeDurationOther(""); }}
+                      options={["2 weken", "4 weken", "6 weken", "Anders"]}
+                    />
+                    {recipeDuration === "Anders" && (
+                      <div className="pt-3">
+                        <LineInput
+                          value={recipeDurationOther}
+                          onChange={setRecipeDurationOther}
+                          placeholder="Bijvoorbeeld: 8 weken"
+                        />
                       </div>
                     )}
                   </Field>
