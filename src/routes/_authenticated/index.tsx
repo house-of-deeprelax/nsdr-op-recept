@@ -125,7 +125,7 @@ function Dashboard() {
             <Step
               n="01"
               title="Casus invoeren"
-              body="Beschrijf de patiënt: leeftijd, klacht, context. Kort en specifiek — de basis van het recept."
+              body="Beschrijf de cliënt: leeftijd, klacht, context. Kort en specifiek — de basis van het recept."
             />
             <Step
               n="02"
@@ -136,7 +136,7 @@ function Dashboard() {
             <Step
               n="03"
               title="Setting & recept"
-              body="Kies setting en tijd. Download een professioneel PDF-voorschrift, klaar voor de patiënt."
+              body="Kies setting en tijd. Download een professioneel PDF-voorschrift, klaar voor de cliënt."
             />
           </div>
         </div>
