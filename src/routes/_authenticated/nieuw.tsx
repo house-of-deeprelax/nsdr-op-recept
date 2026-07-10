@@ -73,7 +73,7 @@ const steps = [
   {
     name: "Systeemscan",
     blurb:
-      "Bepaal de regulatie-fase en het dominante domein. Dit stuurt protocol en intensiteit.",
+      "Geen standaard protocol, maar begeleiding die past bij het moment. Bepaal de regulatiefase en het dominante domein/belangrijkste thema, zodat je kunt aansluiten bij waar iemand nu staat.",
   },
   {
     name: "Setting",
