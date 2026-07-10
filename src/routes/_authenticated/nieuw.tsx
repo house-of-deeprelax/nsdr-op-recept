@@ -101,9 +101,9 @@ function NieuwPage() {
 
   const [setting, setSetting] = useState<"individueel" | "groep">("individueel");
   const [frequencyPerWeek, setFrequencyPerWeek] = useState<string>("");
-  const [timeOfDay, setTimeOfDay] = useState<string>("");
+  const [timeOfDay, setTimeOfDay] = useState<string[]>([]);
   const [timeOfDayOther, setTimeOfDayOther] = useState<string>("");
-  const [sessionDuration, setSessionDuration] = useState<string>("");
+  const [sessionDuration, setSessionDuration] = useState<string[]>([]);
   const [recipeDuration, setRecipeDuration] = useState<string>("");
   const [recipeDurationOther, setRecipeDurationOther] = useState<string>("");
   const [specialConds, setSpecialConds] = useState<string[]>([]);
