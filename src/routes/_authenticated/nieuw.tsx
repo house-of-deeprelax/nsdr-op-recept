@@ -182,7 +182,13 @@ function NieuwPage() {
         context, complaint, duration, treatment,
         somaticCleared: somatic === true,
         phase, variant, domain,
-        setting, time, frequency, dailyTimes, rhythm,
+        setting,
+        frequencyPerWeek,
+        timeOfDay,
+        timeOfDayOther,
+        sessionDuration,
+        recipeDuration,
+        recipeDurationOther,
         special_conditions: specialConds,
       };
       try {
