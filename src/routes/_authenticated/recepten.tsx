@@ -34,6 +34,26 @@ function ReceptenPage() {
   const [items, setItems] = useState<PrescriptionRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  async function handleDelete(e: React.MouseEvent, rx: PrescriptionRow) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (deletingId) return;
+    const ok = window.confirm(
+      `Recept ${rx.rx_number} definitief verwijderen?`,
+    );
+    if (!ok) return;
+    setDeletingId(rx.id);
+    try {
+      await deletePrescription(rx.id);
+      setItems((prev) => (prev ? prev.filter((p) => p.id !== rx.id) : prev));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Verwijderen mislukt");
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
