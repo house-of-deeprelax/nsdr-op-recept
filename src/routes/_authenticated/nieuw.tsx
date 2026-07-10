@@ -433,12 +433,12 @@ function NieuwPage() {
                   </Field>
 
                   <Field label="Moment van de dag">
-                    <ChipRow
+                    <MultiChipRow
                       value={timeOfDay}
-                      onChange={(v) => { setTimeOfDay(v); if (v !== "Anders") setTimeOfDayOther(""); }}
+                      onChange={(v) => { setTimeOfDay(v); if (!v.includes("Anders")) setTimeOfDayOther(""); }}
                       options={["Ochtend", "Middag", "Avond", "Voor het slapen", "Na een stressvol moment", "Anders"]}
                     />
-                    {timeOfDay === "Anders" && (
+                    {timeOfDay.includes("Anders") && (
                       <div className="pt-3">
                         <LineInput
                           value={timeOfDayOther}
@@ -450,7 +450,7 @@ function NieuwPage() {
                   </Field>
 
                   <Field label="Sessieduur">
-                    <ChipRow
+                    <MultiChipRow
                       value={sessionDuration}
                       onChange={setSessionDuration}
                       options={["5–10 minuten", "10–20 minuten", "20–30 minuten", "30+ minuten"]}
