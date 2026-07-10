@@ -18,9 +18,12 @@ export type Intake = {
   variant: string;
   domain: string;
   setting: "individueel" | "groep";
-  time: string;
-  frequency: string;
-  rhythm: string;
+  frequencyPerWeek: string;
+  timeOfDay: string;
+  timeOfDayOther: string;
+  sessionDuration: string;
+  recipeDuration: string;
+  recipeDurationOther: string;
   special_conditions: string[];
 };
 
