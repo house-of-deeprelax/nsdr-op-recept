@@ -379,7 +379,7 @@ function NieuwPage() {
                     </Field>
                   )}
 
-                  <Field label="Dominant domein" optional>
+                  <Field label="Aandachtsgebied" optional>
                     <div className="flex flex-wrap gap-2 pt-2">
                       {domains.map((d) => (
                         <Chip key={d} active={domain === d} onClick={() => setDomain(domain === d ? "" : d)}>
