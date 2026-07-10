@@ -100,10 +100,12 @@ function NieuwPage() {
   const [domain, setDomain] = useState<string>("");
 
   const [setting, setSetting] = useState<"individueel" | "groep">("individueel");
-  const [time, setTime] = useState("");
-  const [frequency, setFrequency] = useState("");
-  const [dailyTimes, setDailyTimes] = useState("");
-  const [rhythm, setRhythm] = useState("");
+  const [frequencyPerWeek, setFrequencyPerWeek] = useState<string>("");
+  const [timeOfDay, setTimeOfDay] = useState<string>("");
+  const [timeOfDayOther, setTimeOfDayOther] = useState<string>("");
+  const [sessionDuration, setSessionDuration] = useState<string>("");
+  const [recipeDuration, setRecipeDuration] = useState<string>("");
+  const [recipeDurationOther, setRecipeDurationOther] = useState<string>("");
   const [specialConds, setSpecialConds] = useState<string[]>([]);
 
   // Hydrate uit sessionStorage zodat intake bewaard blijft bij fouten / terugkeer
