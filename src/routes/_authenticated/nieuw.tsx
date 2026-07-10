@@ -78,7 +78,7 @@ const steps = [
   {
     name: "Setting",
     blurb:
-      "Hoeveel tijd, hoe vaak, op welk moment van de dag. Het ritme is belangrijker dan de duur.",
+      "Een goed NSDR-recept sluit niet alleen aan bij de hulpvraag, maar ook bij het dagelijks leven van de cliënt of coachee.\n\nStel samen een routine op die haalbaar en realistisch is. Bespreek hoe vaak iemand per week gaat oefenen, welk moment van de dag daar het beste bij past en hoe lang een sessie mag duren. Een vaste routine die iemand kan volhouden levert uiteindelijk meer op dan een ambitieus schema.",
   },
 ];
 
@@ -223,7 +223,7 @@ function NieuwPage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.1 }}
             className="mt-6 block text-sm lg:mt-8 lg:text-[17px]"
-            style={{ lineHeight: 1.7, color: "rgba(240,237,230,0.4)" }}
+            style={{ lineHeight: 1.7, color: "rgba(240,237,230,0.4)", whiteSpace: "pre-line" }}
           >
             {steps[step].blurb}
           </motion.p>
