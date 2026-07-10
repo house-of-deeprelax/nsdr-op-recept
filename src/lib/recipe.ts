@@ -66,9 +66,14 @@ export async function generateRecipe(
     variant: (intake.variant ?? "").toLowerCase(),
     dominant_domein: intake.domain,
     setting: intake.setting,
-    beschikbare_tijd: intake.time,
-    frequentie: intake.frequency,
-    dagritme: intake.rhythm,
+    frequentie_per_week: intake.frequencyPerWeek,
+    moment_van_de_dag: intake.timeOfDay === "Anders"
+      ? `Anders: ${intake.timeOfDayOther}`
+      : intake.timeOfDay,
+    sessieduur: intake.sessionDuration,
+    duur_van_het_recept: intake.recipeDuration === "Anders"
+      ? `Anders: ${intake.recipeDurationOther}`
+      : intake.recipeDuration,
     special_conditions: intake.special_conditions,
   };
 
