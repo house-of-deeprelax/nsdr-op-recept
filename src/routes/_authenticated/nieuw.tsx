@@ -101,9 +101,9 @@ function NieuwPage() {
 
   const [setting, setSetting] = useState<"individueel" | "groep">("individueel");
   const [frequencyPerWeek, setFrequencyPerWeek] = useState<string>("");
-  const [timeOfDay, setTimeOfDay] = useState<string>("");
+  const [timeOfDay, setTimeOfDay] = useState<string[]>([]);
   const [timeOfDayOther, setTimeOfDayOther] = useState<string>("");
-  const [sessionDuration, setSessionDuration] = useState<string>("");
+  const [sessionDuration, setSessionDuration] = useState<string[]>([]);
   const [recipeDuration, setRecipeDuration] = useState<string>("");
   const [recipeDurationOther, setRecipeDurationOther] = useState<string>("");
   const [specialConds, setSpecialConds] = useState<string[]>([]);
@@ -124,9 +124,11 @@ function NieuwPage() {
       if (d.domain) setDomain(d.domain);
       if (d.setting) setSetting(d.setting);
       if (d.frequencyPerWeek) setFrequencyPerWeek(d.frequencyPerWeek);
-      if (d.timeOfDay) setTimeOfDay(d.timeOfDay);
+      if (Array.isArray(d.timeOfDay)) setTimeOfDay(d.timeOfDay);
+      else if (d.timeOfDay) setTimeOfDay([d.timeOfDay]);
       if (d.timeOfDayOther) setTimeOfDayOther(d.timeOfDayOther);
-      if (d.sessionDuration) setSessionDuration(d.sessionDuration);
+      if (Array.isArray(d.sessionDuration)) setSessionDuration(d.sessionDuration);
+      else if (d.sessionDuration) setSessionDuration([d.sessionDuration]);
       if (d.recipeDuration) setRecipeDuration(d.recipeDuration);
       if (d.recipeDurationOther) setRecipeDurationOther(d.recipeDurationOther);
       if (Array.isArray(d.special_conditions)) setSpecialConds(d.special_conditions);
@@ -157,9 +159,9 @@ function NieuwPage() {
     (step === 1 && phase && variant) ||
     (step === 2 &&
       frequencyPerWeek &&
-      timeOfDay &&
-      (timeOfDay !== "Anders" || timeOfDayOther) &&
-      sessionDuration &&
+      timeOfDay.length > 0 &&
+      (!timeOfDay.includes("Anders") || timeOfDayOther) &&
+      sessionDuration.length > 0 &&
       recipeDuration &&
       (recipeDuration !== "Anders" || recipeDurationOther));
 
@@ -431,12 +433,12 @@ function NieuwPage() {
                   </Field>
 
                   <Field label="Moment van de dag">
-                    <ChipRow
+                    <MultiChipRow
                       value={timeOfDay}
-                      onChange={(v) => { setTimeOfDay(v); if (v !== "Anders") setTimeOfDayOther(""); }}
+                      onChange={(v) => { setTimeOfDay(v); if (!v.includes("Anders")) setTimeOfDayOther(""); }}
                       options={["Ochtend", "Middag", "Avond", "Voor het slapen", "Na een stressvol moment", "Anders"]}
                     />
-                    {timeOfDay === "Anders" && (
+                    {timeOfDay.includes("Anders") && (
                       <div className="pt-3">
                         <LineInput
                           value={timeOfDayOther}
@@ -448,7 +450,7 @@ function NieuwPage() {
                   </Field>
 
                   <Field label="Sessieduur">
-                    <ChipRow
+                    <MultiChipRow
                       value={sessionDuration}
                       onChange={setSessionDuration}
                       options={["5–10 minuten", "10–20 minuten", "20–30 minuten", "30+ minuten"]}
@@ -610,6 +612,21 @@ function ChipRow({ value, onChange, options }: { value: string; onChange: (v: st
           {o}
         </Chip>
       ))}
+    </div>
+  );
+}
+
+function MultiChipRow({ value, onChange, options }: { value: string[]; onChange: (v: string[]) => void; options: string[] }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {options.map((o) => {
+        const active = value.includes(o);
+        return (
+          <Chip key={o} active={active} onClick={() => onChange(active ? value.filter((v) => v !== o) : [...value, o])}>
+            {o}
+          </Chip>
+        );
+      })}
     </div>
   );
 }

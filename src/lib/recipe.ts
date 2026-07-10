@@ -19,9 +19,9 @@ export type Intake = {
   domain: string;
   setting: "individueel" | "groep";
   frequencyPerWeek: string;
-  timeOfDay: string;
+  timeOfDay: string[];
   timeOfDayOther: string;
-  sessionDuration: string;
+  sessionDuration: string[];
   recipeDuration: string;
   recipeDurationOther: string;
   special_conditions: string[];
@@ -67,10 +67,10 @@ export async function generateRecipe(
     dominant_domein: intake.domain,
     setting: intake.setting,
     frequentie_per_week: intake.frequencyPerWeek,
-    moment_van_de_dag: intake.timeOfDay === "Anders"
-      ? `Anders: ${intake.timeOfDayOther}`
-      : intake.timeOfDay,
-    sessieduur: intake.sessionDuration,
+    moment_van_de_dag: intake.timeOfDay
+      .map((v) => (v === "Anders" ? `Anders: ${intake.timeOfDayOther}` : v))
+      .join(", "),
+    sessieduur: intake.sessionDuration.join(", "),
     duur_van_het_recept: intake.recipeDuration === "Anders"
       ? `Anders: ${intake.recipeDurationOther}`
       : intake.recipeDuration,
