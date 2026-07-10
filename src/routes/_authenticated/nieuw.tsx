@@ -62,7 +62,7 @@ const steps = [
   {
     name: "De casus",
     blurb:
-      "Beschrijf in eigen woorden wie er voor je zit. Context, hoofdklacht en duur — kort en concreet.",
+      "Vertel in een paar zinnen iets over de persoon die je begeleidt. Wat is de achtergrond van de hulpvraag, waar ervaart iemand klachten of uitdagingen en sinds wanneer speelt dit?",
   },
   {
     name: "Systeemscan",
