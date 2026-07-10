@@ -616,6 +616,21 @@ function ChipRow({ value, onChange, options }: { value: string; onChange: (v: st
   );
 }
 
+function MultiChipRow({ value, onChange, options }: { value: string[]; onChange: (v: string[]) => void; options: string[] }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {options.map((o) => {
+        const active = value.includes(o);
+        return (
+          <Chip key={o} active={active} onClick={() => onChange(active ? value.filter((v) => v !== o) : [...value, o])}>
+            {o}
+          </Chip>
+        );
+      })}
+    </div>
+  );
+}
+
 function CTAButton({ onClick, disabled, children }: { onClick: () => void; disabled?: boolean; children: React.ReactNode }) {
   return (
     <button
