@@ -140,11 +140,17 @@ function NieuwPage() {
         context, complaint, duration, treatment,
         somaticCleared: somatic === true,
         phase, variant, domain,
-        setting, time, frequency, dailyTimes, rhythm,
+        setting,
+        frequencyPerWeek,
+        timeOfDay,
+        timeOfDayOther,
+        sessionDuration,
+        recipeDuration,
+        recipeDurationOther,
         special_conditions: specialConds,
       }));
     } catch {}
-  }, [context, complaint, duration, treatment, somatic, phase, variant, domain, setting, time, frequency, dailyTimes, rhythm, specialConds]);
+  }, [context, complaint, duration, treatment, somatic, phase, variant, domain, setting, frequencyPerWeek, timeOfDay, timeOfDayOther, sessionDuration, recipeDuration, recipeDurationOther, specialConds]);
 
   const canNext =
     (step === 0 && context && complaint && duration && somatic !== null) ||
