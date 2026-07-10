@@ -124,9 +124,11 @@ function NieuwPage() {
       if (d.domain) setDomain(d.domain);
       if (d.setting) setSetting(d.setting);
       if (d.frequencyPerWeek) setFrequencyPerWeek(d.frequencyPerWeek);
-      if (d.timeOfDay) setTimeOfDay(d.timeOfDay);
+      if (Array.isArray(d.timeOfDay)) setTimeOfDay(d.timeOfDay);
+      else if (d.timeOfDay) setTimeOfDay([d.timeOfDay]);
       if (d.timeOfDayOther) setTimeOfDayOther(d.timeOfDayOther);
-      if (d.sessionDuration) setSessionDuration(d.sessionDuration);
+      if (Array.isArray(d.sessionDuration)) setSessionDuration(d.sessionDuration);
+      else if (d.sessionDuration) setSessionDuration([d.sessionDuration]);
       if (d.recipeDuration) setRecipeDuration(d.recipeDuration);
       if (d.recipeDurationOther) setRecipeDurationOther(d.recipeDurationOther);
       if (Array.isArray(d.special_conditions)) setSpecialConds(d.special_conditions);
