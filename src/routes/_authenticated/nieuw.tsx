@@ -216,8 +216,8 @@ function NieuwPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="mt-6 block lg:mt-8"
-            style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(240,237,230,0.4)" }}
+            className="mt-6 block text-sm lg:mt-8 lg:text-[17px]"
+            style={{ lineHeight: 1.7, color: "rgba(240,237,230,0.4)" }}
           >
             {steps[step].blurb}
           </motion.p>
