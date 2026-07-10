@@ -265,20 +265,20 @@ function NieuwPage() {
               {step === 0 && (
                 <div className="space-y-10">
                   <Field label="Leeftijd en context">
-                    <LineTextarea value={context} onChange={setContext} placeholder="bv. vrouw, 44, HR-manager, twee kinderen" />
+                    <LineTextarea value={context} onChange={setContext} placeholder="Bijvoorbeeld: 42 jaar, HR manager, moeder van twee jonge kinderen." />
                   </Field>
-                  <Field label="Hoofdklacht">
-                    <LineTextarea value={complaint} onChange={setComplaint} placeholder="waar komt deze persoon mee, in jouw woorden" />
+                  <Field label="Hulpvraag of hoofdklacht">
+                    <LineTextarea value={complaint} onChange={setComplaint} placeholder="Waar loopt iemand op dit moment vooral tegenaan?" />
                   </Field>
-                  <Field label="Duur klachten">
-                    <LineInput value={duration} onChange={setDuration} placeholder="bv. 8 maanden" />
+                  <Field label="Sinds wanneer speelt dit?">
+                    <LineInput value={duration} onChange={setDuration} placeholder="Bijvoorbeeld: ongeveer 6 maanden, al enkele jaren of sinds een ingrijpende gebeurtenis." />
                   </Field>
-                  <Field label="Lopende behandeling" optional>
-                    <LineInput value={treatment} onChange={setTreatment} placeholder="bv. POH-GGZ, fysio" />
+                  <Field label="Lopende behandeling of begeleiding" optional>
+                    <LineInput value={treatment} onChange={setTreatment} placeholder="Bijvoorbeeld: fysiotherapie, psycholoog, coaching, medicatie of geen." />
                   </Field>
-                  <Field label="Somatische oorzaak uitgesloten">
+                  <Field label="Is door een arts vastgesteld dat er geen lichamelijke oorzaak is voor de klachten?">
                     <div className="grid grid-cols-2 gap-3 pt-1">
-                      <LineToggle active={somatic === true} onClick={() => setSomatic(true)} label="Ja, uitgesloten" />
+                      <LineToggle active={somatic === true} onClick={() => setSomatic(true)} label="Ja" />
                       <LineToggle active={somatic === false} onClick={() => setSomatic(false)} label="Nee of onbekend" />
                     </div>
                   </Field>
