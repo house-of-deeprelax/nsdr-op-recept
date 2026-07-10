@@ -17,9 +17,15 @@ const phases: { id: Phase; label: string; color: string; hint: string }[] = [
 ];
 
 const domains = [
-  "Burn-out", "Slaapproblemen", "Hormonaal", "Chronische pijn",
-  "Long COVID", "Trauma", "Rouw",
-  "Neurodivergentie", "Postcommotioneel",
+  "Burn-out",
+  "Slaapproblemen",
+  "Hormonale klachten",
+  "Chronische pijn",
+  "Long COVID",
+  "Trauma",
+  "Rouw",
+  "Neurodivergentie",
+  "Postcommotionele klachten",
 ];
 
 const variantsByPhase: Record<
