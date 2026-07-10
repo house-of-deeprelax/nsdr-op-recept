@@ -123,10 +123,12 @@ function NieuwPage() {
       if (d.variant) setVariant(d.variant);
       if (d.domain) setDomain(d.domain);
       if (d.setting) setSetting(d.setting);
-      if (d.time) setTime(d.time);
-      if (d.frequency) setFrequency(d.frequency);
-      if (d.dailyTimes) setDailyTimes(d.dailyTimes);
-      if (d.rhythm) setRhythm(d.rhythm);
+      if (d.frequencyPerWeek) setFrequencyPerWeek(d.frequencyPerWeek);
+      if (d.timeOfDay) setTimeOfDay(d.timeOfDay);
+      if (d.timeOfDayOther) setTimeOfDayOther(d.timeOfDayOther);
+      if (d.sessionDuration) setSessionDuration(d.sessionDuration);
+      if (d.recipeDuration) setRecipeDuration(d.recipeDuration);
+      if (d.recipeDurationOther) setRecipeDurationOther(d.recipeDurationOther);
       if (Array.isArray(d.special_conditions)) setSpecialConds(d.special_conditions);
     } catch {}
   }, []);
