@@ -216,7 +216,7 @@ function NieuwPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="mt-6 hidden lg:mt-8 lg:block"
+            className="mt-6 block lg:mt-8"
             style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(240,237,230,0.4)" }}
           >
             {steps[step].blurb}
@@ -271,10 +271,10 @@ function NieuwPage() {
                     <LineTextarea value={complaint} onChange={setComplaint} placeholder="Waar loopt iemand op dit moment vooral tegenaan?" />
                   </Field>
                   <Field label="Sinds wanneer speelt dit?">
-                    <LineInput value={duration} onChange={setDuration} placeholder="Bijvoorbeeld: ongeveer 6 maanden, al enkele jaren of sinds een ingrijpende gebeurtenis." />
+                    <LineTextarea value={duration} onChange={setDuration} placeholder="Bijvoorbeeld: ongeveer 6 maanden, al enkele jaren of sinds een ingrijpende gebeurtenis." />
                   </Field>
                   <Field label="Lopende behandeling of begeleiding" optional>
-                    <LineInput value={treatment} onChange={setTreatment} placeholder="Bijvoorbeeld: fysiotherapie, psycholoog, coaching, medicatie of geen." />
+                    <LineTextarea value={treatment} onChange={setTreatment} placeholder="Bijvoorbeeld: fysiotherapie, psycholoog, coaching, medicatie of geen." />
                   </Field>
                   <Field label="Is door een arts vastgesteld dat er geen lichamelijke oorzaak is voor de klachten?">
                     <div className="grid grid-cols-2 gap-3 pt-1">
