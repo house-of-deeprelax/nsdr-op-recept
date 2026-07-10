@@ -141,15 +141,18 @@ function ReceptenPage() {
             </li>
           )}
           {filtered.map((rx, i) => (
-            <li key={rx.id}>
+            <li
+              key={rx.id}
+              className="relative"
+              style={{
+                borderBottom:
+                  i === filtered.length - 1 ? "none" : "1px solid var(--border-default)",
+              }}
+            >
               <Link
                 to="/recept/$id"
                 params={{ id: rx.rx_number.toLowerCase() }}
-                className="group relative flex flex-col gap-2 py-4 transition-colors sm:py-5"
-                style={{
-                  borderBottom:
-                    i === filtered.length - 1 ? "none" : "1px solid var(--border-default)",
-                }}
+                className="group relative flex flex-col gap-2 py-4 pr-12 transition-colors sm:py-5"
               >
                 <div className="flex items-center justify-between">
                   <span
@@ -189,6 +192,16 @@ function ReceptenPage() {
                   )}
                 </div>
               </Link>
+              <button
+                type="button"
+                onClick={(e) => handleDelete(e, rx)}
+                disabled={deletingId === rx.id}
+                aria-label={`Verwijder ${rx.rx_number}`}
+                className="absolute right-0 top-4 flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-[rgba(240,237,230,0.06)] disabled:opacity-40"
+                style={{ color: "rgba(240,237,230,0.45)" }}
+              >
+                <Trash2 className="h-4 w-4" strokeWidth={1.5} />
+              </button>
             </li>
           ))}
         </ul>
