@@ -155,7 +155,13 @@ function NieuwPage() {
   const canNext =
     (step === 0 && context && complaint && duration && somatic !== null) ||
     (step === 1 && phase && variant) ||
-    (step === 2 && frequency && (frequency !== "Dagelijks" || dailyTimes));
+    (step === 2 &&
+      frequencyPerWeek &&
+      timeOfDay &&
+      (timeOfDay !== "Anders" || timeOfDayOther) &&
+      sessionDuration &&
+      recipeDuration &&
+      (recipeDuration !== "Anders" || recipeDurationOther));
 
   const progress = ((step + 1) / 3) * 100;
 
