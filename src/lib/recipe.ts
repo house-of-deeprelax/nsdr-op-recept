@@ -56,6 +56,20 @@ export async function generateRecipe(
     groen: "groen",
   };
 
+  const momentVanDeDag = intake.timeOfDay
+    .map((v) => (v === "Anders" ? `Anders: ${intake.timeOfDayOther}` : v))
+    .join(", ");
+  const sessieduur = intake.sessionDuration.join(", ");
+  const duurRecept =
+    intake.recipeDuration === "Anders"
+      ? `Anders: ${intake.recipeDurationOther}`
+      : intake.recipeDuration;
+  // De edge function kent alleen `frequentie` (niet `duur_van_het_recept`),
+  // dus we plakken de looptijd erbij zodat die info in het prompt terechtkomt.
+  const frequentieMetLooptijd = duurRecept
+    ? `${intake.frequencyPerWeek} per week, gedurende ${duurRecept}`
+    : `${intake.frequencyPerWeek} per week`;
+
   const payload = {
     leeftijd_context: intake.context,
     hoofdklacht: intake.complaint,
@@ -66,14 +80,10 @@ export async function generateRecipe(
     variant: (intake.variant ?? "").toLowerCase(),
     dominant_domein: intake.domain,
     setting: intake.setting,
-    frequentie_per_week: intake.frequencyPerWeek,
-    moment_van_de_dag: intake.timeOfDay
-      .map((v) => (v === "Anders" ? `Anders: ${intake.timeOfDayOther}` : v))
-      .join(", "),
-    sessieduur: intake.sessionDuration.join(", "),
-    duur_van_het_recept: intake.recipeDuration === "Anders"
-      ? `Anders: ${intake.recipeDurationOther}`
-      : intake.recipeDuration,
+    // Veldnamen exact zoals de edge function ze verwacht:
+    beschikbare_tijd: sessieduur,
+    frequentie: frequentieMetLooptijd,
+    dagritme: momentVanDeDag,
     special_conditions: intake.special_conditions,
   };
 
