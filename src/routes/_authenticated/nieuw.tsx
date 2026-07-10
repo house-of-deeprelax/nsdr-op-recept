@@ -100,10 +100,12 @@ function NieuwPage() {
   const [domain, setDomain] = useState<string>("");
 
   const [setting, setSetting] = useState<"individueel" | "groep">("individueel");
-  const [time, setTime] = useState("");
-  const [frequency, setFrequency] = useState("");
-  const [dailyTimes, setDailyTimes] = useState("");
-  const [rhythm, setRhythm] = useState("");
+  const [frequencyPerWeek, setFrequencyPerWeek] = useState<string>("");
+  const [timeOfDay, setTimeOfDay] = useState<string>("");
+  const [timeOfDayOther, setTimeOfDayOther] = useState<string>("");
+  const [sessionDuration, setSessionDuration] = useState<string>("");
+  const [recipeDuration, setRecipeDuration] = useState<string>("");
+  const [recipeDurationOther, setRecipeDurationOther] = useState<string>("");
   const [specialConds, setSpecialConds] = useState<string[]>([]);
 
   // Hydrate uit sessionStorage zodat intake bewaard blijft bij fouten / terugkeer
@@ -121,10 +123,12 @@ function NieuwPage() {
       if (d.variant) setVariant(d.variant);
       if (d.domain) setDomain(d.domain);
       if (d.setting) setSetting(d.setting);
-      if (d.time) setTime(d.time);
-      if (d.frequency) setFrequency(d.frequency);
-      if (d.dailyTimes) setDailyTimes(d.dailyTimes);
-      if (d.rhythm) setRhythm(d.rhythm);
+      if (d.frequencyPerWeek) setFrequencyPerWeek(d.frequencyPerWeek);
+      if (d.timeOfDay) setTimeOfDay(d.timeOfDay);
+      if (d.timeOfDayOther) setTimeOfDayOther(d.timeOfDayOther);
+      if (d.sessionDuration) setSessionDuration(d.sessionDuration);
+      if (d.recipeDuration) setRecipeDuration(d.recipeDuration);
+      if (d.recipeDurationOther) setRecipeDurationOther(d.recipeDurationOther);
       if (Array.isArray(d.special_conditions)) setSpecialConds(d.special_conditions);
     } catch {}
   }, []);
@@ -136,16 +140,28 @@ function NieuwPage() {
         context, complaint, duration, treatment,
         somaticCleared: somatic === true,
         phase, variant, domain,
-        setting, time, frequency, dailyTimes, rhythm,
+        setting,
+        frequencyPerWeek,
+        timeOfDay,
+        timeOfDayOther,
+        sessionDuration,
+        recipeDuration,
+        recipeDurationOther,
         special_conditions: specialConds,
       }));
     } catch {}
-  }, [context, complaint, duration, treatment, somatic, phase, variant, domain, setting, time, frequency, dailyTimes, rhythm, specialConds]);
+  }, [context, complaint, duration, treatment, somatic, phase, variant, domain, setting, frequencyPerWeek, timeOfDay, timeOfDayOther, sessionDuration, recipeDuration, recipeDurationOther, specialConds]);
 
   const canNext =
     (step === 0 && context && complaint && duration && somatic !== null) ||
     (step === 1 && phase && variant) ||
-    (step === 2 && frequency && (frequency !== "Dagelijks" || dailyTimes));
+    (step === 2 &&
+      frequencyPerWeek &&
+      timeOfDay &&
+      (timeOfDay !== "Anders" || timeOfDayOther) &&
+      sessionDuration &&
+      recipeDuration &&
+      (recipeDuration !== "Anders" || recipeDurationOther));
 
   const progress = ((step + 1) / 3) * 100;
 
@@ -166,7 +182,13 @@ function NieuwPage() {
         context, complaint, duration, treatment,
         somaticCleared: somatic === true,
         phase, variant, domain,
-        setting, time, frequency, dailyTimes, rhythm,
+        setting,
+        frequencyPerWeek,
+        timeOfDay,
+        timeOfDayOther,
+        sessionDuration,
+        recipeDuration,
+        recipeDurationOther,
         special_conditions: specialConds,
       };
       try {
@@ -399,26 +421,53 @@ function NieuwPage() {
                       <LineToggle active={setting === "groep"} onClick={() => setSetting("groep")} label="Groep" />
                     </div>
                   </Field>
-                  <Field label="Frequentie">
-                    <ChipRow value={frequency} onChange={(v) => { setFrequency(v); if (v !== "Dagelijks") setDailyTimes(""); }} options={["Dagelijks", "3x per week", "2x per week", "1x per week"]} />
-                    {frequency === "Dagelijks" && (
+
+                  <Field label="Hoe vaak per week?">
+                    <ChipRow
+                      value={frequencyPerWeek}
+                      onChange={setFrequencyPerWeek}
+                      options={["1×", "2×", "3×", "4×", "5–7×"]}
+                    />
+                  </Field>
+
+                  <Field label="Moment van de dag">
+                    <ChipRow
+                      value={timeOfDay}
+                      onChange={(v) => { setTimeOfDay(v); if (v !== "Anders") setTimeOfDayOther(""); }}
+                      options={["Ochtend", "Middag", "Avond", "Voor het slapen", "Na een stressvol moment", "Anders"]}
+                    />
+                    {timeOfDay === "Anders" && (
                       <div className="pt-3">
-                        <select
-                          value={dailyTimes}
-                          onChange={(e) => setDailyTimes(e.target.value)}
-                          className="w-full rounded-md px-3 py-2.5 text-[13px] outline-none transition-colors"
-                          style={{
-                            border: "1px solid rgba(255,255,255,0.08)",
-                            background: "rgba(255,255,255,0.02)",
-                            color: "#f0ede6",
-                          }}
-                        >
-                          <option value="">Hoe vaak per dag?</option>
-                          <option value="1x per dag">1x per dag</option>
-                          <option value="2x per dag">2x per dag</option>
-                          <option value="3x per dag">3x per dag</option>
-                          <option value="4x per dag">4x per dag</option>
-                        </select>
+                        <LineInput
+                          value={timeOfDayOther}
+                          onChange={setTimeOfDayOther}
+                          placeholder="Bijvoorbeeld: na de lunch, voor een belangrijk gesprek"
+                        />
+                      </div>
+                    )}
+                  </Field>
+
+                  <Field label="Sessieduur">
+                    <ChipRow
+                      value={sessionDuration}
+                      onChange={setSessionDuration}
+                      options={["5–10 minuten", "10–20 minuten", "20–30 minuten", "30+ minuten"]}
+                    />
+                  </Field>
+
+                  <Field label="Duur van het recept">
+                    <ChipRow
+                      value={recipeDuration}
+                      onChange={(v) => { setRecipeDuration(v); if (v !== "Anders") setRecipeDurationOther(""); }}
+                      options={["2 weken", "4 weken", "6 weken", "Anders"]}
+                    />
+                    {recipeDuration === "Anders" && (
+                      <div className="pt-3">
+                        <LineInput
+                          value={recipeDurationOther}
+                          onChange={setRecipeDurationOther}
+                          placeholder="Bijvoorbeeld: 8 weken"
+                        />
                       </div>
                     )}
                   </Field>
