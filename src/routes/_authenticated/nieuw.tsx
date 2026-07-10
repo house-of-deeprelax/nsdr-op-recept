@@ -159,9 +159,9 @@ function NieuwPage() {
     (step === 1 && phase && variant) ||
     (step === 2 &&
       frequencyPerWeek &&
-      timeOfDay &&
-      (timeOfDay !== "Anders" || timeOfDayOther) &&
-      sessionDuration &&
+      timeOfDay.length > 0 &&
+      (!timeOfDay.includes("Anders") || timeOfDayOther) &&
+      sessionDuration.length > 0 &&
       recipeDuration &&
       (recipeDuration !== "Anders" || recipeDurationOther));
 
