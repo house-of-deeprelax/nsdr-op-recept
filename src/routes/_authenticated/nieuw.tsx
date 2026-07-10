@@ -17,9 +17,15 @@ const phases: { id: Phase; label: string; color: string; hint: string }[] = [
 ];
 
 const domains = [
-  "Burn-out", "Slaapproblemen", "Hormonaal", "Chronische pijn",
-  "Long COVID", "Trauma", "Rouw",
-  "Neurodivergentie", "Postcommotioneel",
+  "Burn-out",
+  "Slaapproblemen",
+  "Hormonale klachten",
+  "Chronische pijn",
+  "Long COVID",
+  "Trauma",
+  "Rouw",
+  "Neurodivergentie",
+  "Postcommotionele klachten",
 ];
 
 const variantsByPhase: Record<
@@ -67,7 +73,7 @@ const steps = [
   {
     name: "Systeemscan",
     blurb:
-      "Bepaal de regulatie-fase en het dominante domein. Dit stuurt protocol en intensiteit.",
+      "Geen standaard protocol, maar begeleiding die past bij het moment. Bepaal de regulatiefase en het dominante domein/belangrijkste thema, zodat je kunt aansluiten bij waar iemand nu staat.",
   },
   {
     name: "Setting",
@@ -373,7 +379,7 @@ function NieuwPage() {
                     </Field>
                   )}
 
-                  <Field label="Dominant domein" optional>
+                  <Field label="Aandachtsgebied" optional>
                     <div className="flex flex-wrap gap-2 pt-2">
                       {domains.map((d) => (
                         <Chip key={d} active={domain === d} onClick={() => setDomain(domain === d ? "" : d)}>
