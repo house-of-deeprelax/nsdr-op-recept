@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, FilePlus2, FileText, Settings } from "lucide-react";
+import { LayoutDashboard, FilePlus2, FileText, BookOpen, Settings } from "lucide-react";
 
 type Item = { to: string; label: string; icon: typeof LayoutDashboard };
 
@@ -7,6 +7,7 @@ export const navItems: Item[] = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/nieuw", label: "Nieuw", icon: FilePlus2 },
   { to: "/recepten", label: "Recepten", icon: FileText },
+  { to: "/kennisbank", label: "Kennisbank", icon: BookOpen },
   { to: "/instellingen", label: "Instellingen", icon: Settings },
 ];
 
