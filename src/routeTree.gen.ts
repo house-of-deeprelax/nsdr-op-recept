@@ -16,6 +16,7 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as AuthenticatedReceptenRouteImport } from './routes/_authenticated/recepten'
 import { Route as AuthenticatedNieuwRouteImport } from './routes/_authenticated/nieuw'
+import { Route as AuthenticatedKennisbankRouteImport } from './routes/_authenticated/kennisbank'
 import { Route as AuthenticatedInstellingenRouteImport } from './routes/_authenticated/instellingen'
 import { Route as AuthenticatedGenererenRouteImport } from './routes/_authenticated/genereren'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -60,6 +61,11 @@ const AuthenticatedReceptenRoute = AuthenticatedReceptenRouteImport.update({
 const AuthenticatedNieuwRoute = AuthenticatedNieuwRouteImport.update({
   id: '/nieuw',
   path: '/nieuw',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedKennisbankRoute = AuthenticatedKennisbankRouteImport.update({
+  id: '/kennisbank',
+  path: '/kennisbank',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedInstellingenRoute =
@@ -129,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/genereren': typeof AuthenticatedGenererenRoute
   '/instellingen': typeof AuthenticatedInstellingenRoute
+  '/kennisbank': typeof AuthenticatedKennisbankRoute
   '/nieuw': typeof AuthenticatedNieuwRoute
   '/recepten': typeof AuthenticatedReceptenRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/genereren': typeof AuthenticatedGenererenRoute
   '/instellingen': typeof AuthenticatedInstellingenRoute
+  '/kennisbank': typeof AuthenticatedKennisbankRoute
   '/nieuw': typeof AuthenticatedNieuwRoute
   '/recepten': typeof AuthenticatedReceptenRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/genereren': typeof AuthenticatedGenererenRoute
   '/_authenticated/instellingen': typeof AuthenticatedInstellingenRoute
+  '/_authenticated/kennisbank': typeof AuthenticatedKennisbankRoute
   '/_authenticated/nieuw': typeof AuthenticatedNieuwRoute
   '/_authenticated/recepten': typeof AuthenticatedReceptenRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/genereren'
     | '/instellingen'
+    | '/kennisbank'
     | '/nieuw'
     | '/recepten'
     | '/email/unsubscribe'
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/genereren'
     | '/instellingen'
+    | '/kennisbank'
     | '/nieuw'
     | '/recepten'
     | '/email/unsubscribe'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/genereren'
     | '/_authenticated/instellingen'
+    | '/_authenticated/kennisbank'
     | '/_authenticated/nieuw'
     | '/_authenticated/recepten'
     | '/email/unsubscribe'
@@ -305,6 +317,13 @@ declare module '@tanstack/react-router' {
       path: '/nieuw'
       fullPath: '/nieuw'
       preLoaderRoute: typeof AuthenticatedNieuwRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/kennisbank': {
+      id: '/_authenticated/kennisbank'
+      path: '/kennisbank'
+      fullPath: '/kennisbank'
+      preLoaderRoute: typeof AuthenticatedKennisbankRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/instellingen': {
@@ -391,6 +410,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedGenererenRoute: typeof AuthenticatedGenererenRoute
   AuthenticatedInstellingenRoute: typeof AuthenticatedInstellingenRoute
+  AuthenticatedKennisbankRoute: typeof AuthenticatedKennisbankRoute
   AuthenticatedNieuwRoute: typeof AuthenticatedNieuwRoute
   AuthenticatedReceptenRoute: typeof AuthenticatedReceptenRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -401,6 +421,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedGenererenRoute: AuthenticatedGenererenRoute,
   AuthenticatedInstellingenRoute: AuthenticatedInstellingenRoute,
+  AuthenticatedKennisbankRoute: AuthenticatedKennisbankRoute,
   AuthenticatedNieuwRoute: AuthenticatedNieuwRoute,
   AuthenticatedReceptenRoute: AuthenticatedReceptenRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
