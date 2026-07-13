@@ -6,7 +6,7 @@ export function MobileTabs() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-30 grid h-16 grid-cols-4 md:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 grid h-16 grid-cols-5 md:hidden"
       style={{
         background: "rgba(12,12,10,0.92)",
         backdropFilter: "blur(16px)",
