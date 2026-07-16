@@ -196,8 +196,8 @@ function RecipePage() {
     year: "numeric",
   });
 
-  const copyToClipboard = async () => {
-    const text = [
+  const buildPlainText = () =>
+    [
       `NSDR op Recept — ${rxNumber}`,
       dateStr,
       "",
@@ -222,13 +222,62 @@ function RecipePage() {
       "NSDR komt naast bestaande zorg, niet in plaats daarvan.",
       "Deeprelax Institute — deeprelax.com",
     ].join("\n");
+
+  const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(buildPlainText());
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error("Kopiëren mislukt");
     }
+  };
+
+  const triggerDownload = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const downloadText = () => {
+    triggerDownload(
+      new Blob([buildPlainText()], { type: "text/plain;charset=utf-8" }),
+      `${rxNumber}.txt`,
+    );
+    setDownloadOpen(false);
+  };
+
+  const escapeHtml = (s: string) =>
+    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const downloadWord = () => {
+    const p = (s: string) =>
+      `<p style="font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;">${escapeHtml(s).replace(/\n/g, "<br/>")}</p>`;
+    const h = (s: string) =>
+      `<h2 style="font-family:Calibri,Arial,sans-serif;font-size:12pt;letter-spacing:1px;color:#555;margin-top:18pt;margin-bottom:4pt;">${escapeHtml(s)}</h2>`;
+    const html = `<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${rxNumber}</title></head><body>
+      <h1 style="font-family:Calibri,Arial,sans-serif;font-size:20pt;margin:0 0 4pt 0;">NSDR op Recept — ${rxNumber}</h1>
+      <p style="font-family:Calibri,Arial,sans-serif;font-size:10pt;color:#666;margin:0 0 18pt 0;">${dateStr}</p>
+      ${h("Voor wie en waar nu")}${p(recipe.voor_wie_en_waar_nu)}
+      ${h("Het voorschrift")}
+      ${p(`Eerste keus — ${recipe.het_voorschrift.eerste_keus.sessie}\n${recipe.het_voorschrift.eerste_keus.rationale}`)}
+      ${p(`Lichter, als terugval — ${recipe.het_voorschrift.lichter.sessie}\n${recipe.het_voorschrift.lichter.rationale}`)}
+      ${p(`Zwaarder, als opbouw — ${recipe.het_voorschrift.zwaarder.sessie}\n${recipe.het_voorschrift.zwaarder.rationale}`)}
+      ${h("De dosering")}${p(recipe.de_dosering)}
+      ${h("Looptijd en herijking")}${p(recipe.looptijd_en_herijking)}
+      ${h("Waar je op let")}${p(recipe.waar_je_op_let)}
+      <p style="font-family:Calibri,Arial,sans-serif;font-size:9pt;color:#999;font-style:italic;margin-top:24pt;">NSDR komt naast bestaande zorg, niet in plaats daarvan.<br/>Deeprelax Institute — deeprelax.com</p>
+    </body></html>`;
+    triggerDownload(
+      new Blob([html], { type: "application/msword" }),
+      `${rxNumber}.doc`,
+    );
+    setDownloadOpen(false);
   };
 
   const downloadPDF = () => {
