@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Copy, Download, Pencil } from "lucide-react";
+import { Check, Copy, Download, FileText, FileType, Pencil, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
@@ -99,6 +99,7 @@ function RecipePage() {
   }, [id]);
 
   const [copied, setCopied] = useState(false);
+  const [downloadOpen, setDownloadOpen] = useState(false);
 
   const stored = data ?? FALLBACK;
   const recipe = stored.recipe;
@@ -195,8 +196,8 @@ function RecipePage() {
     year: "numeric",
   });
 
-  const copyToClipboard = async () => {
-    const text = [
+  const buildPlainText = () =>
+    [
       `NSDR op Recept — ${rxNumber}`,
       dateStr,
       "",
@@ -221,13 +222,62 @@ function RecipePage() {
       "NSDR komt naast bestaande zorg, niet in plaats daarvan.",
       "Deeprelax Institute — deeprelax.com",
     ].join("\n");
+
+  const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(buildPlainText());
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error("Kopiëren mislukt");
     }
+  };
+
+  const triggerDownload = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const downloadText = () => {
+    triggerDownload(
+      new Blob([buildPlainText()], { type: "text/plain;charset=utf-8" }),
+      `${rxNumber}.txt`,
+    );
+    setDownloadOpen(false);
+  };
+
+  const escapeHtml = (s: string) =>
+    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const downloadWord = () => {
+    const p = (s: string) =>
+      `<p style="font-family:Calibri,Arial,sans-serif;font-size:11pt;line-height:1.5;">${escapeHtml(s).replace(/\n/g, "<br/>")}</p>`;
+    const h = (s: string) =>
+      `<h2 style="font-family:Calibri,Arial,sans-serif;font-size:12pt;letter-spacing:1px;color:#555;margin-top:18pt;margin-bottom:4pt;">${escapeHtml(s)}</h2>`;
+    const html = `<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${rxNumber}</title></head><body>
+      <h1 style="font-family:Calibri,Arial,sans-serif;font-size:20pt;margin:0 0 4pt 0;">NSDR op Recept — ${rxNumber}</h1>
+      <p style="font-family:Calibri,Arial,sans-serif;font-size:10pt;color:#666;margin:0 0 18pt 0;">${dateStr}</p>
+      ${h("Voor wie en waar nu")}${p(recipe.voor_wie_en_waar_nu)}
+      ${h("Het voorschrift")}
+      ${p(`Eerste keus — ${recipe.het_voorschrift.eerste_keus.sessie}\n${recipe.het_voorschrift.eerste_keus.rationale}`)}
+      ${p(`Lichter, als terugval — ${recipe.het_voorschrift.lichter.sessie}\n${recipe.het_voorschrift.lichter.rationale}`)}
+      ${p(`Zwaarder, als opbouw — ${recipe.het_voorschrift.zwaarder.sessie}\n${recipe.het_voorschrift.zwaarder.rationale}`)}
+      ${h("De dosering")}${p(recipe.de_dosering)}
+      ${h("Looptijd en herijking")}${p(recipe.looptijd_en_herijking)}
+      ${h("Waar je op let")}${p(recipe.waar_je_op_let)}
+      <p style="font-family:Calibri,Arial,sans-serif;font-size:9pt;color:#999;font-style:italic;margin-top:24pt;">NSDR komt naast bestaande zorg, niet in plaats daarvan.<br/>Deeprelax Institute — deeprelax.com</p>
+    </body></html>`;
+    triggerDownload(
+      new Blob([html], { type: "application/msword" }),
+      `${rxNumber}.doc`,
+    );
+    setDownloadOpen(false);
   };
 
   const downloadPDF = () => {
@@ -763,8 +813,8 @@ function RecipePage() {
         </div>
 
         <div className="mt-6 flex flex-row flex-wrap gap-1.5 lg:mt-auto lg:flex-col lg:pt-8">
-          <SidebarAction primary onClick={downloadPDF}>
-            <Download className="h-3.5 w-3.5" strokeWidth={1.5} /> PDF downloaden
+          <SidebarAction primary onClick={() => setDownloadOpen(true)}>
+            <Download className="h-3.5 w-3.5" strokeWidth={1.5} /> Recept downloaden
           </SidebarAction>
           <SidebarAction onClick={() => {
             try {
@@ -908,7 +958,114 @@ function RecipePage() {
           </Section>
         </div>
       </main>
+
+      <AnimatePresence>
+        {downloadOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }}
+            onClick={() => setDownloadOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 12, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.98 }}
+              transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-[420px] rounded-lg p-6"
+              style={{
+                background: "var(--surface-1)",
+                border: "1px solid var(--border-default)",
+              }}
+            >
+              <div className="mb-5 flex items-start justify-between gap-3">
+                <div>
+                  <span
+                    className="text-[10px] uppercase"
+                    style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.35)" }}
+                  >
+                    Download
+                  </span>
+                  <h3
+                    className="font-display mt-1"
+                    style={{ fontSize: 20, color: "#f0ede6", lineHeight: 1.15 }}
+                  >
+                    Recept downloaden
+                  </h3>
+                  <p className="mt-1 text-[12px]" style={{ color: "rgba(240,237,230,0.55)" }}>
+                    Kies een formaat voor {rxNumber}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setDownloadOpen(false)}
+                  aria-label="Sluiten"
+                  className="cursor-pointer rounded-md p-1 transition-colors hover:bg-white/5"
+                  style={{ color: "rgba(240,237,230,0.5)" }}
+                >
+                  <X className="h-4 w-4" strokeWidth={1.5} />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <DownloadOption
+                  icon={<FileText className="h-4 w-4" strokeWidth={1.5} />}
+                  label="PDF"
+                  hint="Opgemaakt document — direct printbaar"
+                  onClick={() => {
+                    setDownloadOpen(false);
+                    downloadPDF();
+                  }}
+                />
+                <DownloadOption
+                  icon={<FileType className="h-4 w-4" strokeWidth={1.5} />}
+                  label="Word"
+                  hint=".doc — bewerkbaar in Word of Google Docs"
+                  onClick={downloadWord}
+                />
+                <DownloadOption
+                  icon={<FileText className="h-4 w-4" strokeWidth={1.5} />}
+                  label="Tekst"
+                  hint=".txt — platte tekst zonder opmaak"
+                  onClick={downloadText}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+function DownloadOption({
+  icon, label, hint, onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  hint: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex cursor-pointer items-center gap-3 rounded-md p-3 text-left transition-all hover:bg-white/5 active:scale-[0.99]"
+      style={{ border: "1px solid var(--border-default)" }}
+    >
+      <span
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md"
+        style={{ background: "rgba(240,237,230,0.05)", color: "var(--sage)" }}
+      >
+        {icon}
+      </span>
+      <span className="flex flex-col">
+        <span style={{ fontSize: 14, color: "#f0ede6" }}>{label}</span>
+        <span style={{ fontSize: 11, color: "rgba(240,237,230,0.5)" }}>{hint}</span>
+      </span>
+    </button>
   );
 }
 
