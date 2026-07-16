@@ -152,17 +152,36 @@ function RecipePage() {
 
   useEffect(() => {
     const handler = () => {
-      let current = "01";
+      const vh = window.innerHeight;
+      // Near bottom of page → activate the last section, regardless of its top.
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+        setActiveSection(sections[sections.length - 1].num);
+        return;
+      }
+      // Otherwise pick the section whose top is closest to (but not past) the trigger line.
+      const trigger = vh * 0.35;
+      let current = sections[0].num;
+      let bestTop = -Infinity;
       for (const s of sections) {
         const el = refs.current[s.num];
-        if (el && el.getBoundingClientRect().top < 160) current = s.num;
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top <= trigger && top > bestTop) {
+          bestTop = top;
+          current = s.num;
+        }
       }
       setActiveSection(current);
     };
     window.addEventListener("scroll", handler, true);
+    window.addEventListener("resize", handler);
     handler();
-    return () => window.removeEventListener("scroll", handler, true);
+    return () => {
+      window.removeEventListener("scroll", handler, true);
+      window.removeEventListener("resize", handler);
+    };
   }, []);
+
 
   const scrollTo = useCallback((num: string) => {
     const el = refs.current[num];
