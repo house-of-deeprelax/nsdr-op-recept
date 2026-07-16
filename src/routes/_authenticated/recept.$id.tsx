@@ -99,6 +99,7 @@ function RecipePage() {
   }, [id]);
 
   const [copied, setCopied] = useState(false);
+  const [downloadOpen, setDownloadOpen] = useState(false);
 
   const stored = data ?? FALLBACK;
   const recipe = stored.recipe;
