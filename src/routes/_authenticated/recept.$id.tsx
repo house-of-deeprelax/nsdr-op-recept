@@ -958,7 +958,114 @@ function RecipePage() {
           </Section>
         </div>
       </main>
+
+      <AnimatePresence>
+        {downloadOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }}
+            onClick={() => setDownloadOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 12, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.98 }}
+              transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-[420px] rounded-lg p-6"
+              style={{
+                background: "var(--surface-1)",
+                border: "1px solid var(--border-default)",
+              }}
+            >
+              <div className="mb-5 flex items-start justify-between gap-3">
+                <div>
+                  <span
+                    className="text-[10px] uppercase"
+                    style={{ letterSpacing: "0.12em", color: "rgba(240,237,230,0.35)" }}
+                  >
+                    Download
+                  </span>
+                  <h3
+                    className="font-display mt-1"
+                    style={{ fontSize: 20, color: "#f0ede6", lineHeight: 1.15 }}
+                  >
+                    Recept downloaden
+                  </h3>
+                  <p className="mt-1 text-[12px]" style={{ color: "rgba(240,237,230,0.55)" }}>
+                    Kies een formaat voor {rxNumber}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setDownloadOpen(false)}
+                  aria-label="Sluiten"
+                  className="cursor-pointer rounded-md p-1 transition-colors hover:bg-white/5"
+                  style={{ color: "rgba(240,237,230,0.5)" }}
+                >
+                  <X className="h-4 w-4" strokeWidth={1.5} />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <DownloadOption
+                  icon={<FileText className="h-4 w-4" strokeWidth={1.5} />}
+                  label="PDF"
+                  hint="Opgemaakt document — direct printbaar"
+                  onClick={() => {
+                    setDownloadOpen(false);
+                    downloadPDF();
+                  }}
+                />
+                <DownloadOption
+                  icon={<FileType className="h-4 w-4" strokeWidth={1.5} />}
+                  label="Word"
+                  hint=".doc — bewerkbaar in Word of Google Docs"
+                  onClick={downloadWord}
+                />
+                <DownloadOption
+                  icon={<FileText className="h-4 w-4" strokeWidth={1.5} />}
+                  label="Tekst"
+                  hint=".txt — platte tekst zonder opmaak"
+                  onClick={downloadText}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+function DownloadOption({
+  icon, label, hint, onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  hint: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex cursor-pointer items-center gap-3 rounded-md p-3 text-left transition-all hover:bg-white/5 active:scale-[0.99]"
+      style={{ border: "1px solid var(--border-default)" }}
+    >
+      <span
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md"
+        style={{ background: "rgba(240,237,230,0.05)", color: "var(--sage)" }}
+      >
+        {icon}
+      </span>
+      <span className="flex flex-col">
+        <span style={{ fontSize: 14, color: "#f0ede6" }}>{label}</span>
+        <span style={{ fontSize: 11, color: "rgba(240,237,230,0.5)" }}>{hint}</span>
+      </span>
+    </button>
   );
 }
 
