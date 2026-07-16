@@ -748,6 +748,14 @@ function RecipePage() {
             <Download className="h-3.5 w-3.5" strokeWidth={1.5} /> PDF downloaden
           </SidebarAction>
           <SidebarAction onClick={() => {
+            try {
+              sessionStorage.setItem("nsdr:intake", JSON.stringify(intake));
+            } catch {}
+            navigate({ to: "/nieuw" });
+          }}>
+            <Pencil className="h-3.5 w-3.5" strokeWidth={1.5} /> Aanpassen
+          </SidebarAction>
+          <SidebarAction onClick={() => {
             sessionStorage.removeItem("nsdr:intake");
             navigate({ to: "/nieuw" });
           }}>
